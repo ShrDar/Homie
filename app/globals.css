@@ -2,3 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+.sulphur {
+    font-family: var(--font-sulphur), sans-serif;
+}
+.jim {
+    font-family: var(--font-jim), sans-serif;
+}

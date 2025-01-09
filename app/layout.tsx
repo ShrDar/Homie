@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Jim_Nightshade, Sulphur_Point } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -11,6 +11,18 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+const sulphur = Sulphur_Point({
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  variable: "--font-sulphur"
+})
+
+const jimNightShade = Jim_Nightshade({
+  subsets: ['latin'],
+  weight: ["400"],
+  variable: "--font-jim"
+})
 
 export const metadata: Metadata = {
   title: "Homie",
@@ -25,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} antialiased`}
       >
         {children}
       </body>
