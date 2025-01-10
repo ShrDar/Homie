@@ -10,7 +10,8 @@ export default {
     extend: {
       colors: {
         'bgPrimary': '#2D2D2D',
-        'bgSecondary': '#434343'
+        'bgSecondary': '#434343',
+        'fontPrimary': '#fff'
       },
     },
   },
