@@ -1,18 +1,53 @@
 "use client"
 
 import { useState } from "react"
+import axios from "axios";
 import EntryBtn from "../Button/EntryBtn";
 import Image from "next/image";
 import Link from "next/link";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export default function LoginRight() {
+
+    const { executeRecaptcha } = useGoogleReCaptcha(); 
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
+        
+        if (!executeRecaptcha) {
+            console.log("not available to execute recaptcha")
+            return;
+          }
+      
+        const gRecaptchaToken = await executeRecaptcha('inquirySubmit');
+
+    
+        const response = await axios({
+        method: "post",
+        url: "/api/recaptchaSubmit",
+        data: {
+            gRecaptchaToken,
+        },
+        headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+        },
+        });
+    
+        if (response?.data?.success === true) {
+        console.log(`Success with score: ${response?.data?.score}`);
+        // setSubmit('ReCaptcha Verified and Form Submitted!')
+        } else {
+        console.log(`Failure with score: ${response?.data?.score}`);
+        // setSubmit("Failed to verify recaptcha! You must be a robot!")
+        }
+
         console.log(email, password);
+
     }
+
 
     return (
         <div className="loginRightContainer w-full flex flex-col gap-6 justify-center items-center sulphur">

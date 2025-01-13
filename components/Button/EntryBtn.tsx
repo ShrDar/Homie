@@ -1,3 +1,4 @@
+"use client"
 type EntryBtnProps = {
     name: string,
     click?: any

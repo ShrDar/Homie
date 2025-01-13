@@ -8,3 +8,13 @@
 .jim {
     font-family: var(--font-jim), sans-serif;
 }
+.grecaptcha-badge {
+    filter: brightness(0.3) opacity(0.5);
+    transition: all;
+    transition-duration: 0.5s;
+    cursor: pointer;
+    pointer-events: none;
+}
+.grecaptcha-badge:hover {
+    filter: brightness(1) opacity(1);
+}
