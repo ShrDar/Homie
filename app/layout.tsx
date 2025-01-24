@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Jim_Nightshade, Sulphur_Point } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,18 +32,22 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <SessionProvider session={session}>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary antialiased h-screen`}
+        >
+          {children}
+          <Toaster />
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

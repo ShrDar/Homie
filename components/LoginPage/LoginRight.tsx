@@ -6,20 +6,21 @@ import EntryBtn from "../Button/EntryBtn";
 import Image from "next/image";
 import Link from "next/link";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { login, loginWithCreds } from "@/actions/auth";
+import { toast, Toaster } from "sonner";
 
 export default function LoginRight() {
-
+    
     const { executeRecaptcha } = useGoogleReCaptcha(); 
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = async() => {
-        
         if (!executeRecaptcha) {
             console.log("not available to execute recaptcha")
             return;
-          }
+        }
       
         const gRecaptchaToken = await executeRecaptcha('inquirySubmit');
 
@@ -37,14 +38,14 @@ export default function LoginRight() {
         });
     
         if (response?.data?.success === true) {
-        console.log(`Success with score: ${response?.data?.score}`);
-        // setSubmit('ReCaptcha Verified and Form Submitted!')
+            const result = await loginWithCreds(email, password);
+            if (result?.error) {
+                toast.error(result.error);
+            }
         } else {
         console.log(`Failure with score: ${response?.data?.score}`);
         // setSubmit("Failed to verify recaptcha! You must be a robot!")
         }
-
-        console.log(email, password);
 
     }
 
@@ -69,7 +70,7 @@ export default function LoginRight() {
                         <Image src={"/logo/googlePlain.png"} alt="" width={500} height={500} className="w-[30px]" />
                         <p>Google</p>
                     </div>
-                    <div className="thirdPartyGoogle cursor-pointer w-full flex items-center border-[1px] border-fontPrimary p-2 rounded-[10px] justify-center gap-5 hover:bg-bgPrimary transition-all duration-100">
+                    <div onClick={() => login("github")} className="thirdPartyGoogle cursor-pointer w-full flex items-center border-[1px] border-fontPrimary p-2 rounded-[10px] justify-center gap-5 hover:bg-bgPrimary transition-all duration-100">
                         <Image src={"/logo/githubPlain.png"} alt="" width={500} height={500} className="w-[30px]" />
                         <p>GitHub</p>
                     </div>
@@ -78,6 +79,7 @@ export default function LoginRight() {
             <div className="w-full flex justify-center items-center">
                 <p className="text-xs">Don't Have an account? <span className="text-lg font-bold hover:text-bgPrimary transition-all duration-100"><Link href={'/signup'}>Sign Up</Link></span> dawg</p>
             </div>
+            <Toaster richColors />
         </div>
     )
 }
