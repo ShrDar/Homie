@@ -57,7 +57,7 @@ export const loginWithCreds = async (email: string, password: string) => {
   revalidatePath("/");
 };
 
-export const signupWithCreds = async (email: string, password: string) => {
+export const signupWithCreds = async (email: string, password: string, name: string) => {
   const existingUser = await getUserByEmail(email);
   
   if (existingUser) {
@@ -70,10 +70,10 @@ export const signupWithCreds = async (email: string, password: string) => {
       data: {
         email,
         hashedPassword,
+        name,
       },
     });
 
-    // Instead of signing in here, return success and handle redirect in the client
     return { success: true };
   } catch (error) {
     console.error("Signup error:", error);

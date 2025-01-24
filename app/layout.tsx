@@ -45,7 +45,7 @@ export default async function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary antialiased h-screen`}
         >
           {children}
-          <Toaster />
+          <Toaster richColors />
         </body>
       </html>
     </SessionProvider>

@@ -7,17 +7,74 @@ import Link from "next/link";
 import { signupWithCreds } from "@/actions/auth";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 export default function SignUpClient() {
     const { executeRecaptcha } = useGoogleReCaptcha();
 
     const [email, setEmail] = useState("");
+    const [fName, setFName] = useState("");
+    const [lName, setLName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     
+    // Add validation states
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [confirmPasswordError, setConfirmPasswordError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+
+    // Email validation function
+    const validateEmail = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            setEmailError("");
+        } else if (!emailRegex.test(email)) {
+            setEmailError("Please enter a valid email address");
+        } else {
+            setEmailError("");
+        }
+    };
+
+    // Password validation function
+    const validatePassword = (password: string) => {
+        if (!password) {
+            setPasswordError("");
+        } else if (password.length < 8) {
+            setPasswordError("Password must be at least 8 characters long");
+        } else {
+            setPasswordError("");
+        }
+        // Also check confirm password when password changes
+        validateConfirmPassword(confirmPassword, password);
+    };
+
+    // Confirm password validation function
+    const validateConfirmPassword = (confirmPass: string, pass: string = password) => {
+        if (!confirmPass) {
+            setConfirmPasswordError("");
+        } else if (confirmPass !== pass) {
+            setConfirmPasswordError("Passwords don't match");
+        } else if(confirmPass.length < 8) {
+            setConfirmPasswordError("Password must be at least 8 characters long");
+        } else {
+            setConfirmPasswordError("");
+        }
+    };
+
     const handleSubmit = async() => {
-        if (password !== confirmPassword) {
-            toast.error("Passwords don't match!");
+        // Validate all fields before submission
+        validateEmail(email);
+        validatePassword(password);
+        validateConfirmPassword(confirmPassword);
+
+        if(email == "" || password == "" || confirmPassword == "" || fName == "" || lName == "") {
+            toast.error("Empty Fields");
+            return;
+        }
+
+        if (emailError || passwordError || confirmPasswordError || !email || !password || !confirmPassword) {
+            toast.error("Invalid input");
             return;
         }
 
@@ -26,6 +83,7 @@ export default function SignUpClient() {
             return;
         }
 
+        const fullName = `${fName} ${lName}`.trim();
         const gRecaptchaToken = await executeRecaptcha('inquirySubmit');
     
         const response = await axios({
@@ -39,7 +97,7 @@ export default function SignUpClient() {
         });
     
         if (response?.data?.success === true) {
-            const result = await signupWithCreds(email, password);
+            const result = await signupWithCreds(email, password, fullName);
             
             if (result.error) {
                 toast.error(result.error);
@@ -55,9 +113,90 @@ export default function SignUpClient() {
     return (
         <div className="w-full flex flex-col justify-center items-center gap-8">
             <div className="typeBoxContainer w-full flex flex-col justify-center selection:bg-[#2d2d2d] items-center gap-8" >
-                <input onChange={(e) => setEmail(e.target.value)} value={email} className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]" type="text" placeholder="Email" />
-                <input onChange={(e) => setPassword(e.target.value)} value={password} className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]" type="text" placeholder="Password" />
-                <input onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword} className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]" type="text" placeholder="Confirm password" />
+                <div className="w-full flex justify-center items-center gap-4">
+                    <div className="w-full">
+                        <input 
+                            onChange={(e) => setFName(e.target.value)} 
+                            value={fName} 
+                            className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]" 
+                            placeholder="First Name" 
+                        />
+                    </div>
+                    <div className="w-full">
+                        <input 
+                            onChange={(e) => setLName(e.target.value)} 
+                            value={lName} 
+                            className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]" 
+                            placeholder="Last Name" 
+                        />
+                    </div>
+                </div>
+                <div className="w-full">
+                    <input 
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            validateEmail(e.target.value);
+                        }} 
+                        value={email} 
+                        className={`w-full bg-[#666666] border-2 focus:outline-none ${
+                            emailError 
+                                ? 'border-red-500' 
+                                : 'border-transparent focus:border-[#2a2a2a]'
+                        } text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                        type="email" 
+                        placeholder="Email" 
+                    />
+                    {/* {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>} */}
+                </div>
+
+                <div className="w-full relative">
+                    <input 
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            validatePassword(e.target.value);
+                        }} 
+                        value={password} 
+                        className={`w-full bg-[#666666] border-2 focus:outline-none ${
+                            passwordError 
+                                ? 'border-red-500' 
+                                : 'border-transparent focus:border-[#2a2a2a]'
+                        } text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password" 
+                    />
+                    <button 
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
+                    >
+                        {showPassword ? (
+                            <FaRegEyeSlash />
+                        ) : (
+                            <FaRegEye/>
+                        )}
+                    </button>
+                    {/* {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>} */}
+                </div>
+
+                <div className="w-full relative">
+                    <input 
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value);
+                            validateConfirmPassword(e.target.value);
+                        }} 
+                        value={confirmPassword} 
+                        className={`w-full bg-[#666666] border-2 focus:outline-none ${
+                            confirmPasswordError 
+                                ? 'border-red-500' 
+                                : 'border-transparent focus:border-[#2a2a2a]'
+                        } text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Confirm password" 
+                    />
+                    
+                    {/* {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>} */}
+                </div>
+                
                 <EntryBtn name="Sign Up" click={handleSubmit} />
             </div>
             <div className="w-full flex justify-center items-center">
