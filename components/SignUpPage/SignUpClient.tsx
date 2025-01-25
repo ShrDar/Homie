@@ -23,6 +23,7 @@ export default function SignUpClient() {
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     // Email validation function
     const validateEmail = (email: string) => {
@@ -67,21 +68,22 @@ export default function SignUpClient() {
         validateEmail(email);
         validatePassword(password);
         validateConfirmPassword(confirmPassword);
-
+        
         if(email == "" || password == "" || confirmPassword == "" || fName == "" || lName == "") {
             toast.error("Empty Fields");
             return;
         }
-
+        
         if (emailError || passwordError || confirmPasswordError || !email || !password || !confirmPassword) {
             toast.error("Invalid input");
             return;
         }
-
+        
         if (!executeRecaptcha) {
             toast.error("Recaptcha not available");
             return;
         }
+        setSubmitting(true);
 
         const fullName = `${fName} ${lName}`.trim();
         const gRecaptchaToken = await executeRecaptcha('inquirySubmit');
@@ -101,8 +103,10 @@ export default function SignUpClient() {
             
             if (result.error) {
                 toast.error(result.error);
+                setSubmitting(false);
             } else {
-                toast.success("Account created successfully!");
+                toast.success("You're a Homie");
+                setSubmitting(false);
                 redirect("/login");
             }
         } else {
@@ -197,7 +201,7 @@ export default function SignUpClient() {
                     {/* {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>} */}
                 </div>
                 
-                <EntryBtn name="Sign Up" click={handleSubmit} />
+                <EntryBtn name={submitting ? "Signing Up" : "Sign Up"} click={handleSubmit} />
             </div>
             <div className="w-full flex justify-center items-center">
                 <p className="text-xs">Already a Homie? <span className="text-lg font-bold hover:text-bgPrimary transition-all duration-100"><Link href={'/login'}>Log In</Link></span> dawg</p>

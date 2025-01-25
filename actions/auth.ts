@@ -36,9 +36,7 @@ export const loginWithCreds = async (email: string, password: string) => {
     role: "USER",
     redirectTo: "/",
   };
-  console.log(email, password)
   const existingUser = await getUserByEmail(email);
-  console.log(existingUser);
 
   try {
     await signIn("credentials", rawFormData);

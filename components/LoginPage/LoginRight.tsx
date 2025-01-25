@@ -17,18 +17,19 @@ export default function LoginRight() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [loggingIn, setLoggingIn] = useState(false);
 
     const handleSubmit = async() => {
-
         if(email == "" || password == "") {
             toast.error("Empty Fields");
             return;
         }
-
+        
         if (!executeRecaptcha) {
             console.log("not available to execute recaptcha")
             return;
         }
+        setLoggingIn(true);
       
         const gRecaptchaToken = await executeRecaptcha('inquirySubmit');
 
@@ -49,10 +50,11 @@ export default function LoginRight() {
             const result = await loginWithCreds(email, password);
             if (result?.error) {
                 toast.error(result.error);
+                setLoggingIn(false);
             }
         } else {
-        console.log(`Failure with score: ${response?.data?.score}`);
-        // setSubmit("Failed to verify recaptcha! You must be a robot!")
+            console.log(`Failure with score: ${response?.data?.score}`);
+            setLoggingIn(false);
         }
 
     }
@@ -82,7 +84,7 @@ export default function LoginRight() {
                         )}
                     </button>
                 </div>
-                <EntryBtn name="Login" click={handleSubmit} />
+                <EntryBtn name={loggingIn ? "Logging In" : "Login"} click={handleSubmit} />
             </div>
             <div className="loginWithContainer mt-6 w-full flex items-center justify-center">
                 <div className="w-[40%] h-[1px] bg-fontPrimary"></div>
@@ -104,7 +106,7 @@ export default function LoginRight() {
                 </div>
             </div>
             <div className="w-full flex justify-center items-center">
-                <p className="text-xs">Don't Have an account? <span className="text-lg font-bold hover:text-bgPrimary transition-all duration-100"><Link href={'/signup'}>Sign Up</Link></span> dawg</p>
+                <p className="text-xs">Don{"'"}t Have an account? <span className="text-lg font-bold hover:text-bgPrimary transition-all duration-100"><Link href={'/signup'}>Sign Up</Link></span> dawg</p>
             </div>
             <Toaster richColors />
         </div>
