@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Toaster } from "sonner";
+import SlideBar from "@/components/SlideBar/SlideBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,8 +43,9 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary antialiased h-screen`}
+          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary bg-bgPrimary antialiased h-screen w-full relative flex justify-center items-center`}
         >
+          {session && <SlideBar />}
           {children}
           <Toaster richColors />
         </body>

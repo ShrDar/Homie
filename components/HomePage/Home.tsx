@@ -7,21 +7,27 @@ import { auth } from "@/auth";
 export default async function HomePage() {
     
     const session = await auth();
-
+    
     return (
-        <div className="homeContainer bg-bgPrimary text-fontPrimary">
-            Home Page
-            <EntryBtn name="LogOut" click={logout} />
-            {session?.user?.name}
-            {session?.user?.image && (
-                <Image
-                    className="rounded-full"
-                    width={30}
-                    height={30}
-                    alt="User Avatar"
-                    src={session?.user?.image || ""}
-                />
-            )}
+        <div className="homeContainer bg-bgPrimary text-fontPrimary sulphur h-screen w-screen flex flex-col items-center justify-center">
+            <p>Home Page</p>
+            <div className="flex flex-col items-center justify-between">
+                <div>
+                    <p className="text-4xl">{session?.user?.name}</p>
+                </div>
+                <div>
+                    {session?.user?.image && (
+                        <Image
+                        className="rounded-full"
+                        width={30}
+                        height={30}
+                        alt="User Avatar"
+                        src={session?.user?.image || ""}
+                        />
+                    )}
+                </div>
+                <EntryBtn name="LogOut" click={logout} />
+            </div>
         </div>
     )
 }
