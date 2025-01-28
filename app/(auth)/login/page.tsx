@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Login() {
     return (
-        <div className="loginPage sulphur min-h-screen h-screen bg-bgPrimary flex justify-center items-center text-fontPrimary">
+        <div className="loginPage w-full sulphur min-h-screen h-screen bg-bgPrimary flex justify-center items-center text-fontPrimary">
             <div className="loginContainer bg-bgSecondary lg:w-[60%] md:w-[85%] md:h-[85%] rounded-[15px] flex gap-10 p-12 md:p-4">
                 <div className="loginLeftContainer hidden md:flex flex-col bg-bgPrimary md:w-[45%] p-6 h-full rounded-[15px] gap-10 justify-center items-center ">
                     <div className="flex w-full items-center justify-center">

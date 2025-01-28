@@ -9,7 +9,7 @@ export default async function HomePage() {
     const session = await auth();
     
     return (
-        <div className="homeContainer bg-bgPrimary text-fontPrimary sulphur h-screen w-screen flex flex-col items-center justify-center">
+        <div className="homeContainer bg-bgPrimary text-fontPrimary z-[5] sulphur h-screen w-screen flex flex-col items-center justify-center">
             <p>Home Page</p>
             <div className="flex flex-col items-center justify-between">
                 <div>

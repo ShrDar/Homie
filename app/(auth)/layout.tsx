@@ -2,7 +2,7 @@ import GoogleCaptchaWrapper from "./GoogleCaptchaWrapper";
 
 export default function AuthLayout({children} : {children: React.ReactNode}) {
     return (
-        <div>
+        <div className="w-full">
             <GoogleCaptchaWrapper>
                 {children}
             </GoogleCaptchaWrapper>
