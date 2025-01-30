@@ -1,0 +1,55 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono, Jim_Nightshade, Sulphur_Point } from "next/font/google";
+import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+import { Toaster } from "sonner";
+import SlideBar from "@/components/SlideBar/SlideBar";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const sulphur = Sulphur_Point({
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  variable: "--font-sulphur"
+})
+
+const jimNightShade = Jim_Nightshade({
+  subsets: ['latin'],
+  weight: ["400"],
+  variable: "--font-jim"
+})
+
+export const metadata: Metadata = {
+  title: "Homie",
+  description: "",
+};
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const session = await auth();
+  return (
+    <SessionProvider session={session}>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary bg-bgPrimary antialiased h-screen w-full relative flex justify-center items-center`}
+        >
+          {session && <SlideBar />}
+          {children}
+          <Toaster richColors />
+        </body>
+      </html>
+    </SessionProvider>
+  );
+}
