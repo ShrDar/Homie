@@ -73,9 +73,16 @@ export default function SignUpClient() {
             toast.error("Empty Fields");
             return;
         }
-        
+        if(emailError) {
+            toast.error(emailError)
+        } else if(passwordError) {
+            toast.error(passwordError)
+        } else if(confirmPasswordError) {
+            toast.error(confirmPasswordError)
+        }
+
         if (emailError || passwordError || confirmPasswordError || !email || !password || !confirmPassword) {
-            toast.error("Invalid input");
+            // toast.error("Invalid input");
             return;
         }
         

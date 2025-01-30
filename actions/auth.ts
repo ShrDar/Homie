@@ -59,7 +59,7 @@ export const signupWithCreds = async (email: string, password: string, name: str
   const existingUser = await getUserByEmail(email);
   
   if (existingUser) {
-    return { error: "User already exists!" };
+    return { error: "Homie/User already exists !" };
   }
 
   try {
