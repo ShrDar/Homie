@@ -69,6 +69,7 @@ export const signupWithCreds = async (email: string, password: string, name: str
         email,
         hashedPassword,
         name,
+        image: ""
       },
     });
 
