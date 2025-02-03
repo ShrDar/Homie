@@ -24,6 +24,8 @@ model User {
   role          UserRole?        @default(USER)
   // Optional for WebAuthn support
   Authenticator Authenticator[]
+
+  postIds       String[]  @db.ObjectId 
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -51,6 +53,16 @@ model Account {
   @@unique([provider, providerAccountId])
 }
  
+model Post {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  userId    String   @db.ObjectId  // Foreign key to User model
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
