@@ -1,18 +1,19 @@
 import express from "express";
 import cors from "cors";
+import records from "./routes/record.js";
+import users from  "./routes/users.js";
+import dotenv from 'dotenv'; 
 
+dotenv.config();
 
+const PORT = process.env.PORT || 5050;
 const app = express();
-const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
-// app.use('/record', records);
+app.use("/users", users);
 
-app.get("/api/home", (req, res) => {
-    res.json({ message: "Hello World" });
-});
-
+// start the Express server
 app.listen(PORT, () => {
-    console.log(`Server Started on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });

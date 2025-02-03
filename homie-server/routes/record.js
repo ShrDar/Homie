@@ -14,13 +14,14 @@ const router = express.Router();
 // This section will help you get a list of all the records.
 router.get("/", async (req, res) => {
   let collection = await db.collection("User");
+  console.log(collection)
   let results = await collection.find({}).toArray();
   res.send(results).status(200);
 });
 
 // This section will help you get a single record by id
 router.get("/:id", async (req, res) => {
-  let collection = await db.collection("User");
+  let collection = await db.collection("records");
   let query = { _id: new ObjectId(req.params.id) };
   let result = await collection.findOne(query);
 
@@ -28,8 +29,8 @@ router.get("/:id", async (req, res) => {
   else res.send(result).status(200);
 });
 
-// This section will help you create a new user
-router.post("/user", async (req, res) => {
+// This section will help you create a new record.
+router.post("/", async (req, res) => {
   try {
     let newDocument = {
       name: req.body.name,
