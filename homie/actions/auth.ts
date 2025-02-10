@@ -6,6 +6,8 @@ import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 
+export const runtime = "nodejs"
+
 const getUserByEmail = async (email: string) => {
   try {
     const user = await prisma.user.findUnique({
