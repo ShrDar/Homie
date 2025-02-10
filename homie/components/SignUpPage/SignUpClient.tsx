@@ -10,15 +10,18 @@ import { redirect } from "next/navigation";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 export default function SignUpClient() {
+    const defaultImages = ['https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa0bcf002e60148154/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa130a0027cba1a4ac/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa131a003596256ea6/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa132700151f0a8682/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa1336000dac6ec818/view?project=67aa0803002c7db860ad&mode=admin'];
     const { executeRecaptcha } = useGoogleReCaptcha();
 
     const [email, setEmail] = useState("");
     const [fName, setFName] = useState("");
     const [lName, setLName] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     
     // Add validation states
+    const [usernameError, setUsernameError] = useState("");
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
@@ -63,6 +66,12 @@ export default function SignUpClient() {
         }
     };
 
+    const validateUsername = async (username: string) => {
+        const response = await fetch("http://localhost:8080/users/")
+        const users = await response.json();
+        console.log(users);
+    }
+
     const handleSubmit = async() => {
         // Validate all fields before submission
         validateEmail(email);
@@ -106,7 +115,8 @@ export default function SignUpClient() {
         });
     
         if (response?.data?.success === true) {
-            const result = await signupWithCreds(email, password, fullName);
+            const image = defaultImages[Math.floor(Math.random() * defaultImages.length)];
+            const result = await signupWithCreds(email, password, fullName, image);
             
             if (result.error) {
                 toast.error(result.error);
@@ -145,6 +155,22 @@ export default function SignUpClient() {
                 <div className="w-full">
                     <input 
                         onChange={(e) => {
+                            setUsername(e.target.value);
+                            validateUsername(e.target.value);
+                        }} 
+                        value={username} 
+                        className={`w-full bg-[#666666] border-2 focus:outline-none ${
+                            usernameError 
+                                ? 'border-red-500' 
+                                : 'border-transparent focus:border-[#2a2a2a]'
+                        } text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                        type="text" 
+                        placeholder="Username" 
+                    />
+                </div>
+                <div className="w-full">
+                    <input 
+                        onChange={(e) => {
                             setEmail(e.target.value);
                             validateEmail(e.target.value);
                         }} 
@@ -159,6 +185,7 @@ export default function SignUpClient() {
                     />
                     {/* {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>} */}
                 </div>
+                
 
                 <div className="w-full relative">
                     <input 

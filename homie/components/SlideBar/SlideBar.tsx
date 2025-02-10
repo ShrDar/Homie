@@ -21,7 +21,7 @@ export default function SlideBar() {
             }}
             animate={hidden ? "hidden" : "visible"}
             transition={{ duration: 0.4 , ease: "easeInOut" }}
-            onMouseEnter={() => setHidden(false)} className="slideBar z-10 bg-transparent text-fontPrimary absolute h-full left-0 flex justify-center items-center w-[40%] md:w-[20%] lg:w-[14%] sulphur">
+            onMouseEnter={() => setHidden(false)} className="slideBar z-10 bg-transparent text-fontPrimary absolute h-full left-[-10px] md:left-0 flex justify-center items-center w-[40%] md:w-[20%] lg:w-[14%] sulphur">
                 <div className="bg-bgSecondary h-[90%] w-[90%] md:w-full flex flex-col justify-center items-center rounded-[15px] ml-2">
                     <div className="text-center">
                         <Link href="/profile">

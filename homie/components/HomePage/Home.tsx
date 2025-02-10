@@ -9,19 +9,19 @@ export default async function HomePage() {
     
     const session = await auth();
 
-    // const commentCollection = collection(db, "Comment");
-    // try {
-    //     const data = await getDocs(commentCollection);
-    //     const comments = data.docs.map((doc) => (
-    //         {
-    //             ...doc.data(), 
-    //             id: doc.id
-    //         }
-    //     ));
-    //     console.log(comments);
-    // } catch(err) {
-    //     console.log(err);
-    // }
+    const commentCollection = collection(db, "Comment");
+    try {
+        const data = await getDocs(commentCollection);
+        const comments = data.docs.map((doc) => (
+            {
+                ...doc.data(), 
+                id: doc.id
+            }
+        ));
+        console.log(comments);
+    } catch(err) {
+        console.log(err);
+    }
     
 
     return (
