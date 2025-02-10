@@ -2,8 +2,8 @@ import Image from "next/image";
 import EntryBtn from "../Button/EntryBtn";
 import { logout } from "@/actions/auth";
 import { auth } from "@/auth";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from '@/config/firebase.js'
+// import { collection, getDocs } from "firebase/firestore";
+// import { db } from '@/config/firebase.js'
 
 export default async function HomePage() {
     

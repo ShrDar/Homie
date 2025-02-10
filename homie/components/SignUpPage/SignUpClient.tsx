@@ -67,9 +67,11 @@ export default function SignUpClient() {
     };
 
     const validateUsername = async (username: string) => {
-        const response = await fetch("http://localhost:8080/users/")
-        const users = await response.json();
-        console.log(users);
+        setUsername(username);
+        setUsernameError("");
+        // const response = await fetch("http://localhost:8080/users/")
+        // const users = await response.json();
+        // console.log(users);
     }
 
     const handleSubmit = async() => {
