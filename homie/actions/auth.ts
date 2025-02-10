@@ -4,7 +4,7 @@ import { signIn, signOut } from "@/auth";
 import { prisma } from "@/prisma";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt-edge";
 
 const getUserByEmail = async (email: string) => {
   try {
