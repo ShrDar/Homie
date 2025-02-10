@@ -7,6 +7,8 @@ import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { saltAndHashPassword } from "./utils/helper";
 
+export const runtime = "nodejs"
+
 export const {
   handlers: { GET, POST },
   signIn,
