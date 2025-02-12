@@ -19,6 +19,7 @@ model User {
   hashedPassword String?
   emailVerified DateTime?
   image         String?
+  username      String?         @unique
   accounts      Account[]
   sessions      Session[]
   role          UserRole?        @default(USER)

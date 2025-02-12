@@ -55,7 +55,7 @@ export const loginWithCreds = async (email: string, password: string) => {
   revalidatePath("/");
 };
 
-export const signupWithCreds = async (email: string, password: string, name: string, image: string) => {
+export const signupWithCreds = async (email: string, password: string, name: string, image: string, username: string) => {
   const existingUser = await getUserByEmail(email);
   
   if (existingUser) {
@@ -69,7 +69,8 @@ export const signupWithCreds = async (email: string, password: string, name: str
         email,
         hashedPassword,
         name,
-        image
+        image, 
+        username
       },
     });
 

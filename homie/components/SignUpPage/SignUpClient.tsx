@@ -67,11 +67,17 @@ export default function SignUpClient() {
     };
 
     const validateUsername = async (username: string) => {
-        setUsername(username);
-        setUsernameError("");
-        // const response = await fetch("http://localhost:8080/users/")
-        // const users = await response.json();
-        // console.log(users);
+        const url = process.env.NEXT_PUBLIC_BACKEND_URL;
+        console.log(url);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`)
+        const users = await response.json();
+        const repeatedUser = users.some((user: { username: string }) => user.username === username);
+        
+        if(repeatedUser) {
+            setUsernameError("Username Taken ")
+        } else {
+            setUsernameError("");
+        }
     }
 
     const handleSubmit = async() => {
@@ -90,6 +96,8 @@ export default function SignUpClient() {
             toast.error(passwordError)
         } else if(confirmPasswordError) {
             toast.error(confirmPasswordError)
+        } else if(usernameError) {
+            toast.error(usernameError)
         }
 
         if (emailError || passwordError || confirmPasswordError || !email || !password || !confirmPassword) {
@@ -118,7 +126,7 @@ export default function SignUpClient() {
     
         if (response?.data?.success === true) {
             const image = defaultImages[Math.floor(Math.random() * defaultImages.length)];
-            const result = await signupWithCreds(email, password, fullName, image);
+            const result = await signupWithCreds(email, password, fullName, image, username);
             
             if (result.error) {
                 toast.error(result.error);
