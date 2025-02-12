@@ -43,11 +43,12 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary bg-bgPrimary antialiased h-screen w-full relative flex justify-center items-center`}
+          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary bg-bgPrimary antialiased min-h-screen w-full relative flex justify-center items-center`}
         >
           {session && <SlideBar />}
           {children}
           <Toaster richColors />
+          <div id="modal"></div>
         </body>
       </html>
     </SessionProvider>

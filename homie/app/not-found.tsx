@@ -1,0 +1,11 @@
+import Link from "next/link";
+
+export default function NotFound() {
+    return (
+        <div className="h-screen w-full flex flex-col justify-center items-center gap-4 sulphur text-[#fff]">
+            <p className="text-5xl">Problem</p>
+            <p>Couldn't find the page ur Looking For</p>
+            <p>Go Back to <Link href={"/"}>Home</Link></p>
+        </div>
+    )
+}

@@ -1,7 +1,13 @@
+import { auth } from "@/auth";
 import LoginRight from "@/components/LoginPage/LoginRight";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
-export default function Login() {
+export default async function Login() {
+    const session = await auth();
+    if(session) {
+        redirect('/');
+    }
     return (
         <div className="loginPage w-full sulphur min-h-screen h-screen bg-bgPrimary flex justify-center items-center text-fontPrimary">
             <div className="loginContainer bg-bgSecondary lg:w-[60%] md:w-[85%] md:h-[85%] rounded-[15px] flex gap-10 p-12 md:p-4">

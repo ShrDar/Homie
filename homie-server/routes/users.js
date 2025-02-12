@@ -28,57 +28,53 @@ router.get("/:id", async (req, res) => {
   else res.send(result).status(200);
 });
 
-// This section will help you create a new user
-router.post("/user", async (req, res) => {
-  try {
-    let newDocument = {
-      name: req.body.name,
-      position: req.body.position,
-      level: req.body.level,
-    };
-    let collection = await db.collection("records");
-    let result = await collection.insertOne(newDocument);
-    res.send(result).status(204);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error adding record");
-  }
-});
-
-// This section will help you update a record by id.
 router.patch("/:id", async (req, res) => {
+  let collection = await db.collection("User");
+
+  const { firstName, lastName, username } = req.body;
+
+  const name = `${firstName} ${lastName}`;
+
+  const updateData = {
+    name,
+    username,
+  };
+
   try {
     const query = { _id: new ObjectId(req.params.id) };
-    const updates = {
-      $set: {
-        name: req.body.name,
-        position: req.body.position,
-        level: req.body.level,
-      },
-    };
+    const result = await collection.updateOne(query, {
+      $set: updateData,
+    });
 
-    let collection = await db.collection("records");
-    let result = await collection.updateOne(query, updates);
-    res.send(result).status(200);
+    if (result.modifiedCount === 0) {
+      res.status(404).send("User not found or no changes made");
+    } else {
+      const updatedUser = await collection.findOne(query);
+      res.status(200).json(updatedUser);
+    }
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error updating record");
+    console.error("Error updating user:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
 
-// This section will help you delete a record
 router.delete("/:id", async (req, res) => {
+  let collection = await db.collection("User");
+
+  const query = { _id: new ObjectId(req.params.id) };
+
   try {
-    const query = { _id: new ObjectId(req.params.id) };
-
-    const collection = db.collection("records");
-    let result = await collection.deleteOne(query);
-
-    res.send(result).status(200);
+    const result = await collection.deleteOne(query);
+    if (result.deletedCount === 0) {
+      res.status(404).send("User not found");
+    } else {
+      res.status(200).send("User deleted successfully");
+    }
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error deleting record");
+    console.error("Error deleting user:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
+
 
 export default router;

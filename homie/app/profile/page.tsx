@@ -12,9 +12,9 @@ export default async function Profile() {
     if (!session) {
         return redirect("/login");
     }
-    
+    // console.log(session)
     return (
-        <div className="profileContainer z-5 bg-bgPrimary text-fontPrimary sulphur h-screen lg:w-[65%] flex items-center justify-center gap-10">
+        <div className="profileContainer z-5 bg-bgPrimary text-fontPrimary sulphur py-20 lg:py-0 lg:h-screen lg:w-[65%] flex flex-col lg:flex-row items-center justify-center lg:items-center lg:justify-center gap-10">
             <Suspense fallback={<ProfileLoading />}>
                 <ProfileLeft session={session} />
                 <ProfileRight session={session} />
