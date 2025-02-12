@@ -27,7 +27,7 @@ export default function ProfileRight({ session }: {session: Session}) {
      }
  
      fetchUserData();
-    }, [])
+    }, [session?.user?.id])
 
     const handleTransform = async() => {
         const updatedData = {
@@ -56,7 +56,7 @@ export default function ProfileRight({ session }: {session: Session}) {
             });
     
             if (response.ok) {
-                const result = await response.json();
+                // const result = await response.json();
                 toast.success("Homie Updated 😉");
     
                 const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);

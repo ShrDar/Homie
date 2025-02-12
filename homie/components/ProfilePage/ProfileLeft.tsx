@@ -24,7 +24,7 @@ export default function ProfileLeft({ session }: { session: Session }) {
         const interval = setInterval(fetchUserData, 5000); 
 
         return () => clearInterval(interval);
-    }, [session?.user?.id]); 
+    }, [session?.user?.id, fetchUserData]); 
 
     if (!user) {
         return (
