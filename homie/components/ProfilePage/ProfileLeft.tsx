@@ -6,25 +6,24 @@ import { useEffect, useState } from "react";
 export default function ProfileLeft({ session }: { session: Session }) {
     const [user, setUser] = useState<any>(null);
 
-    const fetchUserData = async () => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
-            if (response.ok) {
-                const updatedUser = await response.json();
-                setUser(updatedUser); 
-            }
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
-    };
-
     useEffect(() => {
-        fetchUserData(); 
+        const fetchUserData = async() => {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
+            const user = await response.json();
+            setUser(user);
+        }
+        
+        try {
+            fetchUserData();
+        } catch(err) {
+            console.error(err);
+        }
 
         const interval = setInterval(fetchUserData, 5000); 
 
         return () => clearInterval(interval);
-    }, [session?.user?.id, fetchUserData]); 
+
+       }, [session?.user?.id])
 
     if (!user) {
         return (
@@ -37,12 +36,12 @@ export default function ProfileLeft({ session }: { session: Session }) {
         <div className="profileLeftContainer w-[90%] lg:w-[35%] flex flex-col justify-center items-center gap-6">
             <div className="upperBlockContainer w-full flex flex-col justify-center items-center gap-2">
                 <div className="profileImageContainer w-[40%] lg:w-[50%] bg-bgSecondary flex justify-center items-center rounded-full p-6">
-                    <div className="w-full rounded-full overflow-hidden p-3">
+                    <div className="w-full rounded-full overflow-hidden">
                         <Image src={session?.user?.image || "/logo/googlePlain.png"}
                         alt="profile" 
                         width={100} 
                         height={100}
-                        className="w-[100%] h-[100%]"
+                        className="w-[100%] h-[100%] rounded-full"
                         />
                     </div>
                 </div>

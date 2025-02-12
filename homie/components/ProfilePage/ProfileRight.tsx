@@ -10,7 +10,7 @@ import { motion } from "motion/react";
 
 export default function ProfileRight({ session }: {session: Session}) {
     // Split the full name into first and last name
-    const [dbFirstName, dbLastName] = session.user?.name?.split(' ') || ['', ''];
+    let [dbFirstName, dbLastName] = session.user?.name?.split(' ') || ['', ''];
     const [firstName, setFirstName] = useState(dbFirstName);
     const [lastName, setLastName] = useState(dbLastName);
     const [newPassword, setNewPassword] = useState("hello123");
@@ -65,6 +65,10 @@ export default function ProfileRight({ session }: {session: Session}) {
                 setFirstName(updatedUser.name.split(' ')[0]);
                 setLastName(updatedUser.name.split(' ')[1]);
                 setUsername(updatedUser.username);
+                setUser(updatedUser)
+                dbFirstName = updatedUser.name.split(' ')[0];
+                dbLastName = updatedUser.name.split(' ')[1];
+
             } else {
                 const error = await response.text();
                 console.error("Failed to update user:", error);
