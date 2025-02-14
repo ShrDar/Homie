@@ -19,7 +19,8 @@ model User {
   hashedPassword String?
   emailVerified DateTime?
   image         String?
-  username      String?         @unique
+  username      String?         
+  bio           String?
   accounts      Account[]
   sessions      Session[]
   role          UserRole?        @default(USER)

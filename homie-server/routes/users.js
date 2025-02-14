@@ -31,13 +31,14 @@ router.get("/:id", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   let collection = await db.collection("User");
 
-  const { firstName, lastName, username } = req.body;
+  const { firstName, lastName, username, bio } = req.body;
 
   const name = `${firstName} ${lastName}`;
 
   const updateData = {
     name,
     username,
+    bio
   };
 
   try {

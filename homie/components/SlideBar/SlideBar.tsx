@@ -39,7 +39,7 @@ export default function SlideBar( {session} : {session: Session} ) {
                 <div className="bg-bgSecondary h-[95%] w-[90%] md:w-full flex flex-col justify-center items-center gap-5 rounded-[15px] ml-2">
                     <div className="flex flex-col justify-center items-center gap-2">
                         <div className="w-full flex items-center justify-center lg:px-4">
-                            <div className="bg-[#8B8B8B] w-[80%] aspect-square md:w-[70%] lg:w-[85%] p-3 rounded-full overflow-hidden translate-x-[15px] flex justify-center items-center">
+                            <Link href={"/profile"} onClick={() => setHidden(true)} className="bg-[#8B8B8B] w-[40%] aspect-square md:w-[70%] lg:w-[85%] p-3 rounded-full overflow-hidden translate-x-[15px] flex justify-center items-center">
                                 <Image 
                                     src={"/figmaIcons/bio.svg"}
                                     alt=""
@@ -47,8 +47,8 @@ export default function SlideBar( {session} : {session: Session} ) {
                                     width={200}
                                     className="md:w-[80%] lg:w-[90%]"
                                 />
-                            </div>
-                            <div className="w-[80%] md:w-[70%] lg:w-[85%] translate-x-[-15px] aspect-square flex justify-center items-center">
+                            </Link>
+                            <Link href={"/profile"} onClick={() => setHidden(true)} className="w-[40%] md:w-[70%] lg:w-[85%] translate-x-[-15px] aspect-square flex bg-bgPrimary rounded-full justify-center items-center p-2">
                                 <Image 
                                     src={session?.user?.image || "/Homie-2.svg"}
                                     alt=""
@@ -56,12 +56,12 @@ export default function SlideBar( {session} : {session: Session} ) {
                                     width={200}
                                     className="rounded-full md:w-[80%] lg:w-[90%]"
                                 />
-                            </div>
+                            </Link>
                         </div>
-                        <div className="w-full flex flex-col justify-center items-center gap-0 text-center">
+                        <Link href={'profile'} onClick={() => setHidden(true)} className="w-full cursor-pointer flex flex-col justify-center items-center gap-0 text-center">
                             <p className="text-lg">{session.user?.name}</p>
                             <p className="text-sm">@{user.username}</p>
-                        </div>
+                        </Link>
                     </div>
 
                     <div className="flex flex-col items-center justify-start w-full gap-4">

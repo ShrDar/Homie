@@ -42,8 +42,17 @@ export default async function HomePage() {
             username: username,
           },
         });
-  
-        session.user.email = username;
+      }
+
+      if(user && !user.bio) {
+        const bio = "Hello this is bio";
+
+        await prisma.user.update({
+          where: { email: session.user.email },
+          data: {
+            bio: bio,
+          },
+        });
       }
     }
   

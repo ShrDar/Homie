@@ -13,9 +13,9 @@ export default function ProfileRight({ session }: {session: Session}) {
     let [dbFirstName, dbLastName] = session.user?.name?.split(' ') || ['', ''];
     const [firstName, setFirstName] = useState(dbFirstName);
     const [lastName, setLastName] = useState(dbLastName);
-    const [newPassword, setNewPassword] = useState("hello123");
+    const [bio, setBio] = useState("");
     const [username, setUsername] = useState("");
-    const [user, setUser] = useState({username: ""});
+    const [user, setUser] = useState({username: "", bio: ""});
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     
     useEffect(() => {
@@ -24,6 +24,7 @@ export default function ProfileRight({ session }: {session: Session}) {
          const user = await response.json();
          setUser(user);
          setUsername(user.username);
+         setBio(user.bio);
      }
  
      fetchUserData();
@@ -33,7 +34,8 @@ export default function ProfileRight({ session }: {session: Session}) {
         const updatedData = {
             firstName,
             lastName,
-            username
+            username,
+            bio
         };
         
         if(firstName == "" || lastName == "" || username == "") {
@@ -41,7 +43,7 @@ export default function ProfileRight({ session }: {session: Session}) {
             return
         }
 
-        if (firstName === dbFirstName && lastName === dbLastName && username === user.username) {
+        if (firstName === dbFirstName && lastName === dbLastName && username === user.username && bio === user.bio) {
             toast.info("No changes detected 🙅‍♂️");
             return;  // No changes, so don't send the update request
         }
@@ -81,6 +83,7 @@ export default function ProfileRight({ session }: {session: Session}) {
         setFirstName(dbFirstName)
         setLastName(dbLastName)
         setUsername(user.username)
+        setBio(user.bio);
     }
 
     return (
@@ -92,7 +95,7 @@ export default function ProfileRight({ session }: {session: Session}) {
                         type="text"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
+                        className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
                         placeholder="First Name"
                     />
                 </div>
@@ -101,16 +104,16 @@ export default function ProfileRight({ session }: {session: Session}) {
                         type="text"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
+                        className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
                         placeholder="Last Name"
                     />
                 </div>
             </div>
             <div className="relative w-full flex justify-center items-center gap-4">
-                <input type="text" placeholder="username" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
+                <input type="text" placeholder="username" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
             </div>
             <div className="relative w-full flex justify-center items-center gap-4">
-                <input type="text" placeholder="new password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
+                <input type="text" placeholder="bio" value={bio} onChange={(e) => setBio(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
             </div>
             <div className="relative w-full flex justify-center items-center gap-4">
                 <div onClick={() => handleDiscard()} className="w-full hover:brightness-[0.8] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer">

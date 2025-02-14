@@ -49,7 +49,7 @@ export default function ProfileLeft({ session }: { session: Session }) {
             </div>
             <div className="lowerBlockContainer w-full bg-bgSecondary rounded-[15px] px-8 py-10 flex flex-col justify-center items-center gap-6">
                 <div className="bioContainer text-center">
-                    <p>Hello this is bio</p>
+                    <p>{user.bio}</p>
                 </div>
                 <div className="profileStatsContainer w-full flex lg:flex-col justify-center items-center gap-4">
                     <div className="profileStat w-full flex justify-center lg:justify-between items-center text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-2 lg:gap-0">
