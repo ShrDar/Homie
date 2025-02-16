@@ -33,7 +33,7 @@ export default function ProfileRight({ session }: {session: Session}) {
     }, [session?.user?.id])
 
     const validateUsername = async (username: string) => {
-        const url = process.env.NEXT_PUBLIC_BACKEND_URL;
+        // const url = process.env.NEXT_PUBLIC_BACKEND_URL;
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`)
         const users = await response.json();
         const repeatedUser = users.some((otherUser: { username: string }) => otherUser.username === username && otherUser.username !== user.username);
