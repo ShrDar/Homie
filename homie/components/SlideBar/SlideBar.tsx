@@ -3,13 +3,18 @@ import { motion } from "motion/react"
 import { Session } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaBarsStaggered } from "react-icons/fa6";
+import { FaUserAstronaut } from "react-icons/fa6";
+import { RiMessage3Fill } from "react-icons/ri"
 
 export default function SlideBar( {session} : {session: Session} ) {
 
+    const pathname = usePathname();
+
     const [hidden, setHidden] = useState(true);
-    const [user, setUser] = useState({username: ''});
+    const [user, setUser] = useState({username: '', bio: ''});
 
     useEffect(() => {
         const fetchUserData = async() => {
@@ -36,19 +41,22 @@ export default function SlideBar( {session} : {session: Session} ) {
             animate={hidden ? "hidden" : "visible"}
             transition={{ duration: 0.4 , ease: "easeInOut" }}
             onMouseEnter={() => setHidden(false)} className="slideBar z-[100] lg:z-10 bg-transparent text-fontPrimary fixed top-0 h-full left-[-10px] md:left-0 flex justify-center items-center w-[40%] md:w-[20%] lg:w-[14%] sulphur">
-                <div className="bg-bgSecondary h-[95%] w-[90%] md:w-full flex flex-col justify-center items-center gap-5 rounded-[15px] ml-2">
+                <div className="bg-bgSecondary h-[95%] w-[90%] md:w-full flex flex-col justify-start pt-20 items-center gap-10 rounded-[15px] ml-2">
                     <div className="flex flex-col justify-center items-center gap-2">
                         <div className="w-full flex items-center justify-center lg:px-4">
-                            <Link href={"/profile"} onClick={() => setHidden(true)} className="bg-[#8B8B8B] w-[40%] aspect-square md:w-[70%] lg:w-[85%] p-3 rounded-full overflow-hidden translate-x-[15px] flex justify-center items-center">
+                            <Link href={"/profile"} onClick={() => setHidden(true)} className="bg-[#8B8B8B] w-[40%] aspect-square md:w-[70%] lg:w-[45%] p-3 rounded-full overflow-hidden translate-x-[15px] flex justify-center items-center">
                                 <Image 
                                     src={"/figmaIcons/bio.svg"}
                                     alt=""
                                     height={200}
                                     width={200}
-                                    className="md:w-[80%] lg:w-[90%]"
+                                    className="md:w-[80%] lg:w-[90%] h-full bg-[#888888] z-20 hover:opacity-0 transition-all duration-150"
                                 />
+                                <div className="absolute w-full flex flex-col justify-center items-center">
+                                    <p className="text-xs text-bgPrimary absolute w-[70%] text-center flex justify-center items-center tracking-[1px]">{user.bio.slice(0, 20)}...</p>
+                                </div>
                             </Link>
-                            <Link href={"/profile"} onClick={() => setHidden(true)} className="w-[40%] md:w-[70%] lg:w-[85%] translate-x-[-15px] aspect-square flex bg-bgPrimary rounded-full justify-center items-center p-2">
+                            <Link href={"/profile"} onClick={() => setHidden(true)} className="w-[40%] md:w-[70%] lg:w-[45%] translate-x-[-15px] aspect-square flex bg-bgPrimary rounded-full justify-center items-center p-2">
                                 <Image 
                                     src={session?.user?.image || "/Homie-2.svg"}
                                     alt=""
@@ -60,39 +68,57 @@ export default function SlideBar( {session} : {session: Session} ) {
                         </div>
                         <Link href={'profile'} onClick={() => setHidden(true)} className="w-full cursor-pointer flex flex-col justify-center items-center gap-0 text-center">
                             <p className="text-lg">{session.user?.name}</p>
-                            <p className="text-sm">@{user.username}</p>
+                            <p className="text-sm tracking-[1px]">@{user.username}</p>
                         </Link>
                     </div>
 
-                    <div className="flex flex-col items-center justify-start w-full gap-4">
-                        <div className={`w-[70%] text-lg font-thin`} onClick={() => setHidden(true)}>
-                            <Link href="/">
+                    <div className="flex flex-col items-center justify-start w-full gap-10">
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/" ? "brightness-[0.5]" : ""}`} onClick={() => setHidden(true)}>
+                            <Link href="/" className="w-full flex justify-start items-center gap-4">
+                                <Image 
+                                    src={"/slideBarIcons/home.svg"} 
+                                    alt="" 
+                                    height={200} 
+                                    width={200} 
+                                    className="h-[30px] w-[30px]"
+                                />
                                 <p>Home</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin`}>
-                            <Link href="/profile" onClick={() => setHidden(true)}>
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/profile" ? "brightness-[0.5]" : ""}`}>
+                            <Link href="/profile" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
+                                <FaUserAstronaut size={28} />
                                 <p>Profile</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin`}>
-                            <Link href="/texts" onClick={() => setHidden(true)}>
-                                <p>Texts</p>
-                            </Link>
-                        </div>
-                        <div className={`w-[70%] text-lg font-thin`}>
-                            <Link href="/homies" onClick={() => setHidden(true)}>
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/homies" ? "brightness-[0.5]" : ""}`}>
+                            <Link href="/homies" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
+                                <Image 
+                                    src={"/slideBarIcons/homies.svg"} 
+                                    alt="" 
+                                    height={200} 
+                                    width={200} 
+                                    className="h-[30px] w-[30px]"
+                                />
                                 <p>Homies</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin`}>
-                            <Link href="/texts" onClick={() => setHidden(true)}>
-                                <p>Texts</p>
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/yap" ? "brightness-[0.5]" : ""}`}>
+                            <Link href="/yap" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
+                                <RiMessage3Fill size={28} />
+                                <p>Yap</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin`}>
-                            <Link href="/issues" onClick={() => setHidden(true)}>
-                                <p>Issues</p>
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/teas" ? "brightness-[0.5]" : ""}`}>
+                            <Link href="/teas" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
+                                <Image 
+                                    src={"/slideBarIcons/tea.svg"} 
+                                    alt="" 
+                                    height={200} 
+                                    width={200} 
+                                    className="h-[30px] w-[30px]"
+                                />
+                                <p>Teas</p>
                             </Link>
                         </div>
 

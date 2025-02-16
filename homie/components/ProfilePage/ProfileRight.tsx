@@ -17,6 +17,8 @@ export default function ProfileRight({ session }: {session: Session}) {
     const [username, setUsername] = useState("");
     const [user, setUser] = useState({username: "", bio: ""});
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+    const [usernameError, setUsernameError] = useState("")
     
     useEffect(() => {
      const fetchUserData = async() => {
@@ -29,6 +31,19 @@ export default function ProfileRight({ session }: {session: Session}) {
  
      fetchUserData();
     }, [session?.user?.id])
+
+    const validateUsername = async (username: string) => {
+        const url = process.env.NEXT_PUBLIC_BACKEND_URL;
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`)
+        const users = await response.json();
+        const repeatedUser = users.some((otherUser: { username: string }) => otherUser.username === username && otherUser.username !== user.username);
+        
+        if(repeatedUser) {
+            setUsernameError("Username Taken ")
+        } else {
+            setUsernameError("");
+        }
+    }
 
     const handleTransform = async() => {
         const updatedData = {
@@ -46,6 +61,11 @@ export default function ProfileRight({ session }: {session: Session}) {
         if (firstName === dbFirstName && lastName === dbLastName && username === user.username && bio === user.bio) {
             toast.info("No changes detected 🙅‍♂️");
             return;  // No changes, so don't send the update request
+        }
+
+        if(usernameError) {
+            toast.error(usernameError);
+            return;
         }
 
         try {
@@ -84,6 +104,7 @@ export default function ProfileRight({ session }: {session: Session}) {
         setLastName(dbLastName)
         setUsername(user.username)
         setBio(user.bio);
+        setUsernameError("");
     }
 
     return (
@@ -110,7 +131,20 @@ export default function ProfileRight({ session }: {session: Session}) {
                 </div>
             </div>
             <div className="relative w-full flex justify-center items-center gap-4">
-                <input type="text" placeholder="username" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
+                <input 
+                    type="text" 
+                    placeholder="username" 
+                    value={username} 
+                    onChange={(e) => {
+                        setUsername(e.target.value)
+                        validateUsername(e.target.value)
+                    }} 
+                    className={`w-full bg-bgPrimary border-2 selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px] ${
+                        usernameError 
+                                ? 'border-red-500' 
+                                : 'border-transparent focus:border-[#2a2a2a]'
+                    }`} 
+                />
             </div>
             <div className="relative w-full flex justify-center items-center gap-4">
                 <input type="text" placeholder="bio" value={bio} onChange={(e) => setBio(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />

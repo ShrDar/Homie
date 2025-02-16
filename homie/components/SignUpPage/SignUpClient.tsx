@@ -68,7 +68,7 @@ export default function SignUpClient() {
 
     const validateUsername = async (username: string) => {
         const url = process.env.NEXT_PUBLIC_BACKEND_URL;
-        console.log(url);
+        // console.log(url);
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`)
         const users = await response.json();
         const repeatedUser = users.some((user: { username: string }) => user.username === username);
