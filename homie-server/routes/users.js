@@ -59,6 +59,37 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+router.patch("/:id/image", async (req, res) => {
+  let collection = await db.collection("User");
+
+  const { image } = req.body;
+
+  if (!image) {
+    return res.status(400).send("Image field is required");
+  }
+
+  const updateData = {
+    image,
+  };
+
+  try {
+    const query = { _id: new ObjectId(req.params.id) };
+    const result = await collection.updateOne(query, {
+      $set: updateData,
+    });
+
+    if (result.modifiedCount === 0) {
+      res.status(404).send("User not found or no changes made");
+    } else {
+      const updatedUser = await collection.findOne(query);
+      res.status(200).json(updatedUser);
+    }
+  } catch (err) {
+    console.error("Error updating user image:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   let collection = await db.collection("User");
 
