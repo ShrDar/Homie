@@ -1,9 +1,6 @@
-import { Suspense } from "react";
 import { auth } from "@/auth";
-import ProfileLeft from "@/components/ProfilePage/ProfileLeft";
-import ProfileRight from "@/components/ProfilePage/ProfileRight";
 import { redirect } from "next/navigation";
-import ProfileLoading from "@/components/ProfilePage/ProfileLoading";
+import ProfileMain from "@/components/ProfilePage/ProfileMain";
 
 
 export default async function Profile() {
@@ -14,11 +11,12 @@ export default async function Profile() {
     }
     // console.log(session)
     return (
-        <div className="profileContainer z-5 bg-bgPrimary text-fontPrimary sulphur py-20 lg:py-0 lg:h-screen lg:w-[65%] flex flex-col lg:flex-row items-center justify-center lg:items-center lg:justify-center gap-10">
-            <Suspense fallback={<ProfileLoading />}>
+        <div className="profileContainer z-5 bg-bgPrimary text-fontPrimary sulphur py-20 lg:py-0 lg:w-[65%] flex flex-col lg:flex-row items-center justify-center lg:items-center lg:justify-center gap-10">
+            {/* <Suspense fallback={<ProfileLoading />}>
                 <ProfileLeft session={session} />
                 <ProfileRight session={session} />
-            </Suspense>
+            </Suspense> */}
+            <ProfileMain session={session} />
         </div>
     )
 }

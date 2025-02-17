@@ -8,29 +8,22 @@ import DeleteAccountModal from "../Portals/DeleteAccoutModal";
 import { motion } from "motion/react";
 
 
-export default function ProfileRight({ session }: {session: Session}) {
+export default function ProfileRight({ session, user, setUser }: {session: Session, user: any, setUser: any}) {
     // Split the full name into first and last name
-    let [dbFirstName, dbLastName] = session.user?.name?.split(' ') || ['', ''];
+    const [tdbFirstName, tdbLastName] = session.user?.name?.split(' ') || ['', ''];
+    const [dbFirstName, setDbFirstName] = useState(tdbFirstName);
+    const [dbLastName, setDbLastName] = useState(tdbLastName);
     const [firstName, setFirstName] = useState(dbFirstName);
     const [lastName, setLastName] = useState(dbLastName);
-    const [bio, setBio] = useState("");
-    const [username, setUsername] = useState("");
-    const [user, setUser] = useState({username: "", bio: ""});
+    const [bio, setBio] = useState(user.bio);
+    const [username, setUsername] = useState(user.username);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
-
     const [usernameError, setUsernameError] = useState("")
-    
+
     useEffect(() => {
-     const fetchUserData = async() => {
-         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
-         const user = await response.json();
-         setUser(user);
-         setUsername(user.username);
-         setBio(user.bio);
-     }
- 
-     fetchUserData();
-    }, [session?.user?.id])
+        setBio(user.bio || "");
+        setUsername(user.username || "");
+    }, [user]);
 
     const validateUsername = async (username: string) => {
         // const url = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -88,8 +81,8 @@ export default function ProfileRight({ session }: {session: Session}) {
                 setLastName(updatedUser.name.split(' ')[1]);
                 setUsername(updatedUser.username);
                 setUser(updatedUser)
-                dbFirstName = updatedUser.name.split(' ')[0];
-                dbLastName = updatedUser.name.split(' ')[1];
+                setDbFirstName(updatedUser.name.split(' ')[0]);
+                setDbLastName(updatedUser.name.split(' ')[1]);
 
             } else {
                 const error = await response.text();
@@ -108,61 +101,63 @@ export default function ProfileRight({ session }: {session: Session}) {
     }
 
     return (
-        <div className="profileRightContainer relative bg-bgSecondary rounded-[15px] px-10 lg:px-16 py-16 z-10 w-[90%] lg:w-[65%] flex flex-col justify-center items-center gap-10">
-            <p className="text-fontPrimary text-4xl lgtext-5xl font-thin">{firstName} {lastName}</p>
-            <div className="relative flex gap-4 w-full items-center justify-center">
-                <div className="w-1/2">
+        <>
+            <div className="profileRightContainer relative bg-bgSecondary rounded-[15px] px-10 lg:px-16 py-16 z-[11] w-[90%] lg:w-[65%] flex flex-col justify-center items-center gap-10">
+                <p className="text-fontPrimary text-4xl lgtext-5xl font-thin">{firstName} {lastName}</p>
+                <div className="relative flex gap-4 w-full items-center justify-center">
+                    <div className="w-1/2">
+                        <input 
+                            type="text"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
+                            placeholder="First Name"
+                        />
+                    </div>
+                    <div className="w-1/2">
+                        <input 
+                            type="text"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
+                            placeholder="Last Name"
+                        />
+                    </div>
+                </div>
+                <div className="relative w-full flex justify-center items-center gap-4">
                     <input 
-                        type="text"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
-                        placeholder="First Name"
+                        type="text" 
+                        placeholder="username" 
+                        value={username} 
+                        onChange={(e) => {
+                            setUsername(e.target.value)
+                            validateUsername(e.target.value)
+                        }} 
+                        className={`w-full bg-bgPrimary border-2 selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px] ${
+                            usernameError 
+                                    ? 'border-red-500' 
+                                    : 'border-transparent focus:border-[#2a2a2a]'
+                        }`} 
                     />
                 </div>
-                <div className="w-1/2">
-                    <input 
-                        type="text"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
-                        placeholder="Last Name"
-                    />
+                <div className="relative w-full flex justify-center items-center gap-4">
+                    <input type="text" placeholder="bio" value={bio} maxLength={30} onChange={(e) => setBio(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
                 </div>
-            </div>
-            <div className="relative w-full flex justify-center items-center gap-4">
-                <input 
-                    type="text" 
-                    placeholder="username" 
-                    value={username} 
-                    onChange={(e) => {
-                        setUsername(e.target.value)
-                        validateUsername(e.target.value)
-                    }} 
-                    className={`w-full bg-bgPrimary border-2 selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px] ${
-                        usernameError 
-                                ? 'border-red-500' 
-                                : 'border-transparent focus:border-[#2a2a2a]'
-                    }`} 
-                />
-            </div>
-            <div className="relative w-full flex justify-center items-center gap-4">
-                <input type="text" placeholder="bio" value={bio} onChange={(e) => setBio(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
-            </div>
-            <div className="relative w-full flex justify-center items-center gap-4">
-                <div onClick={() => handleDiscard()} className="w-full hover:brightness-[0.8] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer">
-                    <p className="text-[#FF6F6F] text-xl">Discard</p>
-                </div>
-                <div onClick={() => handleTransform()} className="w-full hover:brightness-[1.2] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer">
-                    <p className="text-[#5FB972] text-xl">Transform</p>
-                </div>
+                <div className="relative w-full flex justify-center items-center gap-4">
+                    <div onClick={() => handleDiscard()} className="w-full hover:brightness-[0.8] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer">
+                        <p className="text-[#FF6F6F] text-xl">Discard</p>
+                    </div>
+                    <div onClick={() => handleTransform()} className="w-full hover:brightness-[1.2] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer">
+                        <p className="text-[#5FB972] text-xl">Transform</p>
+                    </div>
 
 
+                </div>
+                <motion.div whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} onClick={() => setOpenDeleteModal(true)} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 right-4 rounded-full border-[2px] border-[#FF6F6F] scale-[0.8] cursor-pointer">
+                        <MdDelete color="#FF6F6F" className="w-[15px] h-[15px]" />
+                </motion.div>
             </div>
-            <motion.div whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} onClick={() => setOpenDeleteModal(true)} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 right-4 rounded-full border-[2px] border-[#FF6F6F] scale-[0.8] cursor-pointer">
-                    <MdDelete color="#FF6F6F" className="w-[15px] h-[15px]" />
-            </motion.div>
             <DeleteAccountModal openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} user={user} />
-        </div>
+        </>
     )
 }

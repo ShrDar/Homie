@@ -1,0 +1,131 @@
+"use client"
+
+import Image from "next/image";
+import { useEffect, useState } from "react";
+// import { toast } from "sonner";
+import { IoIosImages } from "react-icons/io";
+import { FaCheck } from "react-icons/fa6";
+import { RxCross2 } from "react-icons/rx";
+import { getProfileUrl } from "@/extra/helpers";
+import { toast } from "sonner";
+import { ID, storage } from "@/config/AppWriteClient";
+
+export default function ChangeProfilePicModal( {openChangeProfileModal, setOpenChangeProfileModal, user, setUser} : {openChangeProfileModal : boolean, setOpenChangeProfileModal: any, user: any, setUser: any} ) {
+    
+    const [currentImage, setCurrentImage] = useState(user.image || "");
+    const [currentFile, setCurrentFile] = useState(user.image);
+    
+    useEffect(() => {
+        setCurrentImage(user.image || "");
+    }, [user]);
+    
+    if(!openChangeProfileModal) {
+        return null;
+    }
+    const handlePicChange = (file: File | undefined) => {
+        if (file && file.type.startsWith("image/")) {
+            setCurrentFile(file);
+            const imageUrl = URL.createObjectURL(file);
+            setCurrentImage(imageUrl);
+        }
+    }
+
+    const handleImageAccept = async() => {
+        if(user.image === currentImage) {
+            toast.info("Old Image 📷");
+            return;
+        }
+
+        //validations
+        const maxSizeInMB = 1;
+        const maxSizeInBytes = maxSizeInMB * 1024 * 1024; 
+
+        if (currentFile.size > maxSizeInBytes) {
+            toast.info("Maximum Pic Size 2MB");
+            return;
+        }
+
+
+        if(!user.image.startsWith("htt")) { //delete file
+            console.log('delete');
+            try {
+                const result = await storage.deleteFile(process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", user.image);
+                console.log(result);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        //create file
+        try {
+            const id = ID.unique();
+            const result = await storage.createFile(process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", id, currentFile)
+            console.log(result);
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user._id}/image`, {
+                method: 'PATCH',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ image: id }),
+            });
+        
+            if (response.ok) {
+                // const result = await response.json();
+                // console.log(result);
+                const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user._id}`);
+                const updatedUser = await refetchedResponse.json();
+                setUser(updatedUser);
+            } else {
+                toast.error('Pic Change Failed');
+                return;
+            }
+
+            toast.success("Homie's Pic Changed 📸");
+            setOpenChangeProfileModal(false);
+        } catch(err) {
+            toast.error('Pic Change Failed')
+            console.error(err);
+        }
+
+    }
+
+    return(
+        <>
+            <div onClick={() => {
+                setOpenChangeProfileModal(false)
+                setCurrentImage(user.image || "")
+            }} className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000052] ">
+
+            </div>
+            <div className="fixed px-10 lg:px-16 py-8 flex justify-center lg:scale-[1.2] items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-[#fff]">
+                <form onSubmit={(e) => e.preventDefault()} className="w-full h-full flex justify-center items-center gap-5 lg:gap-10"> 
+                    <Image 
+                        src={getProfileUrl(currentImage)}
+                        alt="userProfileImage"
+                        width={200}
+                        height={200}
+                        className="w-[150px] h-[150px] bg-bgPrimary rounded-full p-5 aspect-square object-cover"
+                    />
+                    <div className="flex flex-col justify-center items-center gap-4">
+                        <label htmlFor="file" className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#c9c9c9] p-2 rounded-full" >
+                            <IoIosImages color="#c9c9c9" size={20}/>
+                            {/* <div>
+                                <p className="text-xl">Change Pic</p>
+                            </div> */}
+                        </label>
+                        <input className="hidden" type="file" accept="image/*" name="file" id="file" onChange={(e) => handlePicChange(e.target.files?.[0])} />
+                        <div onClick={() => handleImageAccept()} className="border-[2px] hover:brightness-[1.5] transition-all duration-150 cursor-pointer p-2 rounded-full border-[#5FB972]">
+                            <FaCheck size={20} color="5FB972"/>
+                        </div>
+                    </div>
+                </form>
+                <div onClick={() => {
+                    setOpenChangeProfileModal(false)
+                    setCurrentImage(user.image || "")
+                }} className="absolute hover:brightness-[3] transition-all duration-100 cursor-pointer top-2 right-2 flex justify-center items-center p-1 rounded-full border-[2px] border-bgPrimary">
+                    <RxCross2 size={12} color="2a2a2a"/>
+                </div>
+            </div>
+        </>
+    );
+}

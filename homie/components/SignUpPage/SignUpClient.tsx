@@ -46,10 +46,12 @@ export default function SignUpClient() {
             setPasswordError("");
         } else if (password.length < 8) {
             setPasswordError("Password must be at least 8 characters long");
+        } else if (/\s/.test(password)) {  // Regex to check for whitespace
+            setPasswordError("Password cannot contain spaces");
         } else {
             setPasswordError("");
         }
-        // Also check confirm password when password changes
+        
         validateConfirmPassword(confirmPassword, password);
     };
 
@@ -67,15 +69,20 @@ export default function SignUpClient() {
     };
 
     const validateUsername = async (username: string) => {
-        // const url = process.env.NEXT_PUBLIC_BACKEND_URL;
-        // console.log(url);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/`);
         const users = await response.json();
         const repeatedUser = users.some((user: { username: string }) => user.username === username);
-        
-        if(repeatedUser) {
-            setUsernameError("Username Taken ")
-        } else {
+
+        if (repeatedUser) {
+            setUsernameError("Username Taken");
+        }
+        else if (/\s/.test(username)) { //checking whitespaces
+            setUsernameError("Username cannot contain spaces");
+        }
+        else if (/[^a-zA-Z0-9_]/.test(username)) {  //checking special characters
+            setUsernameError("Username cannot contain special characters");
+        }
+        else {
             setUsernameError("");
         }
     }
@@ -149,6 +156,7 @@ export default function SignUpClient() {
                         <input 
                             onChange={(e) => setFName(e.target.value)} 
                             value={fName} 
+                            maxLength={50}
                             className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]" 
                             placeholder="First Name" 
                         />
@@ -157,6 +165,7 @@ export default function SignUpClient() {
                         <input 
                             onChange={(e) => setLName(e.target.value)} 
                             value={lName} 
+                            maxLength={50}
                             className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]" 
                             placeholder="Last Name" 
                         />
@@ -169,6 +178,7 @@ export default function SignUpClient() {
                             validateUsername(e.target.value);
                         }} 
                         value={username} 
+                        maxLength={20}
                         className={`w-full bg-[#666666] border-2 focus:outline-none ${
                             usernameError 
                                 ? 'border-red-500' 
@@ -204,6 +214,7 @@ export default function SignUpClient() {
                             validatePassword(e.target.value);
                         }} 
                         value={password} 
+                        maxLength={128}
                         className={`w-full bg-[#666666] border-2 focus:outline-none ${
                             passwordError 
                                 ? 'border-red-500' 

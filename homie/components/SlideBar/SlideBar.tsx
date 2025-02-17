@@ -1,4 +1,5 @@
 "use client"
+import { getProfileUrl } from "@/extra/helpers";
 import { motion } from "motion/react"
 import { Session } from "next-auth";
 import Image from "next/image";
@@ -14,7 +15,7 @@ export default function SlideBar( {session} : {session: Session} ) {
     const pathname = usePathname();
 
     const [hidden, setHidden] = useState(true);
-    const [user, setUser] = useState({username: '', bio: ''});
+    const [user, setUser] = useState({username: '', bio: '', image: ""});
 
     useEffect(() => {
         const fetchUserData = async() => {
@@ -24,7 +25,7 @@ export default function SlideBar( {session} : {session: Session} ) {
         }
     
         fetchUserData();
-    }, [session?.user?.id])
+    }, [session?.user?.id, pathname])
 
     return (
         <>
@@ -53,16 +54,16 @@ export default function SlideBar( {session} : {session: Session} ) {
                                     className="md:w-[80%] lg:w-[90%] h-full bg-[#888888] z-20 hover:opacity-0 transition-all duration-150"
                                 />
                                 <div className="absolute w-full flex flex-col justify-center items-center">
-                                    <p className="text-xs text-bgPrimary absolute w-[70%] text-center flex justify-center items-center tracking-[1px]">{user.bio.slice(0, 20)}...</p>
+                                    <p className="text-md text-bgPrimary absolute w-[70%] text-center flex justify-center items-center tracking-[1px]">Shh......</p>
                                 </div>
                             </Link>
                             <Link href={"/profile"} onClick={() => setHidden(true)} className="w-[40%] md:w-[70%] lg:w-[45%] translate-x-[-15px] aspect-square flex bg-bgPrimary rounded-full justify-center items-center p-2">
                                 <Image 
-                                    src={session?.user?.image || "/Homie-2.svg"}
+                                    src={getProfileUrl(user?.image || "")}
                                     alt=""
                                     height={200}
                                     width={200}
-                                    className="rounded-full md:w-[80%] lg:w-[90%]"
+                                    className="rounded-full aspect-square object-cover md:w-[80%] lg:w-[90%]"
                                 />
                             </Link>
                         </div>
