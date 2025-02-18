@@ -28,6 +28,7 @@ router.get("/:id", async (req, res) => {
   else res.send(result).status(200);
 });
 
+//update user name, username, bio
 router.patch("/:id", async (req, res) => {
   let collection = await db.collection("User");
 
@@ -59,6 +60,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+//update the image field of user
 router.patch("/:id/image", async (req, res) => {
   let collection = await db.collection("User");
 
@@ -90,6 +92,42 @@ router.patch("/:id/image", async (req, res) => {
   }
 });
 
+// api used to update the hashedPasswordField
+router.patch("/:id/passwordChange", async (req, res) => {
+  let collection = await db.collection("User");
+
+  const { hashedPassword } = req.body;
+
+  if (!hashedPassword) {
+    return res.status(400).send("hashedPassword field is required");
+  }
+
+  try {
+    const query = { _id: new ObjectId(req.params.id) };
+    const user = await collection.findOne(query);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const updateData = { hashedPassword };
+
+    const result = await collection.updateOne(query, {
+      $set: updateData,
+    });
+
+    if (result.modifiedCount === 0) {
+      return res.status(400).send("Password update failed or no changes made");
+    }
+
+    res.status(200).send("Password updated successfully");
+  } catch (err) {
+    console.error("Error updating password:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+//api to delete a user
 router.delete("/:id", async (req, res) => {
   let collection = await db.collection("User");
 

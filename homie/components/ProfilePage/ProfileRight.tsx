@@ -6,6 +6,8 @@ import { MdDelete } from "react-icons/md"
 import { toast } from "sonner";
 import DeleteAccountModal from "../Portals/DeleteAccoutModal";
 import { motion } from "motion/react";
+import Image from "next/image";
+import ChangePassModal from "../Portals/ChangePassModal";
 
 
 export default function ProfileRight({ session, user, setUser }: {session: Session, user: any, setUser: any}) {
@@ -17,8 +19,9 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
     const [lastName, setLastName] = useState(dbLastName);
     const [bio, setBio] = useState(user.bio);
     const [username, setUsername] = useState(user.username);
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [usernameError, setUsernameError] = useState("")
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [openChangePassModal, setOpenChangePassModal] = useState(false);
 
     useEffect(() => {
         setBio(user.bio || "");
@@ -110,6 +113,7 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                             type="text"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
+                            maxLength={20}
                             className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
                             placeholder="First Name"
                         />
@@ -119,6 +123,7 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                             type="text"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
+                            maxLength={20}
                             className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
                             placeholder="Last Name"
                         />
@@ -154,10 +159,22 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
 
                 </div>
                 <motion.div whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} onClick={() => setOpenDeleteModal(true)} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 right-4 rounded-full border-[2px] border-[#FF6F6F] scale-[0.8] cursor-pointer">
-                        <MdDelete color="#FF6F6F" className="w-[15px] h-[15px]" />
+                        <MdDelete color="#FF6F6F" size={12} />
                 </motion.div>
+                {user.hashedPassword &&
+                    <motion.div onClick={() => setOpenChangePassModal(true)} whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 left-4 rounded-full border-[2px] border-bgPrimary scale-[0.8] cursor-pointer">
+                        <Image 
+                            src={`/figmaIcons/changePass.svg`}
+                            alt="changePassword"
+                            width={80}
+                            height={100}
+                            className="w-[20px] h-[20px]"
+                        />
+                    </motion.div>
+                }
             </div>
             <DeleteAccountModal openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} user={user} />
+            <ChangePassModal openChangePassModal={openChangePassModal} setOpenChangePassModal={setOpenChangePassModal} user={user} setUser={setUser} />
         </>
     )
 }
