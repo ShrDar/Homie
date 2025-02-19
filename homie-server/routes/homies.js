@@ -41,33 +41,46 @@ router.get("/:userId/homie-requests", async (req, res) => {
   //api to send friend request
   router.post("/:userId/homie-request/:homieId", async (req, res) => {
     const { userId, homieId } = req.params;
-  
-    if (userId === homieId) {
-      return res.status(400).send("You cannot send a homie request to yourself.");
+
+  // Prevent a user from sending a request to themselves
+  if (userId === homieId) {
+    return res.status(400).send("You cannot send a homie request to yourself.");
+  }
+
+  let collection = await db.collection("User");
+
+  try {
+    const user = await collection.findOne({ _id: new ObjectId(userId) });
+    if (!user) return res.status(404).send("User not found");
+
+    // Check if they are already homies
+    if (user.homies.includes(homieId)) {
+      return res.status(400).send("You are already homies.");
     }
-  
-    let collection = await db.collection("User");
-  
-    try {
-      // Check if the homie request already exists
-      const user = await collection.findOne({ _id: new ObjectId(userId) });
-      if (!user) return res.status(404).send("User not found");
-  
-      if (user.homies.includes(homieId)) {
-        return res.status(400).send("You are already homies.");
-      }
-  
-      if (user.homieRequests.includes(homieId)) {
-        return res.status(400).send("Homie request already sent.");
-      }
-  
-      // Add homie request to the recipient's homieRequests list
-      await collection.updateOne(
-        { _id: new ObjectId(homieId) },
-        { $addToSet: { homieRequests: userId } }
-      );
-  
-      res.status(200).send("Homie request sent successfully.");
+
+    // Check if the homie request has already been sent
+    if (user.homieRequests.includes(homieId)) {
+      return res.status(400).send("Homie request already sent.");
+    }
+
+    // Check if the request has already been sent from this user
+    if (user.homieSentRequests && user.homieSentRequests.includes(homieId)) {
+      return res.status(400).send("You have already sent a request to this person.");
+    }
+
+    // Add homie request to the recipient's homieRequests list
+    await collection.updateOne(
+      { _id: new ObjectId(homieId) },
+      { $addToSet: { homieRequests: userId } }
+    );
+
+    // Add this homieId to the user's homieSentRequests list to track the sent request
+    await collection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $addToSet: { homieSentRequests: homieId } }
+    );
+
+    res.status(200).send("Homie request sent successfully.");
     } catch (err) {
       console.error("Error sending homie request:", err);
       res.status(500).send("Internal Server Error");
@@ -180,6 +193,23 @@ router.get("/:userId/homie-requests", async (req, res) => {
       console.error("Error removing homie:", err);
       res.status(500).send("Internal Server Error");
     }
+});
+
+router.post("/add-homie-sent-requests", async (req, res) => {
+  let collection = await db.collection("User");
+
+  try {
+    // Update all users to add the homieSentRequests field as an empty array if not already present
+    const result = await collection.updateMany(
+      { homieSentRequests: { $exists: false } },  // Only users who don't have the field
+      { $set: { homieSentRequests: [] } }         // Set the homieSentRequests to an empty array
+    );
+
+    res.status(200).send(`Updated ${result.modifiedCount} users to add the homieSentRequests field.`);
+  } catch (err) {
+    console.error("Error adding homieSentRequests field:", err);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 export default router;

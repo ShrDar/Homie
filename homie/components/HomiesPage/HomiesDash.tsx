@@ -6,6 +6,8 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { HomieUser } from "@/homieTypes/homieTypes";
 import { getProfileUrl } from "@/extra/helpers";
+import { toast } from "sonner";
+import { FiWatch } from "react-icons/fi";
 
 export default function HomiesDash({session} : {session: Session}) {
 
@@ -57,10 +59,33 @@ export default function HomiesDash({session} : {session: Session}) {
         }
     }
 
-    const befriend = () => {
-        console.log(userHomies);
-        console.log(userHomieRequests);
+    const handleBefriend = async (homie: HomieUser) => {
+        const homieId = homie._id;
+        
+        try {
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${session?.user?.id}/homie-request/${homieId}`, {
+                method: "POST",
+            });
+            if(response.ok) {
+                const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
+                const updatedUser = await refetchedResponse.json();
+                setUser(updatedUser)
+            }
+            toast.success("Befriend Req Sent", {
+                icon: '⌚',
+                style: {
+                    backgroundColor: "#666666",
+                    color: "#fff"
+                }
+            });
+        } catch(err) {
+            console.error(err);
+        }
     }
+    console.log(user);
+    console.log(userHomieRequests)
+    console.log(userHomies)
 
     return (
         <>
@@ -109,6 +134,8 @@ export default function HomiesDash({session} : {session: Session}) {
                                     homie._id !== user?._id
                                 )
                             ).map((homie, index) => {
+
+                                const isRequestSent = user?.homieSentRequests?.includes(homie._id);
                                 
                                 return (
                                     <motion.div key={homie._id} initial={{y: -50, opacity: 0, filter: "blur(10px)"}} transition={{delay: index*0.1}} whileInView={{y: 0, opacity: 1, filter: "blur(0px)"}} className="w-full bg-bgSecondary hover:bg-[#3f3f3f] cursor-default p-4 rounded-[15px] flex justify-center items-center">
@@ -127,18 +154,28 @@ export default function HomiesDash({session} : {session: Session}) {
                                                 <p className="text-xs text-[#ffffffad]">@{homie.username}</p>
                                             </div>
                                         </div>
-                                        <div onClick={() => befriend()} className="bg-bgPrimary cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
-                                            <p className="text-sm">Befriend</p>
-                                            <div>
-                                                <Image 
-                                                    src={`/figmaIcons/befriend.svg`}
-                                                    alt="addHomieImage"
-                                                    width={100}
-                                                    height={100}
-                                                    className="w-[25px]"
-                                                />
+                                        {!isRequestSent &&
+                                            <div onClick={() => handleBefriend(homie)} className="bg-bgPrimary cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                <p className="text-sm">Befriend</p>
+                                                <div>
+                                                    <Image 
+                                                        src={`/figmaIcons/befriend.svg`}
+                                                        alt="addHomieImage"
+                                                        width={100}
+                                                        height={100}
+                                                        className="w-[25px]"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
+                                        }{
+                                            isRequestSent &&
+                                            <div className="bg-bgPrimary  cursor-none transition-all duration-150 border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                <p className="text-sm flex">Pending</p>
+                                                <div>
+                                                    <FiWatch />
+                                                </div>
+                                            </div>
+                                        }
                                     </motion.div>
                                 )
                             })}

@@ -21,8 +21,9 @@ model User {
   image         String?
   username      String?         
   bio           String?
-  homies        String[]
-  homieRequests String[]
+  homies        String[]        @default([])  // Default empty array for new users
+  homieRequests String[]        @default([])  // Default empty array for new users
+  homieSentRequests String[]        @default([])  // Track the users to whom the homie request was sent
   accounts      Account[]
   sessions      Session[]
   role          UserRole?        @default(USER)
