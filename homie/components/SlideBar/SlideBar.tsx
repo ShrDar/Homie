@@ -43,7 +43,7 @@ export default function SlideBar( {session} : {session: Session} ) {
             transition={{ duration: 0.4 , ease: "easeInOut" }}
             onMouseEnter={() => setHidden(false)} className="slideBar z-[100] lg:z-10 bg-transparent text-fontPrimary fixed top-0 h-full left-[-10px] md:left-0 flex justify-center items-center w-[40%] md:w-[20%] lg:w-[14%] sulphur">
                 <div className="bg-bgSecondary h-[95%] w-[90%] md:w-full flex flex-col justify-start pt-20 items-center gap-10 rounded-[15px] ml-2">
-                    <div className="flex flex-col justify-center items-center gap-2">
+                    <div className="flex flex-col justify-center items-center gap-2 w-full">
                         <div className="w-full flex items-center justify-center lg:px-4">
                             <Link href={"/profile"} onClick={() => setHidden(true)} className="bg-[#8B8B8B] w-[40%] aspect-square md:w-[70%] lg:w-[45%] p-3 rounded-full overflow-hidden translate-x-[15px] flex justify-center items-center">
                                 <Image 
@@ -68,9 +68,10 @@ export default function SlideBar( {session} : {session: Session} ) {
                             </Link>
                         </div>
                         <Link href={'profile'} onClick={() => setHidden(true)} className="w-full cursor-pointer flex flex-col justify-center items-center gap-0 text-center">
-                            <p className="text-lg">{session.user?.name}</p>
-                            <p className="text-sm tracking-[1px]">@{user.username}</p>
+                            <p className="text-lg max-w-full truncate">{session.user?.name}</p> {/* Apply max-w and truncate */}
+                            <p className="text-sm tracking-[1px] max-w-full truncate">@{user.username}</p> {/* Apply max-w and truncate */}
                         </Link>
+
                     </div>
 
                     <div className="flex flex-col items-center justify-start w-full gap-10">

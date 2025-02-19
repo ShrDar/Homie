@@ -134,6 +134,7 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                         type="text" 
                         placeholder="username" 
                         value={username} 
+                        maxLength={20}
                         onChange={(e) => {
                             setUsername(e.target.value)
                             validateUsername(e.target.value)

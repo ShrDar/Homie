@@ -53,6 +53,24 @@ export default async function HomePage() {
           },
         });
       }
+
+      if (user && !user.homies) {
+        await prisma.user.update({
+          where: { email: session.user.email },
+          data: {
+            homies: [],
+          },
+        });
+      }
+
+      if (user && !user.homieRequests) {
+        await prisma.user.update({
+          where: { email: session.user.email },
+          data: {
+            homieRequests: [],
+          },
+        });
+      }
     }
   
 
