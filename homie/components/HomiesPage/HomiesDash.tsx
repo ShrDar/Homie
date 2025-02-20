@@ -8,6 +8,7 @@ import { HomieUser } from "@/homieTypes/homieTypes";
 import { getProfileUrl } from "@/extra/helpers";
 import { toast } from "sonner";
 import { FiWatch } from "react-icons/fi";
+import { TiUserAddOutline } from "react-icons/ti";
 
 export default function HomiesDash({session} : {session: Session}) {
 
@@ -15,40 +16,39 @@ export default function HomiesDash({session} : {session: Session}) {
     const [homies, setHomies] = useState<HomieUser[]>([]); //all users
     const [homieUsername, setHomieUsername] = useState("");
     const [backdrop, setBackdrop] = useState(false);
-    const [userHomieRequests, setUserHomieRequests] = useState<string[]>();
-    const [userHomies, setUserHomies] = useState<HomieUser[]>([]); //friends of user 
+    const [currentDisplay, setCurrentDisplay] = useState<string>("homies");
+
+    const isEqual = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b);
 
     useEffect(() => {
             const fetchUserData = async() => {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
-                const user = await response.json();
-                setUser(user);
+                const fetchedUser = await response.json();
+                if(!isEqual(fetchedUser, user)) {
+                    console.log('changed user')
+                    setUser(fetchedUser);
+                } else {
+                    console.log("no change user");
+                }
             }
             const fetchUsers = async() => {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`);
                 const users = await response.json();
-                setHomies(users);
-            }
-            const fetchFriendRequests = async() => {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${session?.user?.id}/homies`);
-                const friendRequests = await response.json();
-                setUserHomieRequests(friendRequests)
-            }
-            const fetchFriends = async() => {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${session?.user?.id}/homie-requests`);
-                const userFriends = await response.json();
-                setUserHomies(userFriends)
+                if(!isEqual(users, homies)) {
+                    console.log('changed homies');
+                    setHomies(users);
+                } else {
+                    console.log("no change in homies")
+                }
             }
             
             try {
                 fetchUserData();
                 fetchUsers();
-                fetchFriendRequests();
-                fetchFriends()
             } catch(err) {
                 console.error(err);
             }
-    }, [session?.user?.id])
+    }, [session?.user?.id, homieUsername, currentDisplay, homies, user])
 
 
     const handleBackDrop = (username: string) => {
@@ -75,7 +75,7 @@ export default function HomiesDash({session} : {session: Session}) {
             toast.success("Befriend Req Sent", {
                 icon: '⌚',
                 style: {
-                    backgroundColor: "#666666",
+                    backgroundColor: "#2a2a2a",
                     color: "#fff"
                 }
             });
@@ -83,27 +83,73 @@ export default function HomiesDash({session} : {session: Session}) {
             console.error(err);
         }
     }
-    console.log(user);
-    console.log(userHomieRequests)
-    console.log(userHomies)
 
+    const handleAcceptBefriend = async(homie: HomieUser) => {
+        const homieId = homie._id;
+        
+        try {
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${session?.user?.id}/accept-request/${homieId}`, {
+                method: "POST",
+            });
+            if(response.ok) {
+                const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
+                const updatedUser = await refetchedResponse.json();
+                setUser(updatedUser)
+            }
+            toast.success(`${homie.username} is your homie`, {
+                icon: '🤝🏻',
+                style: {
+                    backgroundColor: "#2a2a2a",
+                    color: "#fff"
+                }
+            });
+        } catch(err) {
+            console.error(err);
+        }
+    }
+
+    const handleRemoveFriend = async(homie?: HomieUser) => {
+        const homieId = homie?._id
+        console.log(homieId)
+        try {
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${session?.user?.id}/remove-homie/${homieId}`, {
+                method: "DELETE",
+            });
+            if(response.ok) {
+                const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
+                const updatedUser = await refetchedResponse.json();
+                setUser(updatedUser)
+            }
+            toast.success(`${homie?.username} is not your homie`, {
+                icon: '💔',
+                style: {
+                    backgroundColor: "#2a2a2a",
+                    color: "#fff"
+                }
+            });
+        } catch(err) {
+            console.error(err);
+        }
+    }
     return (
         <>
 
             <div className="flex flex-col gap-6 justify-center items-start w-[80%] lg:w-[65%] py-10 ">
             {backdrop && 
-            <div 
-            onClick={() => {
-                setBackdrop(false)
-                setHomieUsername("")
-                }} 
-                className="fixed top-[50%] z-[11] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000068] " />}
+                <div 
+                onClick={() => {
+                    setBackdrop(false)
+                    setHomieUsername("")
+                    }} 
+                    className="fixed top-[50%] z-[11] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000068] " 
+                />
+            }
                 
+
                 <div className="addFriends relative w-full flex flex-col justify-center z-[11] items-center gap-3">
 
-                    <div className="w-full flex justify-center items-center">
-                        <p className="uppercase font-bold tracking-[2px]">Add Homie</p>
-                    </div>
 
                     <div className="w-full relative">
                         <input 
@@ -136,6 +182,8 @@ export default function HomiesDash({session} : {session: Session}) {
                             ).map((homie, index) => {
 
                                 const isRequestSent = user?.homieSentRequests?.includes(homie._id);
+                                const isRequestReceived = user?.homieRequests?.includes(homie._id);
+                                const isHomie = user?.homies.includes(homie._id);
                                 
                                 return (
                                     <motion.div key={homie._id} initial={{y: -50, opacity: 0, filter: "blur(10px)"}} transition={{delay: index*0.1}} whileInView={{y: 0, opacity: 1, filter: "blur(0px)"}} className="w-full bg-bgSecondary hover:bg-[#3f3f3f] cursor-default p-4 rounded-[15px] flex justify-center items-center">
@@ -154,8 +202,17 @@ export default function HomiesDash({session} : {session: Session}) {
                                                 <p className="text-xs text-[#ffffffad]">@{homie.username}</p>
                                             </div>
                                         </div>
-                                        {!isRequestSent &&
-                                            <div onClick={() => handleBefriend(homie)} className="bg-bgPrimary cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                        {
+                                            isHomie && 
+                                            <div className="bg-bgPrimary transition-all duration-150 min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                <p className="text-sm flex">Homies</p>
+                                                <div>
+
+                                                </div>
+                                            </div>
+                                        }
+                                        {(!isRequestSent && !isRequestReceived && !isHomie) &&
+                                            <div onClick={() => handleBefriend(homie)} className="bg-bgPrimary min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
                                                 <p className="text-sm">Befriend</p>
                                                 <div>
                                                     <Image 
@@ -169,10 +226,25 @@ export default function HomiesDash({session} : {session: Session}) {
                                             </div>
                                         }{
                                             isRequestSent &&
-                                            <div className="bg-bgPrimary  cursor-none transition-all duration-150 border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                            <div className="bg-bgPrimary cursor-none transition-all duration-150 min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
                                                 <p className="text-sm flex">Pending</p>
                                                 <div>
-                                                    <FiWatch />
+                                                    <FiWatch size={25} className="animate-pulse " />
+                                                </div>
+                                            </div>
+                                        }
+                                        { 
+                                            (isRequestReceived && !isHomie) &&
+                                            <div onClick={() => handleAcceptBefriend(homie)} className="bg-bgPrimary min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                <p className="text-sm flex">Accept</p>
+                                                <div>
+                                                <Image 
+                                                    src={`/slideBarIcons/homies.svg`}
+                                                    alt="addHomieImage"
+                                                    width={100}
+                                                    height={100}
+                                                    className="w-[25px]"
+                                                    />
                                                 </div>
                                             </div>
                                         }
@@ -183,32 +255,135 @@ export default function HomiesDash({session} : {session: Session}) {
                     }
 
                 </div>
-                <div className="w-full z-[10] rounded-[10px] p-4 bg-[#43434395] overflow-y-auto h-[75dvh]">
-                    {!user?.friends && 
-                    <div className="w-full h-full flex flex-col justify-center items-center gap-4 opacity-[0.6]">
-                        <div className="w-full flex justify-center items-center">
-                            <Image 
-                                src={"/figmaIcons/hifive.svg"}
-                                alt="hi-five"
-                                width={300}
-                                height={300}
-                                className={`w-[12vw]`}
-                            />
-                        </div>
-                        <div>
-                            <p className="text-3xl font-bold tracking-[3px]">Add Homies</p>
-                        </div>
-                    </div>
-                    }
-                    {
-                        user?.friends &&
-                        <div className="w-full h-full flex flex-col justify-center items-start">
-                            There are friends
-                        </div>
-                    }
-                    
+                <div className="w-full flex justify-center items-center">
+                    <p className="uppercase font-bold tracking-[2px]">{currentDisplay}</p>
                 </div>
-
+                <div className="w-full relative z-[10] rounded-[10px] p-4 bg-[#43434395] overflow-y-auto h-[70dvh]">
+                    {(user?.homies?.length === 0 && user?.homieRequests?.length === 0 && user?.homieSentRequests?.length === 0) && 
+                        <div className="w-full h-full flex flex-col justify-center items-center gap-4 opacity-[0.6]">
+                            <div className="w-full flex justify-center items-center">
+                                <Image 
+                                    src={"/figmaIcons/hifive.svg"}
+                                    alt="hi-five"
+                                    width={300}
+                                    height={300}
+                                    className={`w-[12vw]`}
+                                />
+                            </div>
+                            <div>
+                                <p className="text-3xl font-bold tracking-[3px]">Add Homies</p>
+                            </div>
+                        </div>
+                    }
+                    <div className="w-full mt-14 flex flex-col justify-center items-center gap-2">
+                        {/* homies */}
+                        {  
+                            (user?.homies && currentDisplay === "homies") &&
+                            <div className="w-full h-full flex flex-col justify-center items-start gap-3">
+                                {user.homies.map((homieId) => {
+                                    const homie = homies.find((user) => user._id === homieId)
+                                    return (
+                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] border-bgPrimary rounded-[15px]">
+                                            <div className="homie flex justify-start items-center gap-4 px-2 py-4">
+                                                <div className="bg-bgPrimary p-2 rounded-full">
+                                                    <Image 
+                                                        alt="homieProfileImage"
+                                                        src={getProfileUrl(homie?.image || "") || "/figmaIcons/profilePicSkeleton"}
+                                                        width={200}
+                                                        height={200}
+                                                        className="w-[2vw] rounded-full aspect-square object-cover"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col justify-center items-start">
+                                                    <p>{homie?.name}</p>
+                                                    <p className="text-xs text-[#ffffffad]">@{homie?.username}</p>
+                                                </div>
+                                            </div>
+                                            <div onClick={() => handleRemoveFriend(homie)} className="cursor-pointer px-6">
+                                                Remove
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        }
+                        {/* pending */}
+                        {  
+                            (user?.homieSentRequests && currentDisplay === "pending") &&
+                            <div className="w-full h-full flex flex-col justify-center items-start gap-3">
+                                {user.homieSentRequests.map((homieId) => {
+                                    const homie = homies.find((user) => user._id === homieId)
+                                    return (
+                                        <div key={homieId} className="w-full flex justify-start items-center border-[5px] border-bgPrimary rounded-[15px]">
+                                            <div className="homie flex justify-start items-center gap-4 px-2 py-4">
+                                                <div className="bg-bgPrimary p-2 rounded-full">
+                                                    <Image 
+                                                        alt="homieProfileImage"
+                                                        src={getProfileUrl(homie?.image || "/figmaIcons/profilePicSkeleton")}
+                                                        width={200}
+                                                        height={200}
+                                                        className="w-[2vw] rounded-full aspect-square object-cover"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col justify-center items-start">
+                                                    <p>{homie?.name}</p>
+                                                    <p className="text-xs text-[#ffffffad]">@{homie?.username}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        }
+                        {/* requests */}
+                        {  
+                            (user?.homieRequests && currentDisplay === "requests") &&
+                            <div className="w-full h-full flex flex-col justify-center items-start gap-3">
+                                {user.homieRequests.map((homieId) => {
+                                    const homie = homies.find((user) => user._id === homieId)
+                                    return (
+                                        <div key={homieId} className="w-full flex justify-start items-center border-[5px] border-bgPrimary rounded-[15px]">
+                                            <div className="homie flex justify-start items-center gap-4 px-2 py-4">
+                                                <div className="bg-bgPrimary p-2 rounded-full">
+                                                    <Image 
+                                                        alt="homieProfileImage"
+                                                        src={getProfileUrl(homie?.image || "/figmaIcons/profilePicSkeleton")}
+                                                        width={200}
+                                                        height={200}
+                                                        className="w-[2vw] rounded-full aspect-square object-cover"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col justify-center items-start">
+                                                    <p>{homie?.name}</p>
+                                                    <p className="text-xs text-[#ffffffad]">@{homie?.username}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        }
+                    </div>
+                
+                        <div className="absolute top-4 right-4 opacity-[0.5] hover:opacity-[1] cursor-pointer transition-all duration-150">
+                            <div className="flex justify-center min-w-[150px] items-center border-[2px] border-[#666] rounded-[15px] overflow-hidden">
+                                <div onClick={() => setCurrentDisplay("homies")} className={`w-full ${currentDisplay === "homies" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[] border-r-[1px] px-6 py-2 text-center transition-all duration-150`}>
+                                    <p className="text-sm">Homies</p>
+                                </div>
+                                <div onClick={() => setCurrentDisplay("pending")} className={`w-full ${currentDisplay === "pending" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[] px-6 py-2 text-center transition-all duration-150`}>
+                                    <p className="text-sm">Pending</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div onClick={() => setCurrentDisplay("requests")} className={`absolute top-4 left-5 overflow-hidden rounded-full ${currentDisplay === "requests" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:brightness-[0.8] cursor-pointer transition-all duration-150`}>
+                            <div className={`flex justify-center items-center rounded-full overflow-hidden`}>
+                                <div className="p-3 border-[#666] border-2 rounded-full">
+                                    <TiUserAddOutline size={15} color="666" />
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                
             </div>
         </>
     )
