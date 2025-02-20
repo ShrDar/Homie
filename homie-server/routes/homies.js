@@ -140,7 +140,7 @@ router.post("/:userId/reject-request/:homieId", async (req, res) => {
     // Remove homie request from both users' lists
     await collection.updateOne(
       { _id: new ObjectId(userId) },
-      { $pull: { homieRequests: homieId }, $pull: { homieSentRequests: homieId } }
+      { $pull: { homieRequests: homieId } }
     );
 
     await collection.updateOne(
@@ -213,6 +213,11 @@ router.delete("/:userId/remove-homie-sent-request/:homieId", async (req, res) =>
     await collection.updateOne(
       { _id: new ObjectId(userId) },
       { $pull: { homieSentRequests: homieId } }
+    );
+
+    await collection.updateOne(
+      { _id: new ObjectId(homieId) },
+      { $pull: { homieRequests: userId } }
     );
 
     res.status(200).send("Homie sent request removed.");

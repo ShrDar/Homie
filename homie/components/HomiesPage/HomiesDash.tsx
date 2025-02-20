@@ -8,7 +8,19 @@ import { HomieUser } from "@/homieTypes/homieTypes";
 import { getProfileUrl } from "@/extra/helpers";
 import { toast } from "sonner";
 import { FiWatch } from "react-icons/fi";
-import { TiUserAddOutline } from "react-icons/ti";
+import { PiHandWavingFill } from "react-icons/pi";
+import { RxCross2 } from "react-icons/rx";
+import { RiMessage3Fill } from "react-icons/ri";
+import { CiMenuKebab } from "react-icons/ci";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+  
 
 export default function HomiesDash({session} : {session: Session}) {
 
@@ -25,20 +37,20 @@ export default function HomiesDash({session} : {session: Session}) {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
                 const fetchedUser = await response.json();
                 if(!isEqual(fetchedUser, user)) {
-                    console.log('changed user')
+                    // console.log('changed user')
                     setUser(fetchedUser);
                 } else {
-                    console.log("no change user");
+                    // console.log("no change user");
                 }
             }
             const fetchUsers = async() => {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`);
                 const users = await response.json();
                 if(!isEqual(users, homies)) {
-                    console.log('changed homies');
+                    // console.log('changed homies');
                     setHomies(users);
                 } else {
-                    console.log("no change in homies")
+                    // console.log("no change in homies")
                 }
             }
             
@@ -59,6 +71,12 @@ export default function HomiesDash({session} : {session: Session}) {
         }
     }
 
+    const updateUser = async() => {
+        const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
+        const updatedUser = await refetchedResponse.json();
+        setUser(updatedUser)
+    }
+
     const handleBefriend = async (homie: HomieUser) => {
         const homieId = homie._id;
         
@@ -68,9 +86,6 @@ export default function HomiesDash({session} : {session: Session}) {
                 method: "POST",
             });
             if(response.ok) {
-                const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
-                const updatedUser = await refetchedResponse.json();
-                setUser(updatedUser)
             }
             toast.success("Befriend Req Sent", {
                 icon: '⌚',
@@ -80,8 +95,10 @@ export default function HomiesDash({session} : {session: Session}) {
                 }
             });
         } catch(err) {
+            updateUser();
             console.error(err);
         }
+        updateUser();
     }
 
     const handleAcceptBefriend = async(homie: HomieUser) => {
@@ -93,9 +110,6 @@ export default function HomiesDash({session} : {session: Session}) {
                 method: "POST",
             });
             if(response.ok) {
-                const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
-                const updatedUser = await refetchedResponse.json();
-                setUser(updatedUser)
             }
             toast.success(`${homie.username} is your homie`, {
                 icon: '🤝🏻',
@@ -107,23 +121,20 @@ export default function HomiesDash({session} : {session: Session}) {
         } catch(err) {
             console.error(err);
         }
+        updateUser();
     }
 
     const handleRemoveFriend = async(homie?: HomieUser) => {
         const homieId = homie?._id
-        console.log(homieId)
         try {
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${session?.user?.id}/remove-homie/${homieId}`, {
                 method: "DELETE",
             });
             if(response.ok) {
-                const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
-                const updatedUser = await refetchedResponse.json();
-                setUser(updatedUser)
             }
             toast.success(`${homie?.username} is not your homie`, {
-                icon: '💔',
+                icon: '❎',
                 style: {
                     backgroundColor: "#2a2a2a",
                     color: "#fff"
@@ -132,7 +143,57 @@ export default function HomiesDash({session} : {session: Session}) {
         } catch(err) {
             console.error(err);
         }
+        updateUser();
     }
+
+    const handleRequestReject = async(homie : HomieUser) => {
+        const homieId = homie?._id
+        try {
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${session?.user?.id}/reject-request/${homieId}`, {
+                method: "POST",
+            });
+            if(response.ok) {
+            }
+            toast.success(`Befriend request to ${homie?.username} Rejected`, {
+                icon: '✖',
+                style: {
+                    backgroundColor: "#2a2a2a",
+                    color: "#fff",
+                    borderColor: "#FF6F6F"
+                }
+            });
+        } catch(err) {
+            updateUser()
+            console.error(err);
+        }
+        updateUser();
+    }
+
+    const handlePendingRevoke = async(homie : HomieUser) => {
+        const homieId = homie?._id
+        try {
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${session?.user?.id}/remove-homie-sent-request/${homieId}`, {
+                method: "DELETE",
+            });
+            if(response.ok) {
+            }
+            toast.success(`Befriend request sent to ${homie?.username} Removed`, {
+                icon: '✖',
+                style: {
+                    backgroundColor: "#2a2a2a",
+                    color: "#fff",
+                    borderColor: "#FF6F6F"
+                }
+            });
+        } catch(err) {
+            updateUser();
+            console.error(err);
+        }
+        updateUser();
+    }
+
     return (
         <>
 
@@ -194,7 +255,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                                     src={getProfileUrl(homie.image)}
                                                     width={200}
                                                     height={200}
-                                                    className="w-[2vw] rounded-full aspect-square object-cover"
+                                                    className="w-[5vw] md:w-[3vw] lg:w-[2vw] rounded-full aspect-square object-cover"
                                                 />
                                             </div>
                                             <div className="flex flex-col justify-center items-start">
@@ -235,16 +296,21 @@ export default function HomiesDash({session} : {session: Session}) {
                                         }
                                         { 
                                             (isRequestReceived && !isHomie) &&
-                                            <div onClick={() => handleAcceptBefriend(homie)} className="bg-bgPrimary min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
-                                                <p className="text-sm flex">Accept</p>
-                                                <div>
-                                                <Image 
-                                                    src={`/slideBarIcons/homies.svg`}
-                                                    alt="addHomieImage"
-                                                    width={100}
-                                                    height={100}
-                                                    className="w-[25px]"
-                                                    />
+                                            <div className="flex justify-center items-center gap-2">
+                                                <div onClick={() => handleAcceptBefriend(homie)} className="bg-bgPrimary min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                    <p className="text-sm flex">Accept</p>
+                                                    <div>
+                                                    <Image 
+                                                        src={`/slideBarIcons/homies.svg`}
+                                                        alt="addHomieImage"
+                                                        width={100}
+                                                        height={100}
+                                                        className="w-[25px]"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div onClick={() => homie && handleRequestReject(homie)} className="rejectRequest cursor-pointer bg-bgPrimary border-[1.5px] border-transparent transition-all duration-150 hover:border-[#FF6F6F] p-2 rounded-full">
+                                                    <RxCross2 size={12} color="FF6F6F" />
                                                 </div>
                                             </div>
                                         }
@@ -291,7 +357,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                                         src={getProfileUrl(homie?.image || "") || "/figmaIcons/profilePicSkeleton"}
                                                         width={200}
                                                         height={200}
-                                                        className="w-[2vw] rounded-full aspect-square object-cover"
+                                                        className="w-[5vw] md:w-[3vw] lg:w-[2vw] rounded-full aspect-square object-cover"
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-center items-start">
@@ -299,8 +365,28 @@ export default function HomiesDash({session} : {session: Session}) {
                                                     <p className="text-xs text-[#ffffffad]">@{homie?.username}</p>
                                                 </div>
                                             </div>
-                                            <div onClick={() => handleRemoveFriend(homie)} className="cursor-pointer px-6">
-                                                Remove
+                                            <div className="flex justify-center items-center gap-2 px-4">
+                                                <div className="bg-bgPrimary flex justify-center items-center gap-2 hover:bg-[#1b1b1b] transition-all duration-150 cursor-pointer p-3 rounded-full">
+                                                    {/* <p>Yap</p> */}
+                                                    <RiMessage3Fill size={20} color="aaa"/>
+                                                </div>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger>
+                                                        <div className="bg-transparent first-line:flex justify-center items-center gap-2 hover:bg-bgPrimary transition-all duration-150 cursor-pointer p-2 rounded-full">
+                                                        <CiMenuKebab size={22} color="aaa" />
+                                                        </div>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="start" className="bg-bgPrimary text-[#fff] text-sm border-[#666] p-2">
+                                                        <div className="sulphur cursor-pointer">
+                                                            <p className="w-full text-start hover:bg-[#1B1B1B] p-2 px-6 rounded-[6px]">Yap</p>
+                                                        </div>
+                                                        <div onClick={() => handleRemoveFriend(homie)} className="sulphur cursor-pointer">
+                                                            <p className="w-full text-start hover:bg-[#1B1B1B] p-2 px-6 rounded-[6px] text-[#FF6F6F] font-black">Remove</p>
+                                                        </div>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+
+                                                
                                             </div>
                                         </div>
                                     )
@@ -314,7 +400,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 {user.homieSentRequests.map((homieId) => {
                                     const homie = homies.find((user) => user._id === homieId)
                                     return (
-                                        <div key={homieId} className="w-full flex justify-start items-center border-[5px] border-bgPrimary rounded-[15px]">
+                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] border-bgPrimary rounded-[15px]">
                                             <div className="homie flex justify-start items-center gap-4 px-2 py-4">
                                                 <div className="bg-bgPrimary p-2 rounded-full">
                                                     <Image 
@@ -322,12 +408,23 @@ export default function HomiesDash({session} : {session: Session}) {
                                                         src={getProfileUrl(homie?.image || "/figmaIcons/profilePicSkeleton")}
                                                         width={200}
                                                         height={200}
-                                                        className="w-[2vw] rounded-full aspect-square object-cover"
+                                                        className="w-[5vw] md:w-[3vw] lg:w-[2vw] rounded-full aspect-square object-cover"
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-center items-start">
                                                     <p>{homie?.name}</p>
                                                     <p className="text-xs text-[#ffffffad]">@{homie?.username}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-center items-center gap-2 px-2">
+                                                <div className="bg-bgPrimary cursor-none transition-all duration-150 min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                    <p className="text-sm flex">Pending</p>
+                                                    <div>
+                                                        <FiWatch size={25} className="animate-pulse " />
+                                                    </div>
+                                                </div>
+                                                <div onClick={() => homie && handlePendingRevoke(homie)} className="rejectRequest cursor-pointer bg-bgPrimary border-[1.5px] border-transparent transition-all duration-150 hover:border-[#FF6F6F] p-2 rounded-full">
+                                                    <RxCross2 size={12} color="FF6F6F" />
                                                 </div>
                                             </div>
                                         </div>
@@ -342,7 +439,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 {user.homieRequests.map((homieId) => {
                                     const homie = homies.find((user) => user._id === homieId)
                                     return (
-                                        <div key={homieId} className="w-full flex justify-start items-center border-[5px] border-bgPrimary rounded-[15px]">
+                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] border-bgPrimary rounded-[15px]">
                                             <div className="homie flex justify-start items-center gap-4 px-2 py-4">
                                                 <div className="bg-bgPrimary p-2 rounded-full">
                                                     <Image 
@@ -350,12 +447,30 @@ export default function HomiesDash({session} : {session: Session}) {
                                                         src={getProfileUrl(homie?.image || "/figmaIcons/profilePicSkeleton")}
                                                         width={200}
                                                         height={200}
-                                                        className="w-[2vw] rounded-full aspect-square object-cover"
+                                                        className="w-[5vw] md:w-[3vw] lg:w-[2vw] rounded-full aspect-square object-cover"
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-center items-start">
                                                     <p>{homie?.name}</p>
                                                     <p className="text-xs text-[#ffffffad]">@{homie?.username}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-center items-center gap-2 px-2">
+                                                <div onClick={() => homie && handleAcceptBefriend(homie)} className="bg-bgPrimary min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                    <p className="text-sm flex">Accept</p>
+                                                    <div>
+                                                    <Image 
+                                                        src={`/slideBarIcons/homies.svg`}
+                                                        alt="addHomieImage"
+                                                        width={100}
+                                                        height={100}
+                                                        className="w-[25px]"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div onClick={() => homie && handleRequestReject(homie)} className="rejectRequest cursor-pointer bg-bgPrimary border-[1.5px] border-transparent transition-all duration-150 hover:border-[#FF6F6F] p-2 rounded-full">
+                                                    <RxCross2 size={12} color="FF6F6F" />
                                                 </div>
                                             </div>
                                         </div>
@@ -367,18 +482,18 @@ export default function HomiesDash({session} : {session: Session}) {
                 
                         <div className="absolute top-4 right-4 opacity-[0.5] hover:opacity-[1] cursor-pointer transition-all duration-150">
                             <div className="flex justify-center min-w-[150px] items-center border-[2px] border-[#666] rounded-[15px] overflow-hidden">
-                                <div onClick={() => setCurrentDisplay("homies")} className={`w-full ${currentDisplay === "homies" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[] border-r-[1px] px-6 py-2 text-center transition-all duration-150`}>
+                                <div onClick={() => setCurrentDisplay("homies")} className={`w-full ${currentDisplay === "homies" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[#222222] border-r-[1px] px-6 py-2 text-center transition-all duration-150`}>
                                     <p className="text-sm">Homies</p>
                                 </div>
-                                <div onClick={() => setCurrentDisplay("pending")} className={`w-full ${currentDisplay === "pending" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[] px-6 py-2 text-center transition-all duration-150`}>
+                                <div onClick={() => setCurrentDisplay("pending")} className={`w-full ${currentDisplay === "pending" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[#222222] px-6 py-2 text-center transition-all duration-150`}>
                                     <p className="text-sm">Pending</p>
                                 </div>
                             </div>
                         </div>
                         <div onClick={() => setCurrentDisplay("requests")} className={`absolute top-4 left-5 overflow-hidden rounded-full ${currentDisplay === "requests" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:brightness-[0.8] cursor-pointer transition-all duration-150`}>
                             <div className={`flex justify-center items-center rounded-full overflow-hidden`}>
-                                <div className="p-3 border-[#666] border-2 rounded-full">
-                                    <TiUserAddOutline size={15} color="666" />
+                                <div className="p-2 border-[#666] border-2 rounded-full">
+                                    <PiHandWavingFill size={18} color="666" />
                                 </div>
                             </div>
                         </div>
