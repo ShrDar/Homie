@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import ChangeProfilePic from "../Portals/ChangeProfilePicModal";
 import { getProfileUrl } from "@/extra/helpers";
-import { HomieUser } from "@/homieTypes/homieTypes";
 
 export default function ProfileLeft({ user, setUser }: { user: any, setUser: any}) {
     // const [user, setUser] = useState<any>(null);
