@@ -490,7 +490,7 @@ export default function HomiesDash({session} : {session: Session}) {
                         <div onClick={() => setCurrentDisplay("requests")} className={`absolute top-4 left-5 overflow-hidden rounded-full ${currentDisplay === "requests" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:brightness-[0.8] cursor-pointer transition-all duration-150`}>
                             <div className={`flex justify-center items-center rounded-full overflow-hidden`}>
                                 <div className="p-2 border-[#666] border-2 rounded-full">
-                                    <PiHandWavingFill size={18} color="666" />
+                                    <PiHandWavingFill size={18} color="bbb" />
                                 </div>
                             </div>
                         </div>

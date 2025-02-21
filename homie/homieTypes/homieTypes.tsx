@@ -9,7 +9,6 @@ export type HomieUser = {
     createdAt: string; 
     updatedAt: string;
     bio: string;
-    friends: string[];
     homies: string[];
     homieSentRequests: string[];
     homieRequests: string[];

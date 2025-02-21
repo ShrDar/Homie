@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import ChangeProfilePic from "../Portals/ChangeProfilePicModal";
 import { getProfileUrl } from "@/extra/helpers";
+import { HomieUser } from "@/homieTypes/homieTypes";
 
 export default function ProfileLeft({ user, setUser }: { user: any, setUser: any}) {
     // const [user, setUser] = useState<any>(null);
@@ -18,7 +19,7 @@ export default function ProfileLeft({ user, setUser }: { user: any, setUser: any
     }
     return (
         <>
-            <div className="profileLeftContainer w-[90%] lg:w-[35%] z-[11] flex flex-col justify-center items-center gap-6">
+            <div className="profileLeftContainer w-[90%] lg:w-[35%] lg:min-h-full z-[11] flex flex-col justify-center items-center gap-6">
                 <div className="upperBlockContainer w-full flex flex-col justify-center items-center gap-2">
                     <motion.div onClick={() => setOpenChangeProfileModal(true)} whileHover={{filter: 'brightness(1.2)'}} whileTap={{scale: 0.9}} className="profileImageContainer cursor-pointer w-[40%] lg:w-[50%] bg-bgSecondary flex justify-center items-center rounded-full p-6">
                         <div className="w-full rounded-full overflow-hidden">
@@ -46,7 +47,7 @@ export default function ProfileLeft({ user, setUser }: { user: any, setUser: any
                                 <Image src="/figmaIcons/squiggly.svg" className="w-[100%]" alt="squiggly" width={100} height={100} />
                             </div>
                             <p className="lg:hidden"> - </p>
-                            <p>{10}</p>
+                            <p>{user?.homies?.length || 0}</p>
                         </div>
                         <div className="profileStat w-full flex justify-center lg:justify-between items-center text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-2 lg:gap-0">
                             <p>POSTS</p>
@@ -54,7 +55,7 @@ export default function ProfileLeft({ user, setUser }: { user: any, setUser: any
                                 <Image src="/figmaIcons/squiggly.svg" className="w-[100%]" alt="squiggly" width={100} height={100} />
                             </div>
                             <p className="lg:hidden"> - </p>
-                            <p>{5}</p>
+                            <p>{0}</p>
                         </div>
                         <div className="profileStat w-full flex justify-center lg:justify-between items-center text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-2 lg:gap-0">
                             <p>TEAS</p>
@@ -62,7 +63,7 @@ export default function ProfileLeft({ user, setUser }: { user: any, setUser: any
                                 <Image src="/figmaIcons/squiggly.svg" className="w-[100%]" alt="squiggly" width={100} height={100} />
                             </div>
                             <p className="lg:hidden"> - </p>
-                            <p>{2}</p>
+                            <p>{0}</p>
                         </div>
         
                         
