@@ -1,19 +1,17 @@
-// "use client"
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-// import { useEffect } from "react"
+export default async function Yap() {
 
-export default function Yap() {
+    const session = await auth();
 
-    // useEffect(() => {
-    //     const dosmth = async() => {
-            
-    //         }
-    //     dosmth()
-    // }, [])
+    if (!session) {
+        return redirect("/login");
+    }
 
     return (
-        <div className="text-5xl sulphur text-[#fff]">
-            Lets Yap
+        <div className="sulphur w-[70%] text-[#fff] text-5xl">
+            Yap
         </div>
     )
 }
