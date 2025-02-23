@@ -1,10 +1,21 @@
 "use client"
 
+import { getProfileUrl } from "@/extra/helpers";
 import { HomieUser } from "@/homieTypes/homieTypes";
 import { Session } from "next-auth"
+import Image from "next/image";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react"
+import { collection, getDocs, addDoc, query, where, doc, updateDoc } from "firebase/firestore";
+import { db } from "@/config/firebase"
 
 export default function YapLayoutContent({ session } : {session: Session}) {
+
+    const params = useParams();
+    const router = useRouter();
+    const { yapId } = params;
+
+    console.log(yapId)//for build error temp fix
 
     const [user, setUser] = useState<HomieUser>();
     const [homies, setHomies] = useState<HomieUser[]>([]);
@@ -42,14 +53,66 @@ export default function YapLayoutContent({ session } : {session: Session}) {
         }
     }, [session?.user?.id, homieUsername, homies, user])
 
-    const updateUser = async() => {
-        const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
-        const updatedUser = await refetchedResponse.json();
-        setUser(updatedUser)
+    // const updateUser = async() => {
+    //     const refetchedResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?._id}`);
+    //     const updatedUser = await refetchedResponse.json();
+    //     setUser(updatedUser)
+    // }
+
+    const checkExistingChat = async (senderId: string, receiverId: string) => {
+        const messagesRef = collection(db, "Yap");
+        const q = query(
+            messagesRef,
+            where("senderId", "in", [senderId, receiverId]),
+            where("receiverId", "in", [senderId, receiverId])
+        );
+
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            const existingMessage = querySnapshot.docs[0];
+            return existingMessage.data().yapId; 
+        }
+
+        return null; 
+    }
+
+    const createChat = async (user: HomieUser, receiverId: string) => {
+        const existingYapId = await checkExistingChat(user._id || "", receiverId);
+
+        if (existingYapId) {
+            router.push(`/yap/${existingYapId}`);
+        } else {
+            try {
+                const newMessageDoc = await addDoc(collection(db, "Yap"), {
+                    yapId: "",  
+                    senderId: session?.user?.id,
+                    receiverId: receiverId,
+                    createdAt: new Date().toISOString(),
+                    yapContent: "",
+                    reaction: {
+                        [user._id]: "",  // Sender's reaction
+                        [receiverId]: "",  // Receiver's reaction
+                    },
+                    status: "sent",
+                    mediaUrl: "",
+                });
+
+                const messageId = newMessageDoc.id;
+                
+                const messageRef = doc(db, "Yap", messageId);
+                await updateDoc(messageRef, {
+                    yapId: messageId,
+                });
+
+                router.push(`/yap/${messageId}`);
+            } catch (error) {
+                console.error("Error creating chat:", error);
+            }
+        }
     }
 
     return (
-        <div className="w-[65%] z-[20] flex justify-center items-center gap-2 text-[#fff]">
+        <div className="w-[65%] z-[20] flex justify-center items-center gap-3 text-[#fff]">
             <div className="searchHomieYap w-[10%]">
                 <input 
                     onChange={(e) => {
@@ -57,17 +120,30 @@ export default function YapLayoutContent({ session } : {session: Session}) {
                     }} 
                     value={homieUsername} 
                     maxLength={30}
-                    className={`w-full bg-bgSecondary text-sm text-center p-2 border-2 focus:outline-none selection:bg-[#666] border-transparent focus:border-[#666666] text-[#fff] placeholder:text-[#bbb] rounded-[20px]`}
+                    className={`w-full bg-bgSecondary placeholder:tracking-[3px] text-sm text-center p-2 border-2 focus:outline-none selection:bg-[#666] border-transparent focus:border-[#666666] text-[#fff] placeholder:text-[#bbb] rounded-[20px]`}
                     type={"text"}
-                    placeholder="username" 
+                    placeholder="search" 
                 />
             </div>
-            <div className="homieYaps w-[90%] bg-bgSecondary p-2 rounded-[15px]">
-                {user?.homies.map((homie) => {
-                    const tempHomie = homies.find((newHomie) => newHomie._id === homie)
-                    if(tempHomie?.username.includes(homieUsername)) {
+            <div className="homieYaps w-[90%] min-h-[60px] bg-bgSecondary overflow-auto flex justify-start items-center gap-2 p-2 rounded-[30px]">
+                {user?.homies.map((homieId) => {
+                    const homie = homies.find((newHomie) => newHomie._id === homieId)
+                    if(homie?.username.includes(homieUsername)) {
                         return (
-                            <p key={tempHomie?._id}>{tempHomie?.username}</p>
+                            <div key={homie._id} onClick={() => createChat(user, homie._id)} className="flex justify-center items-center hover:bg-[#666666] transition-all duration-150 cursor-pointer gap-2 bg-bgPrimary px-4 py-2 rounded-[30px]">
+                                <div className="rounded-full overflow-hidden bg-bgSecondary">
+                                    <Image 
+                                        src={getProfileUrl(homie.image)}
+                                        alt=""
+                                        width={100}
+                                        height={100}
+                                        className="w-[20px] rounded-full"
+                                    />
+                                </div>
+                                <div>
+                                    <p>{homie.username}</p>
+                                </div>
+                            </div>
                         )
                     }
                 })}

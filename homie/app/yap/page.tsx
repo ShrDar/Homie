@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import YapMain from "@/components/YapPage/YapMain";
 import { redirect } from "next/navigation";
 
 export default async function Yap() {
@@ -10,8 +11,8 @@ export default async function Yap() {
     }
 
     return (
-        <div className="sulphur w-[70%] text-[#fff] text-5xl">
-            Yap
+        <div className="sulphur w-[70%] text-[#fff]">
+            <YapMain session={session} />
         </div>
     )
 }

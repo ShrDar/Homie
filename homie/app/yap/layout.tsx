@@ -10,7 +10,7 @@ export default async function YapLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center sulphur">
+    <div className="w-full flex flex-col items-center justify-center gap-5 sulphur">
       <YapLayoutContent session={session} />
       {children}
     </div>

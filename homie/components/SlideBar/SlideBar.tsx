@@ -105,7 +105,7 @@ export default function SlideBar( {session} : {session: Session} ) {
                                 <p>Homies</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/yap" ? "brightness-[0.5]" : ""}`}>
+                        <div className={`w-[70%] text-lg font-thin ${!pathname.includes("/yap") ? "brightness-[0.5]" : ""}`}>
                             <Link href="/yap" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
                                 <RiMessage3Fill size={28} />
                                 <p>Yap</p>
