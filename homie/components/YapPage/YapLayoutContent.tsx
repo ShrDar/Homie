@@ -61,20 +61,19 @@ export default function YapLayoutContent({ session } : {session: Session}) {
 
     const checkExistingChat = async (senderId: string, receiverId: string) => {
         const messagesRef = collection(db, "Yap");
-        const q = query(
-            messagesRef,
-            where("senderId", "in", [senderId, receiverId]),
-            where("receiverId", "in", [senderId, receiverId])
-        );
-
+        const q = query(messagesRef, where("participants", "array-contains", senderId));
+    
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
-            const existingMessage = querySnapshot.docs[0];
-            return existingMessage.data().yapId; 
+            for (const doc of querySnapshot.docs) {
+                const data = doc.data();
+                if (data.participants.includes(receiverId)) {
+                    return data.yapId;
+                }
+            }
         }
-
-        return null; 
-    }
+        return null;
+    };
 
     const createChat = async (user: HomieUser, receiverId: string) => {
         const existingYapId = await checkExistingChat(user._id || "", receiverId);
@@ -85,8 +84,7 @@ export default function YapLayoutContent({ session } : {session: Session}) {
             try {
                 const newMessageDoc = await addDoc(collection(db, "Yap"), {
                     yapId: "",  
-                    senderId: session?.user?.id,
-                    receiverId: receiverId,
+                    participants: [session?.user?.id, receiverId],
                     createdAt: new Date().toISOString(),
                     yapContent: "",
                     reaction: {
@@ -102,6 +100,14 @@ export default function YapLayoutContent({ session } : {session: Session}) {
                 const messageRef = doc(db, "Yap", messageId);
                 await updateDoc(messageRef, {
                     yapId: messageId,
+                });
+
+                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${user._id}/add-yap`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ yapId: messageId, participants: [session?.user?.id, receiverId] }),
                 });
 
                 router.push(`/yap/${messageId}`);

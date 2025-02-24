@@ -30,10 +30,26 @@ model User {
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
+  yaps          YapPreview[]
+
   postIds       String[]  @db.ObjectId 
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model YapPreview {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  yapId          String
+  participants   String[]
+  lastMessage    String
+  lastMessageTime DateTime
+  unreadCount    Int       @default(0)
+  lastSenderId   String
+  status         String    // "sent", "delivered", "read"
+
+  userId         String
+  user           User      @relation(fields: [userId], references: [id]) // Relation back to User
 }
  
 model Account {
