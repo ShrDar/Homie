@@ -11,7 +11,7 @@ export default async function Yap() {
     }
 
     return (
-        <div className="sulphur w-[70%] text-[#fff]">
+        <div className="sulphur w-[70%] text-fontPrimary">
             <YapMain session={session} />
         </div>
     )

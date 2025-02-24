@@ -35,7 +35,7 @@ export default function DeleteAccountModal( {openDeleteModal, setOpenDeleteModal
             <div onClick={() => setOpenDeleteModal(false)} className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000052] ">
 
             </div>
-            <div className="fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-[#fff]">
+            <div className="fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary">
                 <p className="text-lg">Delete Account</p>
                 <div className="bg-bgPrimary p-10 rounded-[15px] w-full flex justify-center items-center">
                     <p className="text-center">Are you leaving us ? 😢</p>

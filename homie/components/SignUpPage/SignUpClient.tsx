@@ -157,7 +157,7 @@ export default function SignUpClient() {
                             onChange={(e) => setFName(e.target.value)} 
                             value={fName} 
                             maxLength={50}
-                            className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]" 
+                            className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]" 
                             placeholder="First Name" 
                         />
                     </div>
@@ -166,7 +166,7 @@ export default function SignUpClient() {
                             onChange={(e) => setLName(e.target.value)} 
                             value={lName} 
                             maxLength={50}
-                            className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]" 
+                            className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]" 
                             placeholder="Last Name" 
                         />
                     </div>
@@ -183,7 +183,7 @@ export default function SignUpClient() {
                             usernameError 
                                 ? 'border-red-500' 
                                 : 'border-transparent focus:border-[#2a2a2a]'
-                        } text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type="text" 
                         placeholder="Username" 
                     />
@@ -199,7 +199,7 @@ export default function SignUpClient() {
                             emailError 
                                 ? 'border-red-500' 
                                 : 'border-transparent focus:border-[#2a2a2a]'
-                        } text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type="email" 
                         placeholder="Email" 
                     />
@@ -219,7 +219,7 @@ export default function SignUpClient() {
                             passwordError 
                                 ? 'border-red-500' 
                                 : 'border-transparent focus:border-[#2a2a2a]'
-                        } text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type={showPassword ? "text" : "password"}
                         placeholder="Password" 
                     />
@@ -248,7 +248,7 @@ export default function SignUpClient() {
                             confirmPasswordError 
                                 ? 'border-red-500' 
                                 : 'border-transparent focus:border-[#2a2a2a]'
-                        } text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm password" 
                     />

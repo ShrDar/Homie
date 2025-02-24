@@ -97,7 +97,7 @@ export default function ChangeProfilePicModal( {openChangeProfileModal, setOpenC
             }} className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000052] ">
 
             </div>
-            <div className="fixed px-10 w-[70%] md:w-auto lg:px-16 py-8 flex justify-center lg:scale-[1.2] items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-[#fff]">
+            <div className="fixed px-10 w-[70%] md:w-auto lg:px-16 py-8 flex justify-center lg:scale-[1.2] items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary">
                 <form onSubmit={(e) => e.preventDefault()} className="w-full h-full flex justify-center items-center gap-5 lg:gap-10"> 
                     <Image 
                         src={getProfileUrl(currentImage)}

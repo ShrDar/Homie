@@ -133,7 +133,7 @@ export default function ChangePassModal( {openChangePassModal, setOpenChangePass
             }} className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000068] ">
 
             </div>
-            <div className="fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-[#fff]">
+            <div className="fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary">
                 {displayCurrentPasswordInput && 
                 <div className="w-full flex justify-center items-center gap-3">
                     <div className="w-full relative">
@@ -148,7 +148,7 @@ export default function ChangePassModal( {openChangePassModal, setOpenChangePass
                                 currentPasswordError 
                                     ? 'border-red-500' 
                                     : 'border-transparent focus:border-[#666666]'
-                            } text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                            } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                             type={showPassword ? "text" : "password"}
                             placeholder="Password" 
                         />
@@ -183,7 +183,7 @@ export default function ChangePassModal( {openChangePassModal, setOpenChangePass
                                     newPasswordError 
                                         ? 'border-red-500' 
                                         : 'border-transparent focus:border-[#666666]'
-                                } text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                                } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                                 type={showPassword ? "text" : "password"}
                                 placeholder="New Password" 
                             />
@@ -211,7 +211,7 @@ export default function ChangePassModal( {openChangePassModal, setOpenChangePass
                                     newPasswordConfirmError 
                                         ? 'border-red-500' 
                                         : 'border-transparent focus:border-[#666666]'
-                                } text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]`}
+                                } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Confirm password" 
                             />

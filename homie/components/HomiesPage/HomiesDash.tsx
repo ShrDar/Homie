@@ -216,7 +216,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 handleBackDrop(e.target.value)
                             }} 
                             value={homieUsername} 
-                            className={`w-full bg-bgSecondary border-2 focus:outline-none selection:bg-[#2a2a2a] border-transparent focus:border-[#6d6d6d] text-[#fff] placeholder:text-[#ffffff85] px-4 py-3 rounded-[6px]`}
+                            className={`w-full bg-bgSecondary border-2 focus:outline-none selection:bg-[#2a2a2a] border-transparent focus:border-[#6d6d6d] text-fontPrimary placeholder:text-[#ffffff85] px-4 py-3 rounded-[6px]`}
                             type={"text"}
                             placeholder="Add homies with their username" 
                         />
@@ -373,7 +373,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                                         <CiMenuKebab size={22} color="aaa" />
                                                         </div>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="start" className="bg-bgPrimary text-[#fff] text-sm border-[#666] p-2">
+                                                    <DropdownMenuContent align="start" className="bg-bgPrimary text-fontPrimary text-sm border-[#666] p-2">
                                                         <div className="sulphur cursor-pointer">
                                                             <p className="w-full text-start hover:bg-[#1B1B1B] p-2 px-6 rounded-[6px]">Yap</p>
                                                         </div>

@@ -112,7 +112,7 @@ export default function YapLayoutContent({ session } : {session: Session}) {
     }
 
     return (
-        <div className="w-[65%] z-[20] flex justify-center items-center gap-3 text-[#fff]">
+        <div className="w-[65%] z-[20] flex justify-center items-center gap-3 text-fontPrimary">
             <div className="searchHomieYap w-[10%]">
                 <input 
                     onChange={(e) => {
@@ -120,7 +120,7 @@ export default function YapLayoutContent({ session } : {session: Session}) {
                     }} 
                     value={homieUsername} 
                     maxLength={30}
-                    className={`w-full bg-bgSecondary placeholder:tracking-[3px] text-sm text-center p-2 border-2 focus:outline-none selection:bg-[#666] border-transparent focus:border-[#666666] text-[#fff] placeholder:text-[#bbb] rounded-[20px]`}
+                    className={`w-full bg-bgSecondary placeholder:tracking-[3px] text-sm text-center p-2 border-2 focus:outline-none selection:bg-[#666] border-transparent focus:border-[#666666] text-fontPrimary placeholder:text-[#bbb] rounded-[20px]`}
                     type={"text"}
                     placeholder="search" 
                 />

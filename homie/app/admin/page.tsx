@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
                     <Link href="/admin/dashboard">
                         <button
                             type="button"
-                            className="bg-bgPrimary hover:bg-[#2d2d2dbb] transition-all duration-150 text-xl w-full text-center flex justify-center items-center sulphur text-[#fff] rounded-[6px] py-3 mt-4"
+                            className="bg-bgPrimary hover:bg-[#2d2d2dbb] transition-all duration-150 text-xl w-full text-center flex justify-center items-center sulphur text-fontPrimary rounded-[6px] py-3 mt-4"
                         >
                             Login
                         </button>

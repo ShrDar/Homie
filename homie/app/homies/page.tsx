@@ -9,7 +9,7 @@ export default async function Homies() {
             return redirect("/login");
     }
     return (
-        <div className="text-[#fff] sulphur w-full min-h-screen flex justify-center items-center">
+        <div className="text-fontPrimary sulphur w-full min-h-screen flex justify-center items-center">
             <HomiesDash session={session} />
         </div>
     )

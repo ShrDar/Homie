@@ -63,12 +63,12 @@ export default function LoginRight() {
     return (
         <div className="loginRightContainer w-full flex flex-col gap-6 justify-center items-center sulphur">
             <div className="typeBoxContainer w-full flex flex-col justify-center selection:bg-[#2d2d2d] items-center gap-8">
-                <input onChange={(e) => setEmail(e.target.value)} value={email} className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-fontPrimary placeholder:text-[#fff] px-6 py-3 rounded-[6px]" type="text" placeholder="Email" />
+                <input onChange={(e) => setEmail(e.target.value)} value={email} className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]" type="text" placeholder="Email" />
                 <div className="w-full relative">
                     <input 
                         onChange={(e) => setPassword(e.target.value)} 
                         value={password} 
-                        className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-[#fff] placeholder:text-[#fff] px-6 py-3 rounded-[6px]" 
+                        className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]" 
                         type={showPassword ? "text" : "password"} 
                         placeholder="Enter your password" 
                     />

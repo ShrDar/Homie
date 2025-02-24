@@ -37,6 +37,10 @@
 }
 @layer base {
   :root {
+        --bgPrimary: #2D2D2D;
+        --bgSecondary: #434343;
+        --fontPrimary: #fff;
+        --borderPrimary: transparent;
         --background: 0 0% 100%;
         --foreground: 240 10% 3.9%;
         --card: 0 0% 100%;
@@ -98,3 +102,9 @@
     @apply bg-background text-foreground;
     }
 }
+/* .lightTheme {
+    --bgPrimary: #F4F4F9; 
+    --bgSecondary: #E1E1E6; 
+    --fontPrimary: #000;
+    --borderPrimary: #2d2d2d;
+} */
