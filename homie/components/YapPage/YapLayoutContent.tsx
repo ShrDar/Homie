@@ -8,6 +8,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react"
 import { collection, getDocs, addDoc, query, where, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/firebase"
+import { motion } from "motion/react";
 
 export default function YapLayoutContent({ session } : {session: Session}) {
 
@@ -15,7 +16,7 @@ export default function YapLayoutContent({ session } : {session: Session}) {
     const router = useRouter();
     const { yapId } = params;
 
-    console.log(yapId)//for build error temp fix
+    // console.log(yapId)//for build error temp fix
 
     const [user, setUser] = useState<HomieUser>();
     const [homies, setHomies] = useState<HomieUser[]>([]);
@@ -118,8 +119,8 @@ export default function YapLayoutContent({ session } : {session: Session}) {
     }
 
     return (
-        <div className="w-[65%] z-[20] flex justify-center items-center gap-3 text-fontPrimary">
-            <div className="searchHomieYap w-[10%]">
+        <div className="w-[90%] md:w-[80%] lg:w-[70%] z-[20] flex justify-center items-center gap-3 text-fontPrimary">
+            <div className="searchHomieYap w-[30%] md:w-[20%] lg:w-[15%]">
                 <input 
                     onChange={(e) => {
                         setHomieUsername(e.target.value)
@@ -131,12 +132,14 @@ export default function YapLayoutContent({ session } : {session: Session}) {
                     placeholder="search" 
                 />
             </div>
-            <div className="homieYaps w-[90%] min-h-[60px] bg-bgSecondary overflow-auto flex justify-start items-center gap-2 p-2 rounded-[30px]">
-                {user?.homies.map((homieId) => {
+            <div className="homieYaps w-[70%] md:w-[80%] lg:w-[85%] min-h-[60px] bg-bgSecondary overflow-auto flex justify-start items-center gap-2 p-2 rounded-[30px]">
+                {user?.homies.map((homieId, index) => {
                     const homie = homies.find((newHomie) => newHomie._id === homieId)
                     if(homie?.username.includes(homieUsername)) {
+                        const isCurrentYap = homie.yaps.find((yap) => yap.yapId === yapId);
+                        // console.log(isCurrentYap);
                         return (
-                            <div key={homie._id} onClick={() => createChat(user, homie._id)} className="flex justify-center items-center hover:bg-[#666666] transition-all duration-150 cursor-pointer gap-2 bg-bgPrimary px-4 py-2 rounded-[30px]">
+                            <motion.div initial={{x: 50, filter: "blur(10px)"}} whileInView={{x: 0, filter: 'blur(0px)'}} transition={{duration: 0.1 * index}} key={homie._id} onClick={() => createChat(user, homie._id)} className={`flex justify-center items-center hover:bg-[#666666] transition-all duration-150 cursor-pointer gap-2  ${isCurrentYap ? "bg-[#666666]" : "bg-bgPrimary"} px-4 py-2 rounded-[30px]`}>
                                 <div className="rounded-full overflow-hidden bg-bgSecondary">
                                     <Image 
                                         src={getProfileUrl(homie.image)}
@@ -149,7 +152,7 @@ export default function YapLayoutContent({ session } : {session: Session}) {
                                 <div>
                                     <p>{homie.username}</p>
                                 </div>
-                            </div>
+                            </motion.div>
                         )
                     }
                 })}

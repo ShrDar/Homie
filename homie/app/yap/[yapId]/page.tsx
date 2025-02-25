@@ -11,7 +11,7 @@ export default async function YapContent() {
     }
 
     return (
-        <div className="w-[70%]">
+        <div className="w-[90%] md:w-[80%] z-[20] lg:w-[70%]">
             <YapDuo session={session} />
         </div>
     )

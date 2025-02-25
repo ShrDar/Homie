@@ -35,6 +35,9 @@
 ::-webkit-scrollbar-thumb:hover {
     background-color: #313131;
 }
+.textEditor {
+    field-sizing: content;
+}
 @layer base {
   :root {
         --bgPrimary: #2D2D2D;
