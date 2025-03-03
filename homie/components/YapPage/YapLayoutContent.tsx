@@ -134,9 +134,9 @@ export default function YapLayoutContent({ session } : {session: Session}) {
             </div>
             <div className="homieYaps w-[70%] md:w-[80%] lg:w-[85%] min-h-[60px] bg-bgSecondary overflow-auto flex justify-start items-center gap-2 p-2 rounded-[30px]">
                 {user?.homies.map((homieId, index) => {
-                    const homie = homies.find((newHomie) => newHomie._id === homieId)
+                    const homie = homies?.find((newHomie) => newHomie._id === homieId)
                     if(homie?.username.includes(homieUsername)) {
-                        const isCurrentYap = homie.yaps.find((yap) => yap.yapId === yapId);
+                        const isCurrentYap = homie?.yaps?.find((yap) => yap.yapId === yapId);
                         // console.log(isCurrentYap);
                         return (
                             <motion.div initial={{x: 50, filter: "blur(10px)"}} whileInView={{x: 0, filter: 'blur(0px)'}} transition={{duration: 0.1 * index}} key={homie._id} onClick={() => createChat(user, homie._id)} className={`flex justify-center items-center hover:bg-[#666666] transition-all duration-150 cursor-pointer gap-2  ${isCurrentYap ? "bg-[#666666]" : "bg-bgPrimary"} px-4 py-2 rounded-[30px]`}>
