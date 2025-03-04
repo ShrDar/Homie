@@ -28,8 +28,9 @@
     border-radius: 20px;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgb(66, 66, 66);
+    background: #313131;
     border-radius: 20px;
+    border: 1px solid #666;
     scroll-behavior: smooth;
 }
 ::-webkit-scrollbar-thumb:hover {
