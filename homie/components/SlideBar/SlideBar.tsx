@@ -30,7 +30,7 @@ export default function SlideBar( {session} : {session: Session} ) {
     return (
         <>
             <div className={`lg:hidden h-full absolute w-full bg-[#00000058] z-[50] ${hidden ? "hidden" : "flex"} `} onClick={() => setHidden(true)}></div>
-            <div className="w-[40%] h-full bg-transparent z-0 absolute left-0 hidden md:flex " onMouseEnter={() => setHidden(true)}></div>
+            <div className={`w-[40%] h-full bg-transparent z-[10] absolute left-0 hidden ${hidden ? "md:hidden" : "md:flex"} `} onMouseEnter={() => setHidden(true)}></div>
             <div onClick={() => setHidden((prev) => !prev)} className="absolute flex md:hidden cursor-pointer top-5 right-5">
                 <FaBarsStaggered color="#fff" />
             </div>
