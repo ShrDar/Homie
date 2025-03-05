@@ -2,7 +2,7 @@
 import { db } from "@/config/firebase";
 import { getProfileUrl } from "@/extra/helpers";
 import { HomieUser } from "@/homieTypes/homieTypes";
-import { collection, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, DocumentData, Timestamp, query, where, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, Timestamp, query, where, getDocs, getDoc } from "firebase/firestore";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -14,6 +14,11 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { IoIosImages } from "react-icons/io";
+import { ID, storage } from "@/config/AppWriteClient";
+import { toast } from "sonner";
+import { RxCross2 } from "react-icons/rx";
+import GifPicker from "./GifPicker";
 
 interface Message {
     id: string;
@@ -22,6 +27,9 @@ interface Message {
     content: string;
     timestamp: Timestamp;
     status: 'sent' | 'delivered' | 'read';
+    type: 'text' | 'image' | 'gif';
+    imageId?: string;
+    gifUrl?: string;
 }
 
 interface MessageGroup {
@@ -37,9 +45,13 @@ export default function YapDuo({ session } : { session: Session }) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [yapData, setYapData] = useState<any>(null);
-    const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+    // const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [showSeen, setShowSeen] = useState(false);
+    // const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [showGifPicker, setShowGifPicker] = useState(false);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,28 +61,28 @@ export default function YapDuo({ session } : { session: Session }) {
         scrollToBottom();
     }, [messages]); // Scroll when messages update
 
+    console.log(yapper1, yapData)
     useEffect(() => {
         const yapCollection = collection(db, 'Yap');
         const messagesCollection = collection(db, 'Messages');
         
         // Subscribe to yap data
         const unsubscribeYap = onSnapshot(yapCollection, (querySnapshot) => {
-            const yapsList = querySnapshot.docs.map(doc => doc.data());
-            const filtered = yapsList.filter((yap) => yap.yapId === yapId);
-            setYapData(filtered);
+          const yapsList = querySnapshot.docs.map(doc => doc.data());
+          const filtered = yapsList.filter((yap) => yap.yapId === yapId);
+          setYapData(filtered);
 
             filtered[0]?.participants.map(async(participantId : string) => {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${participantId}`);
-                const fetchedUser = await response.json();
-                if(fetchedUser._id === session?.user?.id) {
-                    setYapper1(fetchedUser)
-                } else {
-                    setYapper2(fetchedUser)
-                }
-            })
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${participantId}`);
+            const fetchedUser = await response.json();
+            if(fetchedUser._id === session?.user?.id) {
+              setYapper1(fetchedUser)
+            } else {
+              setYapper2(fetchedUser)
+            }
+          })
         });
 
-        // Subscribe to messages and track seen status
         const unsubscribeMessages = onSnapshot(messagesCollection, (querySnapshot) => {
             const messagesList = querySnapshot.docs
                 .map(doc => ({ id: doc.id, ...doc.data() } as Message))
@@ -79,7 +91,6 @@ export default function YapDuo({ session } : { session: Session }) {
             
             setMessages(messagesList);
 
-            // Check if the last message is from current user and is seen
             if (messagesList.length > 0) {
                 const lastMessage = messagesList[messagesList.length - 1];
                 if (lastMessage.senderId === session?.user?.id && lastMessage.status === 'read') {
@@ -90,7 +101,6 @@ export default function YapDuo({ session } : { session: Session }) {
             }
         });
 
-        // Mark messages as read
         const markAsRead = async () => {
             const messagesRef = collection(db, 'Messages');
             const q = query(messagesRef, where('yapId', '==', yapId));
@@ -104,7 +114,6 @@ export default function YapDuo({ session } : { session: Session }) {
             });
         };
 
-        // Set up interval to mark messages as read
         const readInterval = setInterval(markAsRead, 2000);
         
         return () => {
@@ -123,6 +132,14 @@ export default function YapDuo({ session } : { session: Session }) {
 
     const sendMessage = async (e: React.FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault();
+        
+        if (selectedFile) {
+            await sendImageMessage(selectedFile);
+            setImagePreview(null);
+            setSelectedFile(null);
+            return;
+        }
+
         if (!newMessage.trim() || !yapId || !session?.user?.id) return;
 
         try {
@@ -131,7 +148,8 @@ export default function YapDuo({ session } : { session: Session }) {
                 senderId: session.user.id,
                 content: newMessage.replace(/\n$/, ''),
                 timestamp: serverTimestamp(),
-                status: 'sent'
+                status: 'sent',
+                type: 'text'
             });
 
             const previewText = newMessage.replace(/\n/g, ' ').trim();
@@ -148,32 +166,52 @@ export default function YapDuo({ session } : { session: Session }) {
         }
     };
 
-    const formatMessageTime = (timestamp: Timestamp | null) => {
-        if (!timestamp) return '';
+    // const formatMessageTime = (timestamp: Timestamp | null) => {
+    //     if (!timestamp) return '';
         
-        const messageDate = timestamp.toDate();
-        const now = new Date();
-        const hoursDiff = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
+    //     const messageDate = timestamp.toDate();
+    //     const now = new Date();
+    //     const hoursDiff = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
 
-        if (hoursDiff < 1) {
-            const minutes = Math.floor(hoursDiff * 60);
-            return `${minutes}m`;
-        } else if (hoursDiff < 24) {
-            const hours = Math.floor(hoursDiff);
-            return `${hours}h`;
-        } else if (hoursDiff < 168) { // 7 days
-            const days = Math.floor(hoursDiff / 24);
-            return `${days}d`;
-        } else {
-            return messageDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
-        }
-    };
+    //     if (hoursDiff < 1) {
+    //         const minutes = Math.floor(hoursDiff * 60);
+    //         return `${minutes}m`;
+    //     } else if (hoursDiff < 24) {
+    //         const hours = Math.floor(hoursDiff);
+    //         return `${hours}h`;
+    //     } else if (hoursDiff < 168) { // 7 days
+    //         const days = Math.floor(hoursDiff / 24);
+    //         return `${days}d`;
+    //     } else {
+    //         return messageDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    //     }
+    // };
 
     const unsendMessage = async (messageId: string) => {
         try {
-            await deleteDoc(doc(db, 'Messages', messageId));
+            // First get the message data to check if it has an image
+            const messageDoc = doc(db, 'Messages', messageId);
+            const messageSnapshot = await getDoc(messageDoc);
+            const messageData = messageSnapshot.data();
+
+            // If message has an imageId, delete from Appwrite storage first
+            if (messageData?.type === 'image' && messageData?.imageId) {
+                try {
+                    await storage.deleteFile(
+                        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", 
+                        messageData.imageId
+                    );
+                } catch (error) {
+                    console.error("Error deleting image from storage:", error);
+                    toast.error("Failed to delete image");
+                }
+            }
+
+            // Delete message from Firebase
+            await deleteDoc(messageDoc);
         } catch (error) {
             console.error("Error unsending message:", error);
+            toast.error("Failed to unsend message");
         }
     };
 
@@ -201,6 +239,110 @@ export default function YapDuo({ session } : { session: Session }) {
         }));
     };
 
+    const handleImageSelect = async (file: File | undefined) => {
+        if (!file) return;
+        
+        // Validate file type
+        if (!file.type.startsWith("image/")) {
+            toast.error("Please select an image file");
+            return;
+        }
+
+        // Validate file size (1MB limit)
+        const maxSizeInMB = 1;
+        const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+        if (file.size > maxSizeInBytes) {
+            toast.error("Image size should be less than 1MB");
+            return;
+        }
+
+        // Create preview URL
+        const previewUrl = URL.createObjectURL(file);
+        setImagePreview(previewUrl);
+        setSelectedFile(file);
+    };
+
+    const sendImageMessage = async (file: File) => {
+        if (!yapId || !session?.user?.id) return;
+
+        try {
+            // Upload to Appwrite storage
+            const imageId = ID.unique();
+            await storage.createFile(
+                process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", 
+                imageId, 
+                file
+            );
+
+            // Add message to Firebase with caption
+            await addDoc(collection(db, 'Messages'), {
+                yapId,
+                senderId: session.user.id,
+                content: newMessage.trim(), // Add the caption from newMessage
+                imageId: imageId,
+                timestamp: serverTimestamp(),
+                status: 'sent',
+                type: 'image'
+            });
+
+            // Update last message in Yap
+            const yapRef = doc(db, 'Yap', yapId as string);
+            await updateDoc(yapRef, {
+                lastMessage: newMessage.trim() ? `📷 Image: ${newMessage}` : '📷 Image',
+                lastMessageTime: serverTimestamp(),
+                lastSenderId: session.user.id
+            });
+
+            // Clear both image and text
+            setNewMessage("");
+            toast.success("Image sent successfully");
+        } catch (error) {
+            console.error("Error sending image:", error);
+            toast.error("Failed to send image");
+        }
+    };
+
+    const sendGifMessage = async (gif: any) => {
+        if (!yapId || !session?.user?.id) return;
+
+        try {
+            // Add message to Firebase
+            await addDoc(collection(db, 'Messages'), {
+                yapId,
+                senderId: session.user.id,
+                content: newMessage.trim(), // Optional caption
+                gifUrl: gif.images.original.url,
+                timestamp: serverTimestamp(),
+                status: 'sent',
+                type: 'gif'
+            });
+
+            // Update last message in Yap
+            const yapRef = doc(db, 'Yap', yapId as string);
+            await updateDoc(yapRef, {
+                lastMessage: newMessage.trim() ? `🎭 GIF: ${newMessage}` : '🎭 GIF',
+                lastMessageTime: serverTimestamp(),
+                lastSenderId: session.user.id
+            });
+
+            setNewMessage("");
+            toast.success("GIF sent successfully");
+        } catch (error) {
+            console.error("Error sending GIF:", error);
+            toast.error("Failed to send GIF");
+        }
+    };
+
+    // Add cleanup for preview URL in useEffect
+    useEffect(() => {
+        return () => {
+            if (imagePreview) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        };
+    }, [imagePreview]);
+
+
     return (
         <div className="w-full h-[80dvh] z-[10] flex bg-bgSecondary text-fontPrimary rounded-[15px] p-5 flex-col justify-center items-center gap-2">
             <div className="yapTopBar w-full flex justify-start items-center gap-2">
@@ -214,8 +356,8 @@ export default function YapDuo({ session } : { session: Session }) {
                     />
                 </div>
                 <div className="flex flex-col justify-center items-start">
-                    <p className="text-lg tracking-[1px] let">{yapper2?.name}</p>
-                    <p className="text-xs tracking-[3px]">@{yapper2?.username}</p>
+                  <p className="text-lg tracking-[1px] let">{yapper2?.name}</p>
+                  <p className="text-xs tracking-[3px]">@{yapper2?.username}</p>
                 </div>
             </div>
 
@@ -238,8 +380,6 @@ export default function YapDuo({ session } : { session: Session }) {
                                     const isFirstInGroup = messageIndex === 0 || 
                                         group.messages[messageIndex - 1]?.senderId !== message.senderId;
                                     const showAvatar = message.senderId !== session?.user?.id && isFirstInGroup;
-                                    
-                                    // Only show seen status if this is the last message from current user
                                     const isLastUserMessage = message.id === lastUserMessageId;
                                     const showSeenForMessage = showSeen && isLastUserMessage;
 
@@ -284,12 +424,47 @@ export default function YapDuo({ session } : { session: Session }) {
                                                             ? 'bg-bgSecondary text-fontPrimary' 
                                                             : 'bg-[#1b1b1b] text-fontPrimary'
                                                     }`}>
-                                                        <p className="text-[15px] leading-5 whitespace-pre-wrap">{message.content}</p>
+                                                        {message.type === 'image' ? (
+                                                            <div className="flex flex-col gap-2">
+                                                                <div className="relative w-[200px] h-[200px]">
+                                                                    <Image 
+                                                                        src={getProfileUrl(message.imageId || "")}
+                                                                        alt="Sent image"
+                                                                        fill
+                                                                        className="object-cover rounded-[15px]"
+                                                                    />
+                                                                </div>
+                                                                {message.content && (
+                                                                    <p className="text-[15px] leading-5 whitespace-pre-wrap px-2">
+                                                                        {message.content}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        ) : message.type === 'gif' ? (
+                                                            <div className="flex flex-col gap-2">
+                                                                <div className="relative w-[200px]">
+                                                                    <Image 
+                                                                        src={message.gifUrl || ""}
+                                                                        alt="GIF"
+                                                                        width={200}
+                                                                        height={200}
+                                                                        className="rounded-[15px]"
+                                                                        unoptimized
+                                                                    />
+                                                                </div>
+                                                                {message.content && (
+                                                                    <p className="text-[15px] leading-5 whitespace-pre-wrap px-2">
+                                                                        {message.content}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-[15px] leading-5 whitespace-pre-wrap">{message.content}</p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
                                             
-                                            {/* Seen indicator below the last message from current user */}
                                             {showSeenForMessage && (
                                                 <div className="w-full flex justify-end mt-1">
                                                     <div className="w-3 h-3 rounded-full overflow-hidden flex-shrink-0">
@@ -315,26 +490,73 @@ export default function YapDuo({ session } : { session: Session }) {
             </div>
 
             <div className="yapTypeSection w-full">
-                <form onSubmit={sendMessage} className="flex gap-2 items-end">
-                    <div className="flex w-full items-center justify-center relative">
-                        <TextareaAutosize
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            onKeyDown={handleKeyPress}
-                            placeholder="Type a message..."
-                            minRows={1}
-                            maxRows={4}
-                            className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
-                        />
+                <form onSubmit={sendMessage} className="flex flex-col gap-2">
+                    {imagePreview && (
+                        <div className="relative w-full flex justify-start items-center gap-2 bg-bgPrimary p-2 rounded-[15px]">
+                            <div className="relative w-[100px] h-[100px]">
+                                <Image 
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    fill
+                                    className="object-cover rounded-[10px]"
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setImagePreview(null);
+                                    setSelectedFile(null);
+                                }}
+                                className="absolute top-1 right-1 p-1 rounded-full bg-[#FF6F6F] hover:brightness-90"
+                            >
+                                <RxCross2 size={12} color="white"/>
+                            </button>
+                        </div>
+                    )}
+                    <div className="flex gap-2 items-center">
+                        <div className="flex w-full items-center justify-center relative">
+                            <TextareaAutosize
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                                placeholder={selectedFile ? "Add a caption..." : "Type a message..."}
+                                minRows={1}
+                                maxRows={4}
+                                className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
+                            />
+                        </div>
+                        <div className="flex justify-center items-center gap-2">
+                            <label htmlFor="imageInput" className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#666] p-2 rounded-full">
+                                <IoIosImages color="#666" size={15}/>
+                            </label>
+                            <input 
+                                id="imageInput"
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => handleImageSelect(e.target.files?.[0])}
+                            />
+                            <div 
+                                onClick={() => setShowGifPicker(true)}
+                                className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#666] p-2 rounded-full"
+                            >
+                                <p className="text-[8px] text-[#666] tracking-[2px] aspect-square flex items-center justify-center">GIF</p>
+                            </div>
+                        </div>
+                        <button
+                            type="submit"
+                            className="bg-bgPrimary text-fontPrimary px-6 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center"
+                        >
+                            Send
+                        </button>
                     </div>
-                    <button
-                        type="submit"
-                        className="bg-bgPrimary text-fontPrimary px-6 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center"
-                    >
-                        Send
-                    </button>
                 </form>
             </div>
+            <GifPicker
+                isOpen={showGifPicker}
+                onClose={() => setShowGifPicker(false)}
+                onGifSelect={sendGifMessage}
+            />
         </div>
     );
 }

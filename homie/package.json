@@ -12,7 +12,10 @@
   "dependencies": {
     "@auth/mongodb-adapter": "^3.7.4",
     "@auth/prisma-adapter": "^2.7.4",
+    "@giphy/js-fetch-api": "^5.6.0",
+    "@giphy/react-components": "^10.0.1",
     "@prisma/client": "^6.2.1",
+    "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@types/bcryptjs": "^2.4.6",
     "@types/react-textarea-autosize": "^4.3.6",
