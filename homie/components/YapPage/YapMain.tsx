@@ -9,7 +9,7 @@ export default function YapMain({ session } : { session: Session }) {
     console.log(session) //temp fix for build error
 
     return (
-        <div className="w-full bg-bgSecondary h-[75dvh] rounded-[15px] flex flex-col justify-start pt-[120px] items-center">
+        <div className="w-full bg-bgSecondary h-[75dvh] rounded-[15px] flex flex-col justify-center lg:justify-start lg:pt-[120px] items-center">
             <div>
                 <Image 
                     src={`/figmaIcons/startYapping.svg`}

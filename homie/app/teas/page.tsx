@@ -13,7 +13,7 @@ export default function Teas() {
     // }, [])
 
     return (
-        <div className="text-5xl sulphur text-fontPrimary">
+        <div className="text-5xl text-center sulphur text-fontPrimary">
             Lets Have Tea Then
         </div>
     )

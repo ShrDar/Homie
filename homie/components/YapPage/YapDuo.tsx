@@ -143,6 +143,7 @@ export default function YapDuo({ session } : { session: Session }) {
         if (!newMessage.trim() || !yapId || !session?.user?.id) return;
 
         try {
+            // Existing Firebase code
             await addDoc(collection(db, 'Messages'), {
                 yapId,
                 senderId: session.user.id,
@@ -158,6 +159,21 @@ export default function YapDuo({ session } : { session: Session }) {
                 lastMessage: previewText,
                 lastMessageTime: serverTimestamp(),
                 lastSenderId: session.user.id
+            });
+
+            // Add MongoDB update
+            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session.user.id}/update-yap/${yapId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    lastMessage: previewText,
+                    lastMessageTime: new Date().toISOString(),
+                    lastSenderId: session.user.id,
+                    status: 'sent',
+                    participants: yapData[0].participants
+                }),
             });
 
             setNewMessage("");
@@ -209,6 +225,21 @@ export default function YapDuo({ session } : { session: Session }) {
 
             // Delete message from Firebase
             await deleteDoc(messageDoc);
+
+            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session?.user?.id}/update-yap/${yapId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    lastMessage: "Message Unsent",
+                    lastMessageTime: new Date().toISOString(),
+                    lastSenderId: yapper1?._id,
+                    status: 'sent',
+                    participants: yapData[0].participants
+                }),
+            });
+
         } catch (error) {
             console.error("Error unsending message:", error);
             toast.error("Failed to unsend message");
@@ -293,6 +324,20 @@ export default function YapDuo({ session } : { session: Session }) {
                 lastSenderId: session.user.id
             });
 
+            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session.user.id}/update-yap/${yapId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    lastMessage: "Image",
+                    lastMessageTime: new Date().toISOString(),
+                    lastSenderId: session.user.id,
+                    status: 'sent',
+                    participants: yapData[0].participants
+                }),
+            });
+
             // Clear both image and text
             setNewMessage("");
             // toast.success("Image sent successfully");
@@ -323,6 +368,20 @@ export default function YapDuo({ session } : { session: Session }) {
                 lastMessage: newMessage.trim() ? `🎭 GIF: ${newMessage}` : '🎭 GIF',
                 lastMessageTime: serverTimestamp(),
                 lastSenderId: session.user.id
+            });
+
+            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session.user.id}/update-yap/${yapId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    lastMessage: "GIF",
+                    lastMessageTime: new Date().toISOString(),
+                    lastSenderId: session.user.id,
+                    status: 'sent',
+                    participants: yapData[0].participants
+                }),
             });
 
             setNewMessage("");

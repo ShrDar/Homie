@@ -194,7 +194,7 @@ export default function HomiesDash({session} : {session: Session}) {
     return (
         <>
 
-            <div className="flex flex-col gap-6 justify-center items-start w-[80%] lg:w-[65%] py-10 ">
+            <div className="flex flex-col gap-6 justify-center items-start w-[85%] lg:w-[65%] py-10 ">
             {backdrop && 
                 <div 
                 onClick={() => {
@@ -262,16 +262,13 @@ export default function HomiesDash({session} : {session: Session}) {
                                         </div>
                                         {
                                             isHomie && 
-                                            <div className="bg-bgPrimary transition-all duration-150 min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                            <div className="bg-bgPrimary transition-all duration-150 md:min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center text-center gap-2 h-full">
                                                 <p className="text-sm flex">Homies</p>
-                                                <div>
-
-                                                </div>
                                             </div>
                                         }
                                         {(!isRequestSent && !isRequestReceived && !isHomie) &&
-                                            <div onClick={() => handleBefriend(homie)} className="bg-bgPrimary min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
-                                                <p className="text-sm">Befriend</p>
+                                            <div onClick={() => handleBefriend(homie)} className="bg-bgPrimary md:min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                <p className="text-sm hidden md:flex">Befriend</p>
                                                 <div>
                                                     <Image 
                                                         src={`/figmaIcons/befriend.svg`}
@@ -284,8 +281,8 @@ export default function HomiesDash({session} : {session: Session}) {
                                             </div>
                                         }{
                                             isRequestSent &&
-                                            <div className="bg-bgPrimary cursor-none transition-all duration-150 min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
-                                                <p className="text-sm flex">Pending</p>
+                                            <div className="bg-bgPrimary cursor-none transition-all duration-150 md:min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                <p className="text-sm hidden md:flex">Pending</p>
                                                 <div>
                                                     <FiWatch size={25} className="animate-pulse " />
                                                 </div>
@@ -294,9 +291,9 @@ export default function HomiesDash({session} : {session: Session}) {
                                         { 
                                             (isRequestReceived && !isHomie) &&
                                             <div className="flex justify-center items-center gap-2">
-                                                <div onClick={() => handleAcceptBefriend(homie)} className="bg-bgPrimary min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
-                                                    <p className="text-sm flex">Accept</p>
-                                                    <div>
+                                                <div onClick={() => handleAcceptBefriend(homie)} className="bg-bgPrimary md:min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                    <p className="text-sm hidden md:flex">Accept</p>
+                                                    <div className="w-[25px]">
                                                     <Image 
                                                         src={`/slideBarIcons/homies.svg`}
                                                         alt="addHomieImage"
@@ -414,8 +411,8 @@ export default function HomiesDash({session} : {session: Session}) {
                                                 </div>
                                             </div>
                                             <div className="flex justify-center items-center gap-2 px-2">
-                                                <div className="bg-bgPrimary cursor-none transition-all duration-150 min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
-                                                    <p className="text-sm flex">Pending</p>
+                                                <div className="bg-bgPrimary cursor-none transition-all duration-150 md:min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                    <p className="text-sm hidden md:flex">Pending</p>
                                                     <div>
                                                         <FiWatch size={25} className="animate-pulse " />
                                                     </div>
@@ -453,8 +450,8 @@ export default function HomiesDash({session} : {session: Session}) {
                                                 </div>
                                             </div>
                                             <div className="flex justify-center items-center gap-2 px-2">
-                                                <div onClick={() => homie && handleAcceptBefriend(homie)} className="bg-bgPrimary min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
-                                                    <p className="text-sm flex">Accept</p>
+                                                <div onClick={() => homie && handleAcceptBefriend(homie)} className="bg-bgPrimary md:min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                    <p className="text-sm hidden md:flex">Accept</p>
                                                     <div>
                                                     <Image 
                                                         src={`/slideBarIcons/homies.svg`}
@@ -483,7 +480,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                     <p className="text-sm">Homies</p>
                                 </div>
                                 <div onClick={() => setCurrentDisplay("pending")} className={`w-full ${currentDisplay === "pending" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[#222222] px-6 py-2 text-center transition-all duration-150`}>
-                                    <p className="text-sm">Pending</p>
+                                    <p className="text-sm flex">Pending</p>
                                 </div>
                             </div>
                         </div>
