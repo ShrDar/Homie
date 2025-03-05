@@ -295,7 +295,7 @@ export default function YapDuo({ session } : { session: Session }) {
 
             // Clear both image and text
             setNewMessage("");
-            toast.success("Image sent successfully");
+            // toast.success("Image sent successfully");
         } catch (error) {
             console.error("Error sending image:", error);
             toast.error("Failed to send image");
@@ -326,7 +326,7 @@ export default function YapDuo({ session } : { session: Session }) {
             });
 
             setNewMessage("");
-            toast.success("GIF sent successfully");
+            // toast.success("GIF sent successfully");
         } catch (error) {
             console.error("Error sending GIF:", error);
             toast.error("Failed to send GIF");
@@ -519,13 +519,13 @@ export default function YapDuo({ session } : { session: Session }) {
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 onKeyDown={handleKeyPress}
-                                placeholder={selectedFile ? "Add a caption..." : "Type a message..."}
+                                placeholder={selectedFile ? "Write Smth..." : "Yap Smth..."}
                                 minRows={1}
                                 maxRows={4}
                                 className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
                             />
                         </div>
-                        <div className="flex justify-center items-center gap-2">
+                        <div className="flex relative justify-center items-center gap-2">
                             <label htmlFor="imageInput" className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#666] p-2 rounded-full">
                                 <IoIosImages color="#666" size={15}/>
                             </label>
@@ -542,6 +542,12 @@ export default function YapDuo({ session } : { session: Session }) {
                             >
                                 <p className="text-[8px] text-[#666] tracking-[2px] aspect-square flex items-center justify-center">GIF</p>
                             </div>
+                            <GifPicker
+                                isOpen={showGifPicker}
+                                onClose={() => setShowGifPicker(false)}
+                                onGifSelect={sendGifMessage}
+                                showGifPicker={showGifPicker}
+                            />
                         </div>
                         <button
                             type="submit"
@@ -552,15 +558,11 @@ export default function YapDuo({ session } : { session: Session }) {
                     </div>
                 </form>
             </div>
-            <GifPicker
-                isOpen={showGifPicker}
-                onClose={() => setShowGifPicker(false)}
-                onGifSelect={sendGifMessage}
-            />
+            
         </div>
     );
 }
 
-// setYapData(yapsList);  
+// setYapData(yapsList);
           
          
