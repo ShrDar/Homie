@@ -52,6 +52,7 @@ export default function YapDuo({ session } : { session: Session }) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [showGifPicker, setShowGifPicker] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -60,6 +61,12 @@ export default function YapDuo({ session } : { session: Session }) {
     useEffect(() => {
         scrollToBottom();
     }, [messages]); // Scroll when messages update
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setIsMobile(/Mobi|Android/i.test(navigator.userAgent));
+        }
+    }, []);
 
     console.log(yapper1, yapData)
     useEffect(() => {
@@ -124,7 +131,7 @@ export default function YapDuo({ session } : { session: Session }) {
     }, [yapId, session?.user?.id]);
 
     const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (!isMobile && e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendMessage(e);
         }
@@ -518,7 +525,7 @@ export default function YapDuo({ session } : { session: Session }) {
                                                                 )}
                                                             </div>
                                                         ) : (
-                                                            <p className="text-[15px] leading-5 whitespace-pre-wrap">{message.content}</p>
+                                                            <p className="text-[15px] leading-5 whitespace-pre-wrap text-center">{message.content}</p>
                                                         )}
                                                     </div>
                                                 </div>
