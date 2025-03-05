@@ -478,9 +478,9 @@ export default function YapDuo({ session } : { session: Session }) {
                                                             </DropdownMenu>
                                                         </div>
                                                     )}
-                                                    <div className={`px-4 py-2 rounded-[20px] ${
+                                                    <div className={`${message.type === "gif" || message.type === "image" ? "px-2" : "px-4"} py-2 rounded-[20px] ${
                                                         message.senderId === session?.user?.id 
-                                                            ? 'bg-bgSecondary text-fontPrimary' 
+                                                            ? 'bg-bgSecondary text-fontPrimary overflow-hidden' 
                                                             : 'bg-[#1b1b1b] text-fontPrimary'
                                                     }`}>
                                                         {message.type === 'image' ? (
@@ -500,8 +500,8 @@ export default function YapDuo({ session } : { session: Session }) {
                                                                 )}
                                                             </div>
                                                         ) : message.type === 'gif' ? (
-                                                            <div className="flex flex-col gap-2">
-                                                                <div className="relative w-[200px]">
+                                                            <div className="flex justify-center items-center flex-col gap-2">
+                                                                <div className="relative">
                                                                     <Image 
                                                                         src={message.gifUrl || ""}
                                                                         alt="GIF"

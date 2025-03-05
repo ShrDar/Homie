@@ -52,7 +52,7 @@ export default function GifPicker({ isOpen, onClose, onGifSelect, showGifPicker 
         <div className={`fixed inset-0 z-50 items-end justify-center sm:items-center ${showGifPicker ? "flex" : "hidden"}}`} onClick={onClose}>
         </div>
         <div 
-            className="absolute translate-y-[-60%] z-50 w-[350px] bg-bgPrimary border border-[#666] rounded-[15px] p-4"
+            className="absolute translate-y-[-60%] mr-[10vw] md:mr-0 z-50 w-[350px] bg-bgPrimary border border-[#666] rounded-[15px] p-4"
             onClick={e => e.stopPropagation()}
         >
             {/* <button
