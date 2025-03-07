@@ -46,7 +46,8 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
             firstName,
             lastName,
             username,
-            bio
+            bio,
+            name: `${firstName} ${lastName}`
         };
         
         if(firstName == "" || lastName == "" || username == "") {
@@ -86,7 +87,6 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                 setUser(updatedUser)
                 setDbFirstName(updatedUser.name.split(' ')[0]);
                 setDbLastName(updatedUser.name.split(' ')[1]);
-
             } else {
                 const error = await response.text();
                 console.error("Failed to update user:", error);

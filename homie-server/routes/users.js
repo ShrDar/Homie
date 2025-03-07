@@ -126,24 +126,42 @@ router.patch("/:id/passwordChange", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 //api to delete a user
 router.delete("/:id", async (req, res) => {
-  let collection = await db.collection("User");
+    let collection = await db.collection("User");
+    const userId = req.params.id;
+    const query = { _id: new ObjectId(userId) };
+    try {
+        // 1. Get user's yaps before deletion
+        const userToDelete = await collection.findOne(query);
+        if (!userToDelete) {
+            return res.status(404).send("User not found");
+        }
 
-  const query = { _id: new ObjectId(req.params.id) };
+        // 2. Remove yaps containing this user from other users' yaps arrays
+        await collection.updateMany(
+            { "yaps.participants": userId },
+            { $pull: { yaps: { participants: userId } } }
+        );
 
-  try {
-    const result = await collection.deleteOne(query);
-    if (result.deletedCount === 0) {
-      res.status(404).send("User not found");
-    } else {
-      res.status(200).send("User deleted successfully");
+        // 3. Remove user from others' homies arrays
+        await collection.updateMany(
+            { homies: userId },
+            { $pull: { homies: userId } }
+        );
+
+        // 4. Finally delete the user
+        const result = await collection.deleteOne(query);
+        
+        if (result.deletedCount === 0) {
+            res.status(404).send("User not found");
+        } else {
+            res.status(200).send("User and related data deleted successfully");
+        }
+    } catch (err) {
+        console.error("Error deleting user:", err);
+        res.status(500).send("Internal Server Error");
     }
-  } catch (err) {
-    console.error("Error deleting user:", err);
-    res.status(500).send("Internal Server Error");
-  }
 });
 
 

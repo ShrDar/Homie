@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import { logout } from "@/actions/auth";
+import { storage } from "@/config/AppWriteClient";
 
 export default function DeleteAccountModal( {openDeleteModal, setOpenDeleteModal, user} : {openDeleteModal : boolean, setOpenDeleteModal: any, user: any} ) {
     
@@ -12,14 +13,22 @@ export default function DeleteAccountModal( {openDeleteModal, setOpenDeleteModal
 
 
     const handleDelete = async () => {
-        logout();
         try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user._id}`, {
-            method: "DELETE",
-        });
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user._id}`, {
+                method: "DELETE",
+            });
 
-        if (response.ok) {
-            toast.success("Account deleted successfully");
+            if (user.image && !user.image.startsWith("htt")) {
+                try {
+                    await storage.deleteFile(process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", user.image);
+                } catch (imageError) {
+                    console.error("Error deleting profile image:", imageError);
+                }
+            }
+            
+            if (response.ok) {
+                toast.success("Account deleted successfully");
+                logout();
         } else {
             const errorMessage = await response.text();
             toast.error(`Error: ${errorMessage}`);
