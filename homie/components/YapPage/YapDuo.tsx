@@ -525,7 +525,7 @@ export default function YapDuo({ session } : { session: Session }) {
                                                                 )}
                                                             </div>
                                                         ) : (
-                                                            <p className="text-[15px] leading-5 whitespace-pre-wrap text-center">{message.content}</p>
+                                                            <p className="text-[15px] leading-5 whitespace-pre-wrap text-start">{message.content}</p>
                                                         )}
                                                     </div>
                                                 </div>

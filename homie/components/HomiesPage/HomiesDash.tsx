@@ -17,9 +17,14 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { db } from "@/config/firebase";
+import { useRouter } from "next/navigation";
   
 
 export default function HomiesDash({session} : {session: Session}) {
+
+    const router = useRouter();
 
     const [user, setUser] = useState<HomieUser>();
     const [homies, setHomies] = useState<HomieUser[]>([]); //all users
@@ -191,6 +196,64 @@ export default function HomiesDash({session} : {session: Session}) {
         updateUser();
     }
 
+    const checkExistingChat = async (senderId: string, receiverId: string) => {
+        const messagesRef = collection(db, "Yap");
+        const q = query(messagesRef, where("participants", "array-contains", senderId));
+    
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            for (const doc of querySnapshot.docs) {
+                const data = doc.data();
+                if (data.participants.includes(receiverId)) {
+                    return data.yapId;
+                }
+            }
+        }
+        return null;
+    };
+
+    const createChat = async (user: HomieUser, receiverId: string) => {
+        const existingYapId = await checkExistingChat(user._id || "", receiverId);
+
+        if (existingYapId) {
+            router.push(`/yap/${existingYapId}`);
+        } else {
+            try {
+                const newMessageDoc = await addDoc(collection(db, "Yap"), {
+                    yapId: "",  
+                    participants: [session?.user?.id, receiverId],
+                    createdAt: new Date().toISOString(),
+                    yapContent: "",
+                    reaction: {
+                        [user._id]: "",  // Sender's reaction
+                        [receiverId]: "",  // Receiver's reaction
+                    },
+                    status: "sent",
+                    mediaUrl: "",
+                });
+
+                const messageId = newMessageDoc.id;
+                
+                const messageRef = doc(db, "Yap", messageId);
+                await updateDoc(messageRef, {
+                    yapId: messageId,
+                });
+
+                await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${user._id}/add-yap`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ yapId: messageId, participants: [session?.user?.id, receiverId] }),
+                });
+
+                router.push(`/yap/${messageId}`);
+            } catch (error) {
+                console.error("Error creating chat:", error);
+            }
+        }
+    }
+
     return (
         <>
 
@@ -360,7 +423,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                                 </div>
                                             </div>
                                             <div className="flex justify-center items-center gap-2 px-4">
-                                                <div className="bg-bgPrimary flex justify-center items-center gap-2 hover:bg-[#1b1b1b] transition-all duration-150 cursor-pointer p-3 rounded-full">
+                                                <div onClick={() => createChat(user , homie?._id || "")} className="bg-bgPrimary flex justify-center items-center gap-2 hover:bg-[#1b1b1b] transition-all duration-150 cursor-pointer p-3 rounded-full">
                                                     {/* <p>Yap</p> */}
                                                     <RiMessage3Fill size={20} color="aaa"/>
                                                 </div>

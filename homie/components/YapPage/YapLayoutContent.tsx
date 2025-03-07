@@ -146,7 +146,7 @@ export default function YapLayoutContent({ session } : {session: Session}) {
                                         alt=""
                                         width={100}
                                         height={100}
-                                        className="w-[20px] rounded-full"
+                                        className="w-[20px] rounded-full aspect-square object-cover"
                                     />
                                 </div>
                                 <div>
