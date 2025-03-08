@@ -2,7 +2,7 @@
 
 export default function AdminDashboardPage() {
     return (
-        <div className="min-h-screen bg-bgPrimary text-fontPrimary sulphur">
+        <div className="min-h-screen w-full bg-bgPrimary text-fontPrimary sulphur">
             {/* Main Content */}
             <div className="ml-64 p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,6 +1,8 @@
 "use client";
+import { auth } from "@/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({
     children,
@@ -13,8 +15,26 @@ export default function DashboardLayout({
         return pathname === path;
     };
 
+    // const [user , setUser] = useState();
+
+    // useEffect(() => {
+    //     const fetchUserData = async() => {
+    //         const session = await auth();
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
+    //         const fetchedUser = await response.json();
+    //             setUser(fetchedUser);
+    //     }
+    //     try {
+    //         fetchUserData();
+    //     } catch(err) {
+    //         console.error(err);
+    //     }
+    // }, [])
+
+    // console.log(user);
+
     return (
-        <div className="min-h-screen bg-bgPrimary text-fontPrimary sulphur">
+        <div className="min-h-screen w-full bg-bgPrimary text-fontPrimary sulphur">
             {/* Sidebar */}
             <div className="fixed left-0 top-0 h-full w-64 bg-bgSecondary p-6">
                 <div className="mb-10 w-full flex justify-center items-center">
