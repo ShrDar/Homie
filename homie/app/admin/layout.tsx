@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -9,8 +8,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/");
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
-  const user = await response.json();
+  // const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
+  // const user = await response.json();
 
   // if(user?.role !== "admin"){
   //   redirect("/");

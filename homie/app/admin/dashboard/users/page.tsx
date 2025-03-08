@@ -1,13 +1,14 @@
 "use client"
 import { HomieUser } from "@/homieTypes/homieTypes";
 import { useEffect, useState } from "react";
-import { Loader2, X, Trash2 } from "lucide-react";
+import { X, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { storage, ID } from "@/config/AppWriteClient";
 import { getProfileUrl } from "@/extra/helpers";
 import { IoIosImages } from "react-icons/io";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { signupWithCreds } from "@/actions/auth";
+import Image from "next/image";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<HomieUser[]>([]);
@@ -219,12 +220,6 @@ export default function UsersPage() {
 
     try {
       const fullName = `${firstName} ${lastName}`.trim();
-      let imageId = "";
-      if (currentFile) {
-        const id = ID.unique();
-        await storage.createFile(process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", id, currentFile);
-        imageId = id;
-      }
       const defaultImages = ['https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa0bcf002e60148154/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa130a0027cba1a4ac/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa131a003596256ea6/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa132700151f0a8682/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa1336000dac6ec818/view?project=67aa0803002c7db860ad&mode=admin'];
       const image = defaultImages[Math.floor(Math.random() * defaultImages.length)];
       const result = await signupWithCreds(email, password, fullName, image, username);
@@ -278,7 +273,7 @@ export default function UsersPage() {
               {users.map((user: HomieUser) => (
                 <tr key={user._id} className="border-b border-borderPrimary">
                   <td className="p-2">
-                    <img 
+                    <Image 
                       src={getProfileUrl(user.image || "")} 
                       alt={user.name} 
                       className="w-20 aspect-square rounded-full object-cover"
@@ -311,7 +306,7 @@ export default function UsersPage() {
             <div className="flex flex-col items-center mb-8">
               <h3 className="text-2xl font-bold mb-6">Edit User</h3>
               <div className="relative mb-6">
-                <img 
+                <Image 
                   src={getProfileUrl(currentImage || selectedUser.image || "")}
                   alt={selectedUser.name}
                   className="w-32 h-32 rounded-full object-cover bg-bgSecondary"
@@ -369,11 +364,11 @@ export default function UsersPage() {
                 <div className="bg-bgSecondary border border-borderPrimary rounded-md p-4 max-h-[400px] overflow-y-auto">
                   {selectedUser.homies && selectedUser.homies.length > 0 ? (
                     <div className="space-y-3">
-                      {selectedUser.homies.map((homieId) => {
+                      {selectedUser.homies.map((homieId: string) => {
                         const homie = users.find(u => u._id === homieId);
                         return (
                           <div key={homieId} className="flex items-center gap-3 p-2 rounded-md hover:bg-bgPrimary">
-                            <img 
+                            <Image 
                               src={getProfileUrl(homie?.image || "")} 
                               alt={homie?.name || 'Unknown User'} 
                               className="w-10 rounded-full aspect-square object-cover"
