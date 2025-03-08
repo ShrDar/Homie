@@ -7,6 +7,7 @@ import { storage, ID } from "@/config/AppWriteClient";
 import { getProfileUrl } from "@/extra/helpers";
 import { IoIosImages } from "react-icons/io";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { signupWithCreds } from "@/actions/auth";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<HomieUser[]>([]);
@@ -193,37 +194,44 @@ export default function UsersPage() {
     validateConfirmPassword(confirmPassword);
     await validateUsername(username);
 
-    if (!email || !firstName || !lastName || !username || !password || !confirmPassword) {
-      toast.error("All fields are required");
+    if (email === "" || password === "" || confirmPassword === "" || firstName === "" || lastName === "") {
+      toast.error("Empty Fields");
       return;
     }
 
-    if (emailError || passwordError || confirmPasswordError || usernameError) {
-      toast.error("Please fix the errors before submitting");
+    if (emailError) {
+      toast.error(emailError);
+      return;
+    } else if (passwordError) {
+      toast.error(passwordError);
+      return;
+    } else if (confirmPasswordError) {
+      toast.error(confirmPasswordError);
+      return;
+    } else if (usernameError) {
+      toast.error(usernameError);
+      return;
+    }
+
+    if (emailError || passwordError || confirmPasswordError || !email || !password || !confirmPassword) {
       return;
     }
 
     try {
+      const fullName = `${firstName} ${lastName}`.trim();
       let imageId = "";
       if (currentFile) {
         const id = ID.unique();
         await storage.createFile(process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", id, currentFile);
         imageId = id;
       }
+      const defaultImages = ['https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa0bcf002e60148154/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa130a0027cba1a4ac/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa131a003596256ea6/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa132700151f0a8682/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa1336000dac6ec818/view?project=67aa0803002c7db860ad&mode=admin'];
+      const image = defaultImages[Math.floor(Math.random() * defaultImages.length)];
+      const result = await signupWithCreds(email, password, fullName, image, username);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          name: `${firstName} ${lastName}`,
-          username,
-          password,
-          image: imageId || undefined
-        })
-      });
-
-      if (response.ok) {
+      if (result.error) {
+        toast.error(result.error);
+      } else {
         toast.success("User created successfully");
         await fetchUsers();
         setIsAddingUser(false);
@@ -237,15 +245,12 @@ export default function UsersPage() {
         });
         setCurrentFile(null);
         setCurrentImage("");
-      } else {
-        const error = await response.text();
-        toast.error(`Failed to create user: ${error}`);
       }
     } catch (error) {
       console.error('Error creating user:', error);
       toast.error("Failed to create user");
     }
-  };
+  }
   return (
     <div className="flex flex-col items-center w-full max-w-5xl mx-auto p-6">
       <div className="w-full flex justify-between items-center mb-8">
@@ -437,21 +442,21 @@ export default function UsersPage() {
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="flex flex-col gap-6">
               <div className="flex gap-4">
                 <input
                   type="text"
                   placeholder="First Name"
                   value={addUserForm.firstName}
                   onChange={(e) => setAddUserForm({ ...addUserForm, firstName: e.target.value })}
-                  className="w-1/2 bg-bgSecondary border-2 border-transparent focus:border-primary rounded px-4 py-2"
+                  className="w-1/2 bg-bgSecondary border-2 border-transparent focus:outline-none focus:border-primary rounded px-4 py-2"
                 />
                 <input
                   type="text"
                   placeholder="Last Name"
                   value={addUserForm.lastName}
                   onChange={(e) => setAddUserForm({ ...addUserForm, lastName: e.target.value })}
-                  className="w-1/2 bg-bgSecondary border-2 border-transparent focus:border-primary rounded px-4 py-2"
+                  className="w-1/2 bg-bgSecondary border-2 border-transparent focus:outline-none focus:border-primary rounded px-4 py-2"
                 />
               </div>
 
@@ -463,7 +468,7 @@ export default function UsersPage() {
                   setAddUserForm({ ...addUserForm, username: e.target.value });
                   validateUsername(e.target.value);
                 }}
-                className={`w-full bg-bgSecondary border-2 rounded px-4 py-2 ${usernameError ? 'border-red-500' : 'border-transparent focus:border-primary'}`}
+                className={`w-full bg-bgSecondary border-2 focus:outline-none rounded px-4 py-2 ${usernameError ? 'border-red-500' : 'border-transparent focus:border-primary'}`}
               />
               {usernameError && <p className="text-red-500 text-sm">{usernameError}</p>}
 
@@ -475,7 +480,7 @@ export default function UsersPage() {
                   setAddUserForm({ ...addUserForm, email: e.target.value });
                   validateEmail(e.target.value);
                 }}
-                className={`w-full bg-bgSecondary border-2 rounded px-4 py-2 ${emailError ? 'border-red-500' : 'border-transparent focus:border-primary'}`}
+                className={`w-full bg-bgSecondary border-2 focus:outline-none rounded px-4 py-2 ${emailError ? 'border-red-500' : 'border-transparent focus:border-primary'}`}
               />
               {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
 
@@ -488,7 +493,7 @@ export default function UsersPage() {
                     setAddUserForm({ ...addUserForm, password: e.target.value });
                     validatePassword(e.target.value);
                   }}
-                  className={`w-full bg-bgSecondary border-2 rounded px-4 py-2 ${passwordError ? 'border-red-500' : 'border-transparent focus:border-primary'}`}
+                  className={`w-full bg-bgSecondary border-2 focus:outline-none rounded px-4 py-2 ${passwordError ? 'border-red-500' : 'border-transparent focus:border-primary'}`}
                 />
                 <button
                   type="button"
@@ -508,7 +513,7 @@ export default function UsersPage() {
                   setAddUserForm({ ...addUserForm, confirmPassword: e.target.value });
                   validateConfirmPassword(e.target.value);
                 }}
-                className={`w-full bg-bgSecondary border-2 rounded px-4 py-2 ${confirmPasswordError ? 'border-red-500' : 'border-transparent focus:border-primary'}`}
+                className={`w-full bg-bgSecondary border-2 focus:outline-none rounded px-4 py-2 ${confirmPasswordError ? 'border-red-500' : 'border-transparent focus:border-primary'}`}
               />
               {confirmPasswordError && <p className="text-red-500 text-sm">{confirmPasswordError}</p>}
 

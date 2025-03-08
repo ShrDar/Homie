@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 
 export default function DashboardLayout({
     children,
@@ -34,7 +35,7 @@ export default function DashboardLayout({
     // console.log(user);
 
     return (
-        <div className="min-h-screen w-full bg-bgPrimary text-fontPrimary sulphur">
+        <motion.div initial={{filter: "brightness(0)"}} animate={{filter: "brightness(1)"}} transition={{duration: '0.5'}} className="min-h-screen w-full bg-bgPrimary text-fontPrimary sulphur">
             {/* Sidebar */}
             <div className="fixed left-0 top-0 h-full w-64 bg-bgSecondary p-6">
                 <div className="mb-10 w-full flex justify-center items-center">
@@ -77,6 +78,6 @@ export default function DashboardLayout({
             <div className="ml-64">
                 {children}
             </div>
-        </div>
+        </motion.div>
     );
 } 

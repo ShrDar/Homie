@@ -26,6 +26,12 @@ export default function SlideBar( {session} : {session: Session} ) {
     
         fetchUserData();
     }, [session?.user?.id, pathname])
+    
+    if(pathname.includes("admin")) {
+        return (
+            <></>
+        )
+    }
 
     return (
         <>
