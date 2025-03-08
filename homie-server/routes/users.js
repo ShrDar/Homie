@@ -32,16 +32,15 @@ router.get("/:id", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   let collection = await db.collection("User");
 
-  const { firstName, lastName, username, bio } = req.body;
+  const { name, username, bio } = req.body;
 
-  const name = `${firstName} ${lastName}`;
+  // const name = `${firstName} ${lastName}`;
 
   const updateData = {
     name,
     username,
     bio
   };
-
   try {
     const query = { _id: new ObjectId(req.params.id) };
     const result = await collection.updateOne(query, {

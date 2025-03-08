@@ -15,7 +15,7 @@ export default function SlideBar( {session} : {session: Session} ) {
     const pathname = usePathname();
 
     const [hidden, setHidden] = useState(true);
-    const [user, setUser] = useState({username: '', bio: '', image: ""});
+    const [user, setUser] = useState({username: '', bio: '', image: "", name: ""});
 
     useEffect(() => {
         const fetchUserData = async() => {
@@ -68,7 +68,7 @@ export default function SlideBar( {session} : {session: Session} ) {
                             </Link>
                         </div>
                         <Link href={'profile'} onClick={() => setHidden(true)} className="w-full cursor-pointer flex flex-col justify-center items-center gap-0 text-center">
-                            <p className="text-lg max-w-full truncate">{session.user?.name}</p> {/* Apply max-w and truncate */}
+                            <p className="text-lg max-w-full truncate">{user?.name}</p> {/* Apply max-w and truncate */}
                             <p className="text-sm tracking-[1px] max-w-full truncate">@{user.username}</p> {/* Apply max-w and truncate */}
                         </Link>
 

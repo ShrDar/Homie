@@ -60,7 +60,7 @@ export default async function HomePage() {
       <p>Home Page</p>
       <div className="flex flex-col items-center justify-between">
         <div>
-          <p className="text-4xl">{session?.user?.name}</p>
+          {/* <p className="text-4xl">{session?.user?.name}</p> */}
         </div>
         <EntryBtn name="LogOut" click={logout} />
       </div>

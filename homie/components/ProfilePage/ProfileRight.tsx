@@ -24,8 +24,11 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
     const [openChangePassModal, setOpenChangePassModal] = useState(false);
 
     useEffect(() => {
+        const [tdbFirstName, tdbLastName] = user?.name?.split(' ') || ['', ''];
         setBio(user.bio || "");
         setUsername(user.username || "");
+        setFirstName(tdbFirstName);
+        setLastName(tdbLastName)
     }, [user]);
 
     const validateUsername = async (username: string) => {
@@ -43,11 +46,9 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
 
     const handleTransform = async() => {
         const updatedData = {
-            firstName,
-            lastName,
+            name: `${firstName} ${lastName}`,
             username,
             bio,
-            name: `${firstName} ${lastName}`
         };
         
         if(firstName == "" || lastName == "" || username == "") {
