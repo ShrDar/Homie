@@ -34,7 +34,7 @@ export default function ProfileMain({ session }: { session: Session }) {
                 {
                     user?.role === "ADMIN" &&
                     <Link href={'/admin'}>
-                        <div className="absolute top-5 right-5 border-[2px] border-[#666] text-[#666] hover:border-[#fff] hover:text-[#fff] transition-all duration-100 p-2 rounded-full cursor-pointer">
+                        <div className="absolute top-5 left-5 md:left-auto md:right-5 border-[2px] border-[#666] text-[#666] hover:border-[#fff] hover:text-[#fff] transition-all duration-100 p-2 rounded-full cursor-pointer">
                             <MdAdminPanelSettings size={20} />
                         </div>
                     </Link>

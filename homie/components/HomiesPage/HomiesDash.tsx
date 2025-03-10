@@ -434,7 +434,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                                         </div>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="start" className="bg-bgPrimary text-fontPrimary text-sm border-[#666] p-2">
-                                                        <div className="sulphur cursor-pointer">
+                                                        <div onClick={() => createChat(user , homie?._id || "")} className="sulphur cursor-pointer">
                                                             <p className="w-full text-start hover:bg-[#1B1B1B] p-2 px-6 rounded-[6px]">Yap</p>
                                                         </div>
                                                         <div onClick={() => handleRemoveFriend(homie)} className="sulphur cursor-pointer">
