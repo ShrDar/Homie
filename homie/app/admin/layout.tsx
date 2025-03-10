@@ -8,12 +8,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/");
   }
 
-  // const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
-  // const user = await response.json();
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
+  const user = await response.json();
 
-  // if(user?.role !== "admin"){
-  //   redirect("/");
-  // }
+  if(user?.role !== "ADMIN"){
+    redirect("/");
+  }
 
   return (
     <div className="adminLayout w-full min-h-screen h-screen bg-bgPrimary flex justify-center items-center text-fontPrimary">

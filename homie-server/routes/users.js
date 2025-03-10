@@ -91,6 +91,34 @@ router.patch("/:id/image", async (req, res) => {
   }
 });
 
+
+router.patch("/:id/role", async (req, res) => {
+  let collection = await db.collection("User");
+
+  const { role } = req.body;
+
+  if (!role || !['USER', 'ADMIN'].includes(role)) {
+    return res.status(400).send("Valid role (USER or ADMIN) is required");
+  }
+
+  try {
+    const query = { _id: new ObjectId(req.params.id) };
+    const result = await collection.updateOne(query, {
+      $set: { role },
+    });
+
+    if (result.modifiedCount === 0) {
+      res.status(404).send("User not found or no changes made");
+    } else {
+      const updatedUser = await collection.findOne(query);
+      res.status(200).json(updatedUser);
+    }
+  } catch (err) {
+    console.error("Error updating user role:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 // api used to update the hashedPasswordField
 router.patch("/:id/passwordChange", async (req, res) => {
   let collection = await db.collection("User");

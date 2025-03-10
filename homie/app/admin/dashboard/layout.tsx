@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
+import { IoExitOutline } from "react-icons/io5";
 
 export default function DashboardLayout({
     children,
@@ -70,6 +71,12 @@ export default function DashboardLayout({
                         </div>
                     </Link>
                 </nav>
+                <Link href="/profile">
+                    <div className={`p-4 text-left rounded-[20px] bg-bgSecondary transition-all duration-150 hover:bg-bgPrimary absolute bottom-6 left-6 right-6 flex items-center justify-center gap-2`}>
+                        <IoExitOutline className="text-xl" />
+                        <p>Exit Dashboard</p>
+                    </div>
+                </Link>
             </div>
 
             {/* Main Content */}
@@ -78,4 +85,4 @@ export default function DashboardLayout({
             </div>
         </motion.div>
     );
-} 
+}

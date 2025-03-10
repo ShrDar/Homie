@@ -1,31 +1,28 @@
-"use client"
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { TextShimmerWave } from '@/components/ui/text-shimmer-wave';
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import AdminVerifiedUI from "@/components/AdminPage/AdminVerifiedUI";
 
-export default function AdminLoginPage() {
-  const router = useRouter();
+export default async function AdminLoginPage() {
+  const session = await auth(); // Fetch session on the server
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      router.push('/admin/dashboard');
-    }, 2000);
+  if (!session?.user?.id) {
+    redirect("/"); // Redirect if not logged in
+  }
 
-    return () => clearTimeout(timer);
-  }, [router]);
-
-  return (
-    <div className="h-screen w-screen flex items-center text-4xl justify-center bg-bgPrimary text-fontPrimary sulphur tracking-[4px]">
-      <TextShimmerWave
-        className="[--base-color:#fff] [--base-gradient-color:#2a2a2a]"
-        duration={1.3}
-        spread={1}
-        zDistance={1}
-        scaleDistance={1.1}
-        rotateYDistance={20}
-      >
-        Welcome Back Admin
-      </TextShimmerWave>
-    </div>
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session.user.id}`,
+    { cache: "no-store" } // Ensure fresh data
   );
+
+  if (!response.ok) {
+    redirect("/"); // Redirect on error
+  }
+
+  const user = await response.json();
+
+  if (user.role !== "ADMIN") {
+    redirect("/"); // Redirect if not an admin
+  }
+
+  return <AdminVerifiedUI />;
 }

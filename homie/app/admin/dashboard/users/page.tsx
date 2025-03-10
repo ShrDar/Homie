@@ -18,7 +18,8 @@ export default function UsersPage() {
   const [editForm, setEditForm] = useState({
     name: "",
     username: "",
-    bio: ""
+    bio: "",
+    role: ""
   });
   const [addUserForm, setAddUserForm] = useState({
     email: "",
@@ -78,7 +79,8 @@ export default function UsersPage() {
     setEditForm({
       name: user.name || "",
       username: user.username || "",
-      bio: user.bio || ""
+      bio: user.bio || "",
+      role: user.role || "USER"
     });
     setIsEditing(true);
   };
@@ -276,6 +278,8 @@ export default function UsersPage() {
                     <Image 
                       src={getProfileUrl(user.image || "")} 
                       alt={user.name} 
+                      width={100}
+                      height={100}
                       className="w-20 aspect-square rounded-full object-cover"
                     />
                   </td>
@@ -309,6 +313,8 @@ export default function UsersPage() {
                 <Image 
                   src={getProfileUrl(currentImage || selectedUser.image || "")}
                   alt={selectedUser.name}
+                  width={500}
+                  height={500}
                   className="w-32 h-32 rounded-full object-cover bg-bgSecondary"
                 />
                 <label htmlFor="profilePic" className="absolute bottom-0 right-0 cursor-pointer hover:brightness-90 bg-primary p-2 rounded-full">
@@ -371,6 +377,8 @@ export default function UsersPage() {
                             <Image 
                               src={getProfileUrl(homie?.image || "")} 
                               alt={homie?.name || 'Unknown User'} 
+                              width={200}
+                              height={200}
                               className="w-10 rounded-full aspect-square object-cover"
                             />
                             <div className="flex-1">
@@ -384,6 +392,37 @@ export default function UsersPage() {
                   ) : (
                     <p className="text-gray-500 text-center">No homies yet</p>
                   )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Role</label>
+                  <select
+                    value={editForm.role}
+                    onChange={async (e) => {
+                      const newRole = e.target.value;
+                      setEditForm({...editForm, role: newRole});
+                      try {
+                        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${selectedUser._id}/role`, {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ role: newRole })
+                        });
+                        if (response.ok) {
+                          toast.success('Role updated successfully');
+                          await fetchUsers();
+                        } else {
+                          toast.error('Failed to update role');
+                        }
+                      } catch (error) {
+                        console.error('Error updating role:', error);
+                        toast.error('Failed to update role');
+                      }
+                    }}
+                    className="w-full p-2 rounded-md bg-bgSecondary border border-borderPrimary"
+                  >
+                    <option className="" value="USER">User</option>
+                    <option className="" value="ADMIN">Admin</option>
+                  </select>
                 </div>
               </div>
             </div>

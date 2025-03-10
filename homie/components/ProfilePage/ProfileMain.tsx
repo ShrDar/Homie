@@ -5,9 +5,11 @@ import { Suspense, useEffect, useState } from "react"
 import ProfileLoading from "./ProfileLoading";
 import ProfileLeft from "./ProfileLeft";
 import ProfileRight from "./ProfileRight";
+import { MdAdminPanelSettings } from "react-icons/md";
+import Link from "next/link";
 
 export default function ProfileMain({ session }: { session: Session }) {
-    const [user, setUser] = useState({username: "", bio: ""});
+    const [user, setUser] = useState({username: "", bio: "", role: "USER"});
 
     useEffect(() => {
         const fetchUserData = async() => {
@@ -29,6 +31,14 @@ export default function ProfileMain({ session }: { session: Session }) {
             <Suspense fallback={<ProfileLoading />}>
                 <ProfileLeft user={user} setUser={setUser} />
                 <ProfileRight session={session} user={user} setUser={setUser} />
+                {
+                    user?.role === "ADMIN" &&
+                    <Link href={'/admin'}>
+                        <div className="absolute top-5 right-5 border-[2px] border-[#666] text-[#666] hover:border-[#fff] hover:text-[#fff] transition-all duration-100 p-2 rounded-full cursor-pointer">
+                            <MdAdminPanelSettings size={20} />
+                        </div>
+                    </Link>
+                }
             </Suspense>
         </>
     )
