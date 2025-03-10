@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { collection, getDocs, addDoc, query, where, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/firebase"
 import { motion } from "motion/react";
+import LoadingYap from "../ui/LoadingYap";
 
 export default function YapLayoutContent({ session } : {session: Session}) {
 
@@ -21,6 +22,8 @@ export default function YapLayoutContent({ session } : {session: Session}) {
     const [user, setUser] = useState<HomieUser>();
     const [homies, setHomies] = useState<HomieUser[]>([]);
     const [homieUsername, setHomieUsername] = useState("");
+
+    const [isCreatingChat, setIsCreatingChat] = useState(false);
 
     const isEqual = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -77,9 +80,11 @@ export default function YapLayoutContent({ session } : {session: Session}) {
     };
 
     const createChat = async (user: HomieUser, receiverId: string) => {
+        setIsCreatingChat(true);
         const existingYapId = await checkExistingChat(user._id || "", receiverId);
 
         if (existingYapId) {
+            setIsCreatingChat(false);
             router.push(`/yap/${existingYapId}`);
         } else {
             try {
@@ -110,53 +115,59 @@ export default function YapLayoutContent({ session } : {session: Session}) {
                     },
                     body: JSON.stringify({ yapId: messageId, participants: [session?.user?.id, receiverId] }),
                 });
-
+                setIsCreatingChat(false);
                 router.push(`/yap/${messageId}`);
             } catch (error) {
                 console.error("Error creating chat:", error);
+                setIsCreatingChat(false);
             }
         }
     }
 
     return (
-        <div className="w-[90%] md:w-[80%] lg:w-[70%] z-[20] flex justify-center items-center gap-3 text-fontPrimary">
-            <div className="searchHomieYap w-[30%] md:w-[20%] lg:w-[15%]">
-                <input 
-                    onChange={(e) => {
-                        setHomieUsername(e.target.value)
-                    }} 
-                    value={homieUsername} 
-                    maxLength={30}
-                    className={`w-full bg-bgSecondary placeholder:tracking-[3px] text-sm text-center p-2 border-2 focus:outline-none selection:bg-[#666] border-transparent focus:border-[#666666] text-fontPrimary placeholder:text-[#bbb] rounded-[20px]`}
-                    type={"text"}
-                    placeholder="search" 
-                />
+        <>
+            <div className="w-[90%] md:w-[80%] lg:w-[70%] z-[20] flex justify-center items-center gap-3 text-fontPrimary">
+                <div className="searchHomieYap w-[30%] md:w-[20%] lg:w-[15%]">
+                    <input 
+                        onChange={(e) => {
+                            setHomieUsername(e.target.value)
+                        }} 
+                        value={homieUsername} 
+                        maxLength={30}
+                        className={`w-full bg-bgSecondary placeholder:tracking-[3px] text-sm text-center p-2 border-2 focus:outline-none selection:bg-[#666] border-transparent focus:border-[#666666] text-fontPrimary placeholder:text-[#bbb] rounded-[20px]`}
+                        type={"text"}
+                        placeholder="search" 
+                    />
+                </div>
+                <div className="homieYaps w-[70%] md:w-[80%] lg:w-[85%] min-h-[60px] bg-bgSecondary overflow-auto flex justify-start items-center gap-2 p-2 rounded-[30px]">
+                    {user?.homies.map((homieId, index) => {
+                        const homie = homies?.find((newHomie) => newHomie._id === homieId)
+                        if(homie?.username.includes(homieUsername)) {
+                            const isCurrentYap = homie?.yaps?.find((yap) => yap.yapId === yapId);
+                            // console.log(isCurrentYap);
+                            return (
+                                <motion.div initial={{x: 50, filter: "blur(10px)"}} whileInView={{x: 0, filter: 'blur(0px)'}} transition={{duration: 0.1 * index}} key={homie._id} onClick={() => createChat(user, homie._id)} className={`flex justify-center items-center hover:bg-[#666666] transition-all duration-150 cursor-pointer gap-2  ${isCurrentYap ? "bg-[#666666]" : "bg-bgPrimary"} px-4 py-2 rounded-[30px]`}>
+                                    <div className="rounded-full overflow-hidden bg-bgSecondary">
+                                        <Image 
+                                            src={getProfileUrl(homie.image)}
+                                            alt=""
+                                            width={100}
+                                            height={100}
+                                            className="w-[20px] rounded-full aspect-square object-cover"
+                                        />
+                                    </div>
+                                    <div>
+                                        <p>{homie.username}</p>
+                                    </div>
+                                </motion.div>
+                            )
+                        }
+                    })}
+                </div>
             </div>
-            <div className="homieYaps w-[70%] md:w-[80%] lg:w-[85%] min-h-[60px] bg-bgSecondary overflow-auto flex justify-start items-center gap-2 p-2 rounded-[30px]">
-                {user?.homies.map((homieId, index) => {
-                    const homie = homies?.find((newHomie) => newHomie._id === homieId)
-                    if(homie?.username.includes(homieUsername)) {
-                        const isCurrentYap = homie?.yaps?.find((yap) => yap.yapId === yapId);
-                        // console.log(isCurrentYap);
-                        return (
-                            <motion.div initial={{x: 50, filter: "blur(10px)"}} whileInView={{x: 0, filter: 'blur(0px)'}} transition={{duration: 0.1 * index}} key={homie._id} onClick={() => createChat(user, homie._id)} className={`flex justify-center items-center hover:bg-[#666666] transition-all duration-150 cursor-pointer gap-2  ${isCurrentYap ? "bg-[#666666]" : "bg-bgPrimary"} px-4 py-2 rounded-[30px]`}>
-                                <div className="rounded-full overflow-hidden bg-bgSecondary">
-                                    <Image 
-                                        src={getProfileUrl(homie.image)}
-                                        alt=""
-                                        width={100}
-                                        height={100}
-                                        className="w-[20px] rounded-full aspect-square object-cover"
-                                    />
-                                </div>
-                                <div>
-                                    <p>{homie.username}</p>
-                                </div>
-                            </motion.div>
-                        )
-                    }
-                })}
-            </div>
-        </div>
+            {isCreatingChat && (
+                <LoadingYap />
+            )}
+        </>
     )
 }

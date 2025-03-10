@@ -20,6 +20,7 @@ import {
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { useRouter } from "next/navigation";
+import LoadingYap from "../ui/LoadingYap";
   
 
 export default function HomiesDash({session} : {session: Session}) {
@@ -212,13 +213,16 @@ export default function HomiesDash({session} : {session: Session}) {
         return null;
     };
 
-    const createChat = async (user: HomieUser, receiverId: string) => {
-        const existingYapId = await checkExistingChat(user._id || "", receiverId);
+    const [isCreatingChat, setIsCreatingChat] = useState(false);
 
-        if (existingYapId) {
-            router.push(`/yap/${existingYapId}`);
-        } else {
-            try {
+    const createChat = async (user: HomieUser, receiverId: string) => {
+        setIsCreatingChat(true);
+        try {
+            const existingYapId = await checkExistingChat(user._id || "", receiverId);
+
+            if (existingYapId) {
+                router.push(`/yap/${existingYapId}`);
+            } else {
                 const newMessageDoc = await addDoc(collection(db, "Yap"), {
                     yapId: "",  
                     participants: [session?.user?.id, receiverId],
@@ -248,9 +252,17 @@ export default function HomiesDash({session} : {session: Session}) {
                 });
 
                 router.push(`/yap/${messageId}`);
-            } catch (error) {
-                console.error("Error creating chat:", error);
             }
+        } catch (error) {
+            console.error("Error creating chat:", error);
+            toast.error("Failed to create chat", {
+                style: {
+                    backgroundColor: "#2a2a2a",
+                    color: "#fff"
+                }
+            });
+        } finally {
+            setIsCreatingChat(false);
         }
     }
 
@@ -557,6 +569,9 @@ export default function HomiesDash({session} : {session: Session}) {
                 </div>
                 
             </div>
+            {isCreatingChat && (
+                <LoadingYap />
+            )}
         </>
     )
 }
