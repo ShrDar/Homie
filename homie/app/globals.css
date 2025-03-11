@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    scroll-behavior: auto;
+}
+
 .sulphur {
     font-family: var(--font-sulphur), sans-serif;
 }

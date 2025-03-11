@@ -19,6 +19,7 @@ import { ID, storage } from "@/config/AppWriteClient";
 import { toast } from "sonner";
 import { RxCross2 } from "react-icons/rx";
 import GifPicker from "./GifPicker";
+import Lenis from "lenis"
 
 interface Message {
     id: string;
@@ -57,6 +58,27 @@ export default function YapDuo({ session } : { session: Session }) {
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
+
+    const smoothContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!smoothContainerRef.current) return;
+
+    // Initialize Lenis only for the specific container
+    const lenis = new Lenis({
+      wrapper: smoothContainerRef.current, // Apply Lenis to the specific container
+      content: smoothContainerRef.current.children[0], // The content inside the scrollable container
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => lenis.destroy();
+  }, []);
 
     useEffect(() => {
         scrollToBottom();
@@ -427,7 +449,7 @@ export default function YapDuo({ session } : { session: Session }) {
                 </div>
             </div>
 
-            <div className="yapsContainer relative w-full bg-bgPrimary h-[70dvh] overflow-auto rounded-[15px] flex flex-col justify-start items-center p-4">
+            <div ref={smoothContainerRef} className="yapsContainer relative w-full bg-bgPrimary h-[70dvh] overflow-auto rounded-[15px] flex flex-col justify-start items-center p-4">
                 <div className="w-full flex flex-col gap-1">
                     {groupMessagesByDate(messages).map((group, groupIndex) => {
                         // Get all messages from current user
