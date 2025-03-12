@@ -20,12 +20,20 @@ router.get("/", async (req, res) => {
 
 // This section will help you get a single record by id
 router.get("/:id", async (req, res) => {
-  let collection = await db.collection("User");
-  let query = { _id: new ObjectId(req.params.id) };
-  let result = await collection.findOne(query);
+  try {
+    const collection = await db.collection("User");
+    const query = { _id: new ObjectId(req.params.id) };
+    const result = await collection.findOne(query);
 
-  if (!result) res.send("Not found").status(404);
-  else res.send(result).status(200);
+    if (!result) {
+      return res.status(404).json({ error: "User not found" }); // Correct way to return 404
+    }
+
+    res.status(200).json(result); // Correct way to send success response
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Internal Server Error" }); // Handles unexpected errors
+  }
 });
 
 //update user name, username, bio

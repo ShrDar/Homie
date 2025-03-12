@@ -47,7 +47,7 @@ export default function SlideBar( {session} : {session: Session} ) {
             }}
             animate={hidden ? "hidden" : "visible"}
             transition={{ duration: 0.4 , ease: "easeInOut" }}
-            onMouseEnter={() => setHidden(false)} className="slideBar z-[100] lg:z-10 bg-transparent text-fontPrimary fixed top-0 h-full left-[-5px] md:left-0 flex justify-center items-center w-[40%] md:w-[20%] lg:w-[14%] sulphur">
+            onMouseEnter={() => setHidden(false)} className="slideBar z-[100] lg:z-10 bg-transparent text-fontPrimary fixed top-0 h-full left-[-5px] md:left-0 flex justify-center items-center w-[50%] md:w-[20%] lg:w-[14%] sulphur">
                 <div className="bg-bgSecondary h-[95%] w-[90%] md:w-full flex flex-col justify-start pt-20 items-center gap-10 rounded-[15px] ml-2">
                     <div className="flex flex-col justify-center items-center gap-2 w-full">
                         <div className="w-full flex items-center justify-center lg:px-4">
