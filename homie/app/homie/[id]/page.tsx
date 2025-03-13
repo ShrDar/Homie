@@ -14,17 +14,17 @@ export default async function HomieIndividual({params} : {params: Promise<{ id: 
     const user: HomieUser = await response.json();
 
     return (
-      <div className="sulphur bg-bgSecondary-100 w-full md:w-auto min-h-[100dvh] flex flex-col justify-center items-center gap-3 text-fontPrimary">
-        <div className="w-[80%] md:w-auto flex flex-col bg-[#434343ae] border-[2px] border-[#888] justify-start md:justify-center items-center gap-3 py-5 px-2 rounded-[15px]">
+      <div className="sulphur bg-bgSecondary-100 w-full lg:w-auto min-h-[100dvh] flex flex-col justify-center items-center gap-3 text-fontPrimary">
+        <div className="w-[80%] md:w-[50%] lg:w-auto flex flex-col bg-[#434343ae] border-[2px] border-[#888] justify-start md:justify-center items-center gap-3 py-5 px-2 rounded-[15px]">
           <div className="flex flex-col justify-center items-center gap-2 w-full">
-            <p className="capitalize text-4xl tracking-[2px]">{user.username}</p>
+            <p className="capitalize text-4xl tracking-[2px] px-5">{user?.name}</p>
             <div className="rounded-full overflow-hidden bg-bgSecondary border-[3px] border-[#888]">
               <Image 
                 width={400}
                 height={400}
                 alt="profilePic"
                 src={getProfileUrl(user?.image)}
-                className="w-[40vw] md:w-[200px] aspect-square object-cover"
+                className="w-[30vw] md:w-[20vw] lg:w-[10vw] rounded-full aspect-square object-cover"
               />
             </div>
             <p className="text-sm tracking-[3px]">@{user?.username}</p>

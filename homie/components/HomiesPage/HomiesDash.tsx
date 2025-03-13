@@ -320,7 +320,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 
                                 return (
                                     <motion.div key={homie._id} initial={{y: -50, opacity: 0, filter: "blur(10px)"}} transition={{delay: index*0.1}} whileInView={{y: 0, opacity: 1, filter: "blur(0px)"}} className="w-full bg-bgSecondary hover:bg-[#3f3f3f] cursor-default p-4 rounded-[15px] flex justify-center items-center">
-                                        <div className="w-[90%] homie flex justify-start items-center gap-4">
+                                        <div onClick={() => router.push(`/homie/${homie?._id}`)} className="w-[90%] homie cursor-pointer flex justify-start items-center gap-4">
                                             <div className="bg-bgPrimary p-2 rounded-full">
                                                 <Image 
                                                     alt="homieProfileImage"
@@ -418,8 +418,8 @@ export default function HomiesDash({session} : {session: Session}) {
                                 {user.homies.map((homieId) => {
                                     const homie = homies.find((user) => user._id === homieId)
                                     return (
-                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] border-bgPrimary rounded-[15px]">
-                                            <div className="homie flex justify-start items-center gap-4 px-2 py-4">
+                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] hover:bg-[#323232] border-bgPrimary rounded-[15px]">
+                                            <div onClick={() => router.push(`/homie/${homie?._id}`)} className="homie w-[90%] flex justify-start cursor-pointer items-center gap-4 px-2 py-4">
                                                 <div className="bg-bgPrimary p-2 rounded-full">
                                                     <Image 
                                                         alt="homieProfileImage"
@@ -469,8 +469,8 @@ export default function HomiesDash({session} : {session: Session}) {
                                 {user.homieSentRequests.map((homieId) => {
                                     const homie = homies.find((user) => user._id === homieId)
                                     return (
-                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] border-bgPrimary rounded-[15px]">
-                                            <div className="homie flex justify-start items-center gap-4 px-2 py-4">
+                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] border-bgPrimary hover:bg-[#323232] rounded-[15px]">
+                                            <div onClick={() => router.push(`/homie/${homie?._id}`)} className="homie cursor-pointer w-[90%] flex justify-start items-center gap-4 px-2 py-4">
                                                 <div className="bg-bgPrimary p-2 rounded-full">
                                                     <Image 
                                                         alt="homieProfileImage"
@@ -508,8 +508,8 @@ export default function HomiesDash({session} : {session: Session}) {
                                 {user.homieRequests.map((homieId) => {
                                     const homie = homies.find((user) => user._id === homieId)
                                     return (
-                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] border-bgPrimary rounded-[15px]">
-                                            <div className="homie flex justify-start items-center gap-4 px-2 py-4">
+                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] hover:bg-[#323232] border-bgPrimary rounded-[15px]">
+                                            <div onClick={() => router.push(`/homie/${homie?._id}`)}  className="homie w-[90%] flex justify-start items-center cursor-pointer gap-4 px-2 py-4">
                                                 <div className="bg-bgPrimary p-2 rounded-full">
                                                     <Image 
                                                         alt="homieProfileImage"

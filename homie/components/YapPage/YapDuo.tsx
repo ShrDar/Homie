@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { RxCross2 } from "react-icons/rx";
 import GifPicker from "./GifPicker";
 import Lenis from "lenis"
+import { useRouter } from "next/navigation";
 
 interface Message {
     id: string;
@@ -40,6 +41,8 @@ interface MessageGroup {
 
 export default function YapDuo({ session } : { session: Session }) {
     const params = useParams();
+    const router = useRouter();
+
     const { yapId } = params;
     const [yapper1, setYapper1] = useState<HomieUser>(); //currentUser
     const [yapper2, setYapper2] = useState<HomieUser>(); //friendUser
@@ -433,7 +436,7 @@ export default function YapDuo({ session } : { session: Session }) {
 
     return (
         <div className="w-full h-[80dvh] z-[10] flex bg-bgSecondary text-fontPrimary rounded-[15px] p-5 flex-col justify-center items-center gap-2">
-            <div className="yapTopBar w-full flex justify-start items-center gap-2">
+            <div onClick={() => router.push(`/homie/${yapper2?._id}`)} className="yapTopBar cursor-pointer w-full flex justify-start items-center gap-2">
                 <div className="rounded-full overflow-hidden bg-bgPrimary p-2">
                     <Image 
                         src={getProfileUrl(yapper2?.image || "")}
@@ -475,7 +478,7 @@ export default function YapDuo({ session } : { session: Session }) {
                                         <div key={message.id} className="w-full flex flex-col">
                                             <div className={`w-full flex ${message.senderId === session?.user?.id ? 'justify-end' : 'justify-start'} items-end gap-2 mb-[2px]`}>
                                                 {showAvatar ? (
-                                                    <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                                                    <div onClick={() => router.push(`/homie/${yapper2?._id}`)} className="w-8 h-8 rounded-full cursor-pointer overflow-hidden flex-shrink-0">
                                                         <Image 
                                                             src={getProfileUrl(yapper2?.image || "")}
                                                             alt=""
