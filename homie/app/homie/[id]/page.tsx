@@ -10,7 +10,6 @@ import { useSession } from "next-auth/react";
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { FiWatch } from "react-icons/fi";
-import { PiHandWavingFill } from "react-icons/pi";
 import { RxCross2 } from "react-icons/rx";
 import { RiMessage3Fill } from "react-icons/ri";
 import { toast } from "sonner";
