@@ -21,6 +21,7 @@ import { RxCross2 } from "react-icons/rx";
 import GifPicker from "./GifPicker";
 import Lenis from "lenis"
 import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
 
 interface Message {
     id: string;
@@ -32,6 +33,8 @@ interface Message {
     type: 'text' | 'image' | 'gif';
     imageId?: string;
     gifUrl?: string;
+    sending?: boolean;
+    deleting?: boolean; // Add this property
 }
 
 interface MessageGroup {
@@ -43,7 +46,10 @@ export default function YapDuo({ session } : { session: Session }) {
     const params = useParams();
     const router = useRouter();
 
-    const { yapId } = params;
+    // Convert params.yapId to string if it's an array
+    const yapId = Array.isArray(params.yapId) ? params.yapId[0] : params.yapId;
+    
+    // const { yapId } = params;
     const [yapper1, setYapper1] = useState<HomieUser>(); //currentUser
     const [yapper2, setYapper2] = useState<HomieUser>(); //friendUser
     const [messages, setMessages] = useState<Message[]>([]);
@@ -174,18 +180,36 @@ export default function YapDuo({ session } : { session: Session }) {
 
         if (!newMessage.trim() || !yapId || !session?.user?.id) return;
 
+        // Create temporary message with the string yapId
+        const tempMessage: Message = {
+            id: 'temp-' + Date.now(),
+            yapId: yapId, // Now this is guaranteed to be a string
+            senderId: session.user.id,
+            content: newMessage.replace(/\n$/, ''),
+            timestamp: Timestamp.now(),
+            status: 'sent',
+            type: 'text',
+            sending: true
+        };
+
+        // Add temporary message to state
+        setMessages(prev => [...prev, tempMessage]);
+        
+        // Clear input immediately
+        setNewMessage("");
+
         try {
-            // Existing Firebase code
-            await addDoc(collection(db, 'Messages'), {
+            // Send to Firebase
+            const docRef = await addDoc(collection(db, 'Messages'), {
                 yapId,
                 senderId: session.user.id,
-                content: newMessage.replace(/\n$/, ''),
+                content: tempMessage.content,
                 timestamp: serverTimestamp(),
                 status: 'sent',
                 type: 'text'
             });
 
-            const previewText = newMessage.replace(/\n/g, ' ').trim();
+            const previewText = tempMessage.content.replace(/\n/g, ' ').trim();
             const yapRef = doc(db, 'Yap', yapId as string);
             await updateDoc(yapRef, {
                 lastMessage: previewText,
@@ -193,7 +217,7 @@ export default function YapDuo({ session } : { session: Session }) {
                 lastSenderId: session.user.id
             });
 
-            // Add MongoDB update
+            // Update MongoDB
             await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session.user.id}/update-yap/${yapId}`, {
                 method: 'PUT',
                 headers: {
@@ -208,9 +232,14 @@ export default function YapDuo({ session } : { session: Session }) {
                 }),
             });
 
-            setNewMessage("");
         } catch (error) {
             console.error("Error sending message:", error);
+            // Remove the temporary message on error
+            setMessages(prev => prev.filter(msg => msg.id !== tempMessage.id));
+            // Show error toast
+            toast.error("Failed to send message");
+            // Restore the message in the input
+            setNewMessage(tempMessage.content);
         }
     };
 
@@ -452,7 +481,7 @@ export default function YapDuo({ session } : { session: Session }) {
                 </div>
             </div>
 
-            <div ref={smoothContainerRef} className="yapsContainer relative w-full bg-bgPrimary h-[70dvh] overflow-auto rounded-[15px] flex flex-col justify-start items-center p-4">
+            <div ref={smoothContainerRef} className="yapsContainer relative w-full bg-bgPrimary h-[70dvh] overflow-y-auto overflow-x-hidden rounded-[15px] flex flex-col justify-start items-center p-4">
                 <div className="w-full flex flex-col gap-1">
                     {groupMessagesByDate(messages).map((group, groupIndex) => {
                         // Get all messages from current user
@@ -512,7 +541,7 @@ export default function YapDuo({ session } : { session: Session }) {
                                                     )}
                                                     <div className={`${message.type === "gif" || message.type === "image" ? "px-2" : "px-4"} py-2 rounded-[20px] ${
                                                         message.senderId === session?.user?.id 
-                                                            ? 'bg-bgSecondary text-fontPrimary overflow-hidden' 
+                                                            ? `bg-bgSecondary text-fontPrimary overflow-hidden ${message.sending || message.deleting ? 'opacity-50' : ''}` 
                                                             : 'bg-[#1b1b1b] text-fontPrimary'
                                                     }`}>
                                                         {message.type === 'image' ? (
@@ -558,7 +587,7 @@ export default function YapDuo({ session } : { session: Session }) {
                                             
                                             {showSeenForMessage && (
                                                 <div className="w-full flex justify-end mt-1">
-                                                    <div className="w-3 h-3 rounded-full overflow-hidden flex-shrink-0">
+                                                    <motion.div initial={{opacity: 0, x: 20}} animate={{opacity: 1, x: 0}} className="w-3 h-3 rounded-full overflow-hidden flex-shrink-0">
                                                         <Image 
                                                             src={getProfileUrl(yapper2?.image || "")}
                                                             alt=""
@@ -566,7 +595,7 @@ export default function YapDuo({ session } : { session: Session }) {
                                                             height={12}
                                                             className="w-full h-full object-cover"
                                                         />
-                                                    </div>
+                                                    </motion.div>
                                                 </div>
                                             )}
                                         </div>

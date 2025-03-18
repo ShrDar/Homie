@@ -400,7 +400,7 @@ export default function HomieIndividual() {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={sendHomieRequest}
-                                    className="bg-bgPrimary md:min-w-[130px] w-full cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent hover:border-[#666666] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2"
+                                    className="bg-bgPrimary md:min-w-[130px] w-full cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-[#888] hover:border-[#666666] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2"
                                 >
                                     <span className="text-sm hidden md:flex">Befriend</span>
                                     <Image 
@@ -432,31 +432,36 @@ export default function HomieIndividual() {
                         }}
                         className="hidden lg:flex w-[400px] h-[600px] bg-[#434343ae] backdrop-blur-sm border-[2px] border-[#888] rounded-[15px] p-4 flex-col gap-4"
                     >
-              
-                        <div className="flex flex-col gap-3">
-                            {homiesData.map((homie, index) => (
-                                <motion.div 
-                                    onClick={() => router.push(`/homie/${homie._id}`)}
-                                    key={homie._id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    whileHover={{ scale: 1.02 }}
-                                    className="flex items-center gap-3 bg-bgPrimary p-3 rounded-lg cursor-pointer"
-                                >
-                                    <Image 
-                                        src={getProfileUrl(homie.image || "")}
-                                        alt={homie.name}
-                                        width={50}
-                                        height={50}
-                                        className="rounded-full w-[50px] h-[50px] object-cover"
-                                    />
-                                    <div>
-                                        <p className="font-bold">{homie.name}</p>
-                                        <p className="text-sm text-[#aaa]">@{homie.username}</p>
-                                    </div>
-                                </motion.div>
-                            ))}
+                        <div className="flex flex-col gap-3 h-full">
+                            {homiesData.length > 0 ? (
+                                homiesData.map((homie, index) => (
+                                    <motion.div 
+                                        onClick={() => router.push(`/homie/${homie._id}`)}
+                                        key={homie._id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.1 }}
+                                        whileHover={{ scale: 1.02 }}
+                                        className="flex items-center gap-3 bg-bgPrimary p-3 rounded-lg cursor-pointer"
+                                    >
+                                        <Image 
+                                            src={getProfileUrl(homie.image || "")}
+                                            alt={homie.name}
+                                            width={50}
+                                            height={50}
+                                            className="rounded-full w-[50px] h-[50px] object-cover"
+                                        />
+                                        <div>
+                                            <p className="font-bold">{homie.name}</p>
+                                            <p className="text-sm text-[#aaa]">@{homie.username}</p>
+                                        </div>
+                                    </motion.div>
+                                ))
+                            ) : (
+                                <div className="flex items-center justify-center h-full">
+                                    <p className="text-[#aaa] text-lg">No homies yet</p>
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 )}
