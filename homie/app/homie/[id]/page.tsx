@@ -13,6 +13,14 @@ import { FiWatch } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
 import { RiMessage3Fill } from "react-icons/ri";
 import { toast } from "sonner";
+import { CiMenuKebab } from "react-icons/ci";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import ReportModal from "@/components/Report/ReportModal";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 
 export default function HomieIndividual() {
     const params = useParams();
@@ -24,6 +32,7 @@ export default function HomieIndividual() {
     const [showHomies, setShowHomies] = useState(false);
     const [homiesData, setHomiesData] = useState<any[]>([]);
     const [isCreatingChat, setIsCreatingChat] = useState(false);
+    const [showReportModal, setShowReportModal] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -151,6 +160,28 @@ export default function HomieIndividual() {
         setCurrentUser(updatedUser);
     };
 
+    const handleRemoveFriend = async(homie?: HomieUser) => {
+        if (!currentUser?._id || !homie?._id) return;
+        
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/homies/${currentUser._id}/remove-homie/${homie._id}`, {
+                method: "DELETE",
+            });
+            if(response.ok) {
+                toast.success(`${homie?.username} is not your homie`, {
+                    icon: '❎',
+                    style: {
+                        backgroundColor: "#2a2a2a",
+                        color: "#fff"
+                    }
+                });
+                await updateUser();
+            }
+        } catch(err) {
+            console.error(err);
+        }
+    };
+
     const handleAcceptBefriend = async(homie: HomieUser) => {
         if (!currentUser?._id || !homie?._id) return;
         
@@ -233,6 +264,17 @@ export default function HomieIndividual() {
 
     return (
         <div className="sulphur bg-bgSecondary-100 w-full min-h-[100dvh] flex justify-center items-center gap-6 text-fontPrimary p-4">
+            {/* Add ReportModal at the top level of the return statement */}
+            
+            {showReportModal && (
+                <ReportModal 
+                    isOpen={showReportModal}
+                    onClose={() => setShowReportModal(false)}
+                    reportedUserId={user?._id || ""}
+                    currentUserId={currentUser?._id || session?.user?.id || ""}
+                />
+            )}
+
             <motion.div 
                 layout="position"
                 initial={{ opacity: 0, y: 20 }}
@@ -241,13 +283,43 @@ export default function HomieIndividual() {
                     layout: { duration: 0.6, type: "spring", bounce: 0.2 },
                     opacity: { duration: 0.3 }
                 }}
-                className="w-[80%] md:w-[50%] lg:w-[30%] flex flex-col bg-[#434343ae] backdrop-blur-sm border-[2px] border-[#888] justify-start md:justify-center items-center gap-3 py-5 px-2 rounded-[15px]"
+                className="w-[80%] md:w-[50%] lg:w-[30%] flex flex-col bg-[#434343ae] backdrop-blur-sm border-[2px] border-[#888] justify-start md:justify-center items-center gap-4 py-5 px-2 rounded-[15px]"
             >
-                <div className="flex flex-col justify-center items-center gap-2 w-full">
+                {currentUser && currentUser._id !== user?._id && (
+                    <div className="absolute top-4 right-4">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="outline-none">
+                                <div className="p-2 hover:bg-[#ffffff20] rounded-full transition-all duration-150">
+                                    <CiMenuKebab size={20} />
+                                </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="bg-bgSecondary border-[1px] border-[#888] text-fontPrimary p-2 rounded-lg">
+                                {isHomie && (
+                                    <DropdownMenuItem
+                                        onClick={() => handleRemoveFriend(user)}
+                                        className="cursor-pointer px-4 py-2 hover:bg-bgPrimary rounded-lg transition-all duration-150 flex items-center gap-2"
+                                    >
+                                        <span className="text-sm sulphur">Remove</span>
+                                    </DropdownMenuItem>
+                                )}
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        setShowReportModal(true);
+                                    }}
+                                    className="cursor-pointer px-4 py-2 hover:bg-bgPrimary rounded-lg transition-all duration-150 flex items-center gap-2"
+                                >
+                                    <span className="text-sm sulphur">Report</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                )}
+
+                <div className="flex flex-col justify-center items-center gap-3 w-full">
                     <motion.p 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="capitalize text-4xl tracking-[2px] px-5 font-bold"
+                        className="capitalize text-4xl tracking-[2px] px-5 font-thin"
                     >
                         {user?.name}
                     </motion.p>

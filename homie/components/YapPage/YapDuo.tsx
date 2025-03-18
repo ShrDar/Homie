@@ -199,15 +199,6 @@ export default function YapDuo({ session } : { session: Session }) {
         setNewMessage("");
 
         try {
-            // Send to Firebase
-            const docRef = await addDoc(collection(db, 'Messages'), {
-                yapId,
-                senderId: session.user.id,
-                content: tempMessage.content,
-                timestamp: serverTimestamp(),
-                status: 'sent',
-                type: 'text'
-            });
 
             const previewText = tempMessage.content.replace(/\n/g, ' ').trim();
             const yapRef = doc(db, 'Yap', yapId as string);
