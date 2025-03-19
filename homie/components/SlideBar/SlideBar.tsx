@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { FaUserAstronaut } from "react-icons/fa6";
 import { RiMessage3Fill } from "react-icons/ri"
+import { logout } from "@/actions/auth";
+import { IoLogOutOutline } from "react-icons/io5";
 
 export default function SlideBar( {session} : {session: Session} ) {
 
@@ -81,57 +83,70 @@ export default function SlideBar( {session} : {session: Session} ) {
                     </div>
 
                     <div className="flex flex-col items-center justify-start w-full gap-10">
-                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/" ? "brightness-[0.5]" : ""}`} onClick={() => setHidden(true)}>
-                            <Link href="/" className="w-full flex justify-start items-center gap-4">
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/" ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`} onClick={() => setHidden(true)}>
+                            <Link href="/" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6">
                                 <Image 
                                     src={"/slideBarIcons/home.svg"} 
                                     alt="" 
                                     height={200} 
                                     width={200} 
-                                    className="h-[30px] w-[30px]"
+                                    className="h-[30px] w-[30px] group-hover:scale-1 transition-transform duration-300"
                                 />
-                                <p>Home</p>
+                                <p className="group-hover:translate-x-1 transition-transform duration-300">Home</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/profile" ? "brightness-[0.5]" : ""}`}>
-                            <Link href="/profile" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
-                                <FaUserAstronaut size={28} />
-                                <p>Profile</p>
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/profile" ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`}>
+                            <Link href="/profile" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6" onClick={() => setHidden(true)}>
+                                <FaUserAstronaut size={28} className="group-hover:scale-1 transition-transform duration-300" />
+                                <p className="group-hover:translate-x-1 transition-transform duration-300">Profile</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/homies" ? "brightness-[0.5]" : ""}`}>
-                            <Link href="/homies" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/homies" ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`}>
+                            <Link href="/homies" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6" onClick={() => setHidden(true)}>
                                 <Image 
                                     src={"/slideBarIcons/homies.svg"} 
                                     alt="" 
                                     height={200} 
                                     width={200} 
-                                    className="h-[30px] w-[30px]"
+                                    className="h-[30px] w-[30px] group-hover:scale-1 transition-transform duration-300"
                                 />
-                                <p>Homies</p>
+                                <p className="group-hover:translate-x-1 transition-transform duration-300">Homies</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin ${!pathname.includes("/yap") ? "brightness-[0.5]" : ""}`}>
-                            <Link href="/yap" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
-                                <RiMessage3Fill size={28} />
-                                <p>Yap</p>
+                        <div className={`w-[70%] text-lg font-thin ${!pathname.includes("/yap") ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`}>
+                            <Link href="/yap" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6" onClick={() => setHidden(true)}>
+                                <RiMessage3Fill size={28} className="group-hover:scale-1 transition-transform duration-300" />
+                                <p className="group-hover:translate-x-1 transition-transform duration-300">Yap</p>
                             </Link>
                         </div>
-                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/teas" ? "brightness-[0.5]" : ""}`}>
-                            <Link href="/teas" className="w-full flex justify-start items-center gap-4" onClick={() => setHidden(true)}>
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/teas" ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`}>
+                            <Link href="/teas" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6" onClick={() => setHidden(true)}>
                                 <Image 
                                     src={"/slideBarIcons/tea.svg"} 
                                     alt="" 
                                     height={200} 
                                     width={200} 
-                                    className="h-[30px] w-[30px]"
+                                    className="h-[30px] w-[30px] group-hover:scale-1 transition-transform duration-300"
                                 />
-                                <p>Teas</p>
+                                <p className="group-hover:translate-x-1 transition-transform duration-300">Teas</p>
                             </Link>
                         </div>
 
                     </div>
+                    
                 </div>  
+                <div className="absolute bottom-0 w-[80%] text-lg font-thin p-2 pl-5 mb-10 bg-bgPrimary flex justify-center items-center rounded-[15px]">
+                    <button 
+                        onClick={() => {
+                            setHidden(true);
+                            logout();
+                        }} 
+                        className="w-full group flex justify-center md:justify-start items-center gap-4 transition-all duration-300 hover:gap-6"
+                    >
+                        <IoLogOutOutline size={24} className="text-gray-400 group-hover:text-red-400 transition-colors duration-300" />
+                        <p className="text-gray-400 hidden md:flex group-hover:text-red-400 transition-colors duration-300 text-base">Sign out</p>
+                    </button>
+                </div>
             </motion.div>
         </>
     )
