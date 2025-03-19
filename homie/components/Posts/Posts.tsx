@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { CiMenuKebab } from "react-icons/ci";
 import { BiCommentDetail } from "react-icons/bi";

@@ -1,5 +1,3 @@
-import EntryBtn from "../Button/EntryBtn";
-import { logout } from "@/actions/auth";
 import { auth } from "@/auth";
 import { prisma } from "@/prisma"; 
 import Posts from "../Posts/Posts";
