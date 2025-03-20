@@ -104,11 +104,40 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
         setUsernameError("");
     }
 
+    const containerVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { 
+            opacity: 1, 
+            y: 0,
+            transition: { 
+                duration: 0.6,
+                staggerChildren: 0.15
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, x: -10 },
+        visible: { 
+            opacity: 1, 
+            x: 0,
+            transition: { duration: 0.4 }
+        }
+    };
+
     return (
         <>
-            <div className="profileRightContainer relative bg-bgSecondary rounded-[15px] px-10 lg:px-16 py-16 z-[11] w-[90%] lg:w-[65%] flex flex-col justify-center items-center gap-10">
-                <p className="text-fontPrimary text-4xl lgtext-5xl font-thin">{firstName} {lastName}</p>
-                <div className="relative flex gap-4 w-full items-center justify-center">
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="profileRightContainer relative bg-bgSecondary rounded-[15px] px-10 lg:px-16 py-16 z-[11] w-[90%] lg:w-[65%] flex flex-col justify-center items-center gap-10"
+            >
+                <motion.p variants={itemVariants} className="text-fontPrimary text-4xl lgtext-5xl font-thin">
+                    {firstName} {lastName}
+                </motion.p>
+
+                <motion.div variants={itemVariants} className="relative flex gap-4 w-full items-center justify-center">
                     <div className="w-1/2">
                         <input 
                             type="text"
@@ -129,8 +158,8 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                             placeholder="Last Name"
                         />
                     </div>
-                </div>
-                <div className="relative w-full flex justify-center items-center gap-4">
+                </motion.div>
+                <motion.div variants={itemVariants} className="relative w-full flex justify-center items-center gap-4">
                     <input 
                         type="text" 
                         placeholder="username" 
@@ -146,20 +175,29 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                                     : 'border-transparent focus:border-[#2a2a2a]'
                         }`} 
                     />
-                </div>
-                <div className="relative w-full flex justify-center items-center gap-4">
+                </motion.div>
+                <motion.div variants={itemVariants} className="relative w-full flex justify-center items-center gap-4">
                     <input type="text" placeholder="bio" value={bio} maxLength={30} onChange={(e) => setBio(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
-                </div>
-                <div className="relative w-full flex justify-center items-center gap-4">
-                    <div onClick={() => handleDiscard()} className="w-full hover:brightness-[0.8] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer">
+                </motion.div>
+                <motion.div variants={itemVariants} className="relative w-full flex justify-center items-center gap-4">
+                    <motion.div 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleDiscard()} 
+                        className="w-full hover:brightness-[0.8] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer"
+                    >
                         <p className="text-[#FF6F6F] text-xl">Discard</p>
-                    </div>
-                    <div onClick={() => handleTransform()} className="w-full hover:brightness-[1.2] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer">
+                    </motion.div>
+                    <motion.div 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleTransform()} 
+                        className="w-full hover:brightness-[1.2] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer"
+                    >
                         <p className="text-[#5FB972] text-xl">Transform</p>
-                    </div>
+                    </motion.div>
+                </motion.div>
 
-
-                </div>
                 <motion.div whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} onClick={() => setOpenDeleteModal(true)} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 right-4 rounded-full border-[2px] border-[#FF6F6F] scale-[0.8] cursor-pointer">
                         <MdDelete color="#FF6F6F" size={12} />
                 </motion.div>
@@ -174,7 +212,7 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                         />
                     </motion.div>
                 }
-            </div>
+            </motion.div>
             <DeleteAccountModal openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} user={user} />
             <ChangePassModal openChangePassModal={openChangePassModal} setOpenChangePassModal={setOpenChangePassModal} user={user} setUser={setUser} />
         </>

@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-// import { toast } from "sonner";
 import { IoIosImages } from "react-icons/io";
 import { FaCheck } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { getProfileUrl } from "@/extra/helpers";
 import { toast } from "sonner";
 import { ID, storage } from "@/config/AppWriteClient";
+import { motion } from "motion/react";
 
 export default function ChangeProfilePicModal( {openChangeProfileModal, setOpenChangeProfileModal, user, setUser} : {openChangeProfileModal : boolean, setOpenChangeProfileModal: any, user: any, setUser: any} ) {
     
@@ -98,27 +98,29 @@ export default function ChangeProfilePicModal( {openChangeProfileModal, setOpenC
 
             </div>
             <div className="fixed px-10 w-[70%] md:w-auto lg:px-16 py-8 flex justify-center lg:scale-[1.2] items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary">
-                <form onSubmit={(e) => e.preventDefault()} className="w-full h-full flex justify-center items-center gap-5 lg:gap-10"> 
-                    <Image 
-                        src={getProfileUrl(currentImage)}
-                        alt="userProfileImage"
-                        width={200}
-                        height={200}
-                        className="w-[150px] h-[150px] bg-bgPrimary rounded-full p-5 aspect-square object-cover"
-                    />
+                <motion.form onSubmit={(e) => e.preventDefault()} className="w-full h-full flex justify-center items-center gap-5 lg:gap-10"> 
+                    <motion.div initial={{scale: 0.5}} animate={{scale: 1}} className="w-full">
+                        <Image 
+                            src={getProfileUrl(currentImage)}
+                            alt="userProfileImage"
+                            width={200}
+                            height={200}
+                            className="w-[150px] h-[150px] bg-bgPrimary rounded-full p-5 aspect-square object-cover"
+                        />
+                    </motion.div>
                     <div className="flex flex-col justify-center items-center gap-4">
-                        <label htmlFor="file" className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#c9c9c9] p-2 rounded-full" >
+                        <motion.label initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.5}} htmlFor="file" className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#c9c9c9] p-2 rounded-full" >
                             <IoIosImages color="#c9c9c9" size={20}/>
                             {/* <div>
                                 <p className="text-xl">Change Pic</p>
                             </div> */}
-                        </label>
+                        </motion.label>
                         <input className="hidden" type="file" accept="image/*" name="file" id="file" onChange={(e) => handlePicChange(e.target.files?.[0])} />
-                        <div onClick={() => handleImageAccept()} className="border-[2px] hover:brightness-[1.5] transition-all duration-150 cursor-pointer p-2 rounded-full border-[#5FB972]">
+                        <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.5}} onClick={() => handleImageAccept()} className="border-[2px] hover:brightness-[1.5] transition-all duration-150 cursor-pointer p-2 rounded-full border-[#5FB972]">
                             <FaCheck size={20} color="5FB972"/>
-                        </div>
+                        </motion.div>
                     </div>
-                </form>
+                </motion.form>
                 <div onClick={() => {
                     setOpenChangeProfileModal(false)
                     setCurrentImage(user.image || "")

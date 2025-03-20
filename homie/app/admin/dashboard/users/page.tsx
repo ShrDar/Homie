@@ -259,7 +259,7 @@ export default function UsersPage() {
           Add User
         </button>
       </div>
-      <div className="bg-bgSecondary rounded-lg border border-borderPrimary w-full p-2 flex flex-col justify-center items-center">
+      <div className="bg-bgSecondary rounded-lg border border-borderPrimary w-full max-h-[80vh] overflow-y-auto p-2 flex flex-col justify-center items-center">
         <div className="overflow-x-auto w-full">
           <table className="w-full">
             <thead>

@@ -17,7 +17,35 @@ export default function SlideBar( {session} : {session: Session} ) {
     const pathname = usePathname();
 
     const [hidden, setHidden] = useState(true);
+    const [firstVisit, setFirstVisit] = useState(true);
+    const [hasInteracted, setHasInteracted] = useState(false);
     const [user, setUser] = useState({username: '', bio: '', image: "", name: ""});
+
+    // Modified effect to handle first visit peek
+    useEffect(() => {
+        let peekInterval: NodeJS.Timeout | null = null;
+        let closeTimeout: NodeJS.Timeout | null = null;
+
+        if (!hasInteracted && firstVisit) {
+            peekInterval = setInterval(() => {
+                setHidden(false);
+                closeTimeout = setTimeout(() => {
+                    setHidden(true);
+                }, 1000);
+            }, 5000);
+
+            return () => {
+                if (peekInterval) clearInterval(peekInterval);
+                if (closeTimeout) clearTimeout(closeTimeout);
+            };
+        }
+    }, [firstVisit, hasInteracted]);
+
+    const handleSidebarInteraction = () => {
+        setHidden(false);
+        setFirstVisit(false);
+        setHasInteracted(true);
+    };
 
     useEffect(() => {
         const fetchUserData = async() => {
@@ -35,21 +63,34 @@ export default function SlideBar( {session} : {session: Session} ) {
         )
     }
 
+
     return (
         <>
-            <div className={`lg:hidden h-full absolute w-full bg-[#00000058] z-[50] ${hidden ? "hidden" : "flex"} `} onClick={() => setHidden(true)}></div>
-            <div className={`w-[40%] h-full bg-transparent z-[10] absolute left-0 hidden ${hidden ? "md:hidden" : "md:flex"} `} onMouseEnter={() => setHidden(true)}></div>
-            <div onClick={() => setHidden((prev) => !prev)} className="absolute flex md:hidden cursor-pointer top-5 right-5">
+            <div className={`lg:hidden h-full absolute w-full bg-[#00000058] z-[50] ${hidden ? "hidden" : "flex"} `} 
+                onClick={() => setHidden(true)}></div>
+            <div className={`w-[40%] h-full bg-transparent z-[10] absolute left-0 hidden ${hidden || firstVisit ? "md:hidden" : "md:flex"} `} 
+                onMouseEnter={() => setHidden(true)}></div>
+            <div onClick={() => {
+                setHidden((prev) => !prev);
+                handleSidebarInteraction();
+            }} className="absolute flex md:hidden cursor-pointer top-5 right-5">
                 <FaBarsStaggered color="#fff" />
             </div>
             <motion.div 
-            variants={{
-                visible: { x: 0 },
-                hidden: { x: "-98%" }
-            }}
-            animate={hidden ? "hidden" : "visible"}
-            transition={{ duration: 0.4 , ease: "easeInOut" }}
-            onMouseEnter={() => setHidden(false)} className="slideBar z-[100] lg:z-10 bg-transparent text-fontPrimary fixed top-0 h-full left-[-5px] md:left-0 flex justify-center items-center w-[50%] md:w-[20%] lg:w-[14%] sulphur">
+                variants={{
+                    visible: { x: 0 },
+                    hidden: { x: "-98%" },
+                    peek: { x: "-70%" }
+                }}
+                animate={
+                    firstVisit 
+                        ? hidden ? "hidden" : "peek"
+                        : hidden ? "hidden" : "visible"
+                }
+                transition={{ duration: 0.4 , ease: "easeInOut" }}
+                onMouseEnter={handleSidebarInteraction}
+                className="slideBar z-[100] lg:z-10 bg-transparent text-fontPrimary fixed top-0 h-full left-[-5px] md:left-0 flex justify-center items-center w-[50%] md:w-[20%] lg:w-[14%] sulphur"
+            >
                 <div className="bg-bgSecondary h-[95%] w-[90%] md:w-full flex flex-col justify-start pt-20 items-center gap-10 rounded-[15px] ml-2">
                     <div className="flex flex-col justify-center items-center gap-2 w-full">
                         <div className="w-full flex items-center justify-center lg:px-4">
