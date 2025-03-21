@@ -1,8 +1,13 @@
 "use client"
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { CiMenuKebab } from "react-icons/ci";
 import { BiCommentDetail } from "react-icons/bi";
+import { MdOutlinePostAdd } from "react-icons/md";
+import { motion, useScroll, useMotionValueEvent } from 'motion/react';
+import { Session } from "next-auth"
+import PostsAdd from './PostsAdd';
+
 
 interface Post {
   id: string;
@@ -14,7 +19,9 @@ interface Post {
 }
 
 
-export default function Posts() {
+export default function Posts({session} : {session: Session}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [user, setUser] = useState<any>(null);
   const [posts] = useState<Post[]>([
     {
       id: '1',
@@ -31,10 +38,63 @@ export default function Posts() {
       timestamp: '2hr ago'
     },
   ]);
+  const [openPostAddModal, setOpenPostAddModal] = useState(false);
+  const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const { scrollY } = useScroll({ container: containerRef });
+  const [lastActivityTime, setLastActivityTime] = useState(Date.now());
 
+  // Add user fetch effect
+  useEffect(() => {
+    const fetchUserData = async() => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
+        const userData = await response.json();
+        setUser(userData);
+      } catch(err) {
+        console.error(err);
+      }
+    }
+    
+    if (session?.user?.id) {
+      fetchUserData();
+    }
+  }, [session?.user?.id]);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsButtonVisible(true);
+    setLastActivityTime(Date.now());
+  });
+
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const handleMouseMove = () => {
+      setIsButtonVisible(true);
+      setLastActivityTime(Date.now());
+    };
+
+    const checkInactivity = () => {
+      if (Date.now() - lastActivityTime > 5000) {
+        setIsButtonVisible(false);
+      }
+      timeoutId = setTimeout(checkInactivity, 1000);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    timeoutId = setTimeout(checkInactivity, 1000);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(timeoutId);
+    };
+  }, [lastActivityTime]);
 
   return (
-    <div className="min-h-screen w-full flex flex-col justify-start items-center overflow-y-scroll snap-y snap-mandatory">
+    <div 
+      ref={containerRef}
+      className="min-h-screen w-full flex flex-col justify-start items-center overflow-y-scroll snap-y snap-mandatory"
+    >
       {posts.map((post) => (
         <div
           key={post.id}
@@ -95,6 +155,28 @@ export default function Posts() {
             </div>
         </div>
       ))}
+      
+      <motion.button 
+        initial={{ scale: 0 }}
+        animate={{ 
+          scale: isButtonVisible ? 1 : 0,
+        }}
+        whileHover={{scale: 1.1}}
+        whileTap={{scale: 0.9}}
+        transition={{ duration: 0.1 , ease: 'linear'}}
+        className={`fixed bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#] transition-all duration-300 z-50 ${
+          !isButtonVisible && 'pointer-events-none'
+        }`}
+        onClick={() => setOpenPostAddModal(true)}
+      >
+        <MdOutlinePostAdd className="w-6 h-6" />
+      </motion.button>
+
+      <PostsAdd 
+        openPostAddModal={openPostAddModal} 
+        setOpenPostAddModal={setOpenPostAddModal} 
+        user={user} 
+      />
     </div>
   );
 }

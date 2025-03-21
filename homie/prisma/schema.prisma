@@ -75,13 +75,19 @@ model Account {
 }
  
 model Post {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  content   String
-  userId    String   @db.ObjectId  // Foreign key to User model
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  content    String
+  userId     String   @db.ObjectId  // Foreign key to User model
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  image   String?  // Optional image for the post
+  commentId  String?  // Stores the Firebase comment thread ID
+
+  reactions  Json     @default("{}") // Stores reaction counts as JSON
+  isEdited   Boolean  @default(false) // Indicates if post was edited
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Session {

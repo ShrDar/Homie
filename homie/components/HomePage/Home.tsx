@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/prisma"; 
 import Posts from "../Posts/Posts";
+import { redirect } from "next/navigation";
 
 const generateUsername = (name: string) => {
   const timestamp = Date.now();
@@ -9,6 +10,10 @@ const generateUsername = (name: string) => {
 
 export default async function HomePage() {
   const session = await auth();
+
+  if(!session) {
+    redirect('/');
+  }
 
   
     if (session?.user?.email) {
@@ -41,7 +46,7 @@ export default async function HomePage() {
 
   return (
     <div className="homeContainer bg-bgPrimary text-fontPrimary z-[5] sulphur h-screen w-screen flex flex-col items-center justify-center">
-      <Posts />
+      <Posts session={session} />
     </div>
   );
 }
