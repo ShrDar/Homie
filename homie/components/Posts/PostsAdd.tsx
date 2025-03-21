@@ -6,8 +6,9 @@ import { IoIosImages } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 import { storage, ID } from "@/config/AppWriteClient";
 import { toast } from 'sonner';
+import TextareaAutosize from 'react-textarea-autosize';
 
-export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user }: { openPostAddModal: boolean, setOpenPostAddModal: any, user: any }) {
+export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, setPosts }: { openPostAddModal: boolean, setOpenPostAddModal: any, user: any, setPosts: any }) {
     const [content, setContent] = useState('');
     const [currentImage, setCurrentImage] = useState('');
     const [currentFile, setCurrentFile] = useState<File | null>(null);
@@ -41,12 +42,13 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user }
         }
 
         setIsPosting(true);
-        let imageId = ID.unique();
+        let imageId = "";
         
         try {
             // Upload image if exists
             if (currentFile) {
                 try {
+                    imageId = ID.unique();
                     const result = await storage.createFile(
                         process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "",
                         imageId,
@@ -85,7 +87,9 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user }
             if (response.ok) {
                 toast.success("Post created successfully!");
                 setContent('');
-                setCurrentImage('');
+                setCurrentImage("");
+                setCurrentFile(null);
+                fetchPosts();
                 setOpenPostAddModal(false);
             } else {
                 toast.error("Failed to create post");
@@ -97,11 +101,21 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user }
             setIsPosting(false);
         }
     }
+    const fetchPosts = async () => {
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`);
+          const postsData = await response.json();
+          setPosts(postsData);
+        } catch (err) {
+          console.error('Error fetching posts:', err);
+        }
+      };
 
     return (
         <>
             <div onClick={() => {
                 setOpenPostAddModal(false)
+                fetchPosts();
             }} 
                 className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000052]">
             </div>
@@ -113,6 +127,8 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user }
                             setOpenPostAddModal(false);
                             setContent('');
                             setCurrentImage('');
+                            setCurrentFile(null);
+                            fetchPosts();
                         }} 
                             className="p-2 hover:bg-bgPrimary rounded-full transition-colors">
                             <RxCross2 size={24} />
@@ -120,11 +136,12 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user }
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <textarea
+                        <TextareaAutosize
                             placeholder="What's on your mind?"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full h-32 p-3 rounded-lg bg-bgPrimary outline-none resize-none selection:bg-bgSecondary"
+                            className="w-full min-h-[8rem] p-3 rounded-lg bg-bgPrimary outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap"
+                            maxRows={10}
                         />
                         
                         <div className="flex gap-4 items-center">
@@ -150,7 +167,7 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user }
                             <div className="mt-4 border-t border-bgPrimary pt-4">
                                 <h3 className="text-lg mb-4">Preview</h3>
                                 <div className="bg-bgPrimary rounded-[15px] p-4">
-                                    {content && <p className="text-sm mb-4">{content}</p>}
+                                    {content && <p className="text-sm mb-4 whitespace-pre-wrap">{content}</p>}
                                     {currentImage && (
                                         <div className="relative w-full h-48">
                                             <Image
