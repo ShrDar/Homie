@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import users from  "./routes/users.js";
 import homies from "./routes/homies.js"
-import yaps from "./routes/yaps.js"
+import yaps from "./routes/yaps.js";
+import posts from "./routes/posts.js";
 import dotenv from 'dotenv'; 
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/users", users);
 app.use("/homies", homies);
 app.use("/yaps", yaps);
+app.use("/posts", posts);
 
 // start the Express server
 app.listen(PORT, () => {
