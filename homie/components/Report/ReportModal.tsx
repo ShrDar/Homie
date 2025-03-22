@@ -11,13 +11,23 @@ interface ReportModalProps {
     onClose: () => void;
     reportedUserId: string;
     currentUserId: string;
+    reportType?: string; // Make it optional to maintain backward compatibility
 }
 
-export default function ReportModal({ isOpen, onClose, reportedUserId, currentUserId }: ReportModalProps) {
+export default function ReportModal({ isOpen, onClose, reportedUserId, currentUserId, reportType = "user" }: ReportModalProps) {
     const [reason, setReason] = useState("");
+    const [selectedType, setSelectedType] = useState(reportType);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
     const [canShowModal, setCanShowModal] = useState(false);
+
+    const reportTypes = [
+        { value: "user", label: "User Report" },
+        { value: "content", label: "Content Report" },
+        { value: "harassment", label: "Harassment" },
+        { value: "spam", label: "Spam" },
+        { value: "other", label: "Other" }
+    ];
 
     useEffect(() => {
         let isActive = true; 
@@ -85,7 +95,7 @@ export default function ReportModal({ isOpen, onClose, reportedUserId, currentUs
         setIsSubmitting(true);
         try {
             await addDoc(collection(db, "Reports"), {
-                reportType: "user",
+                reportType: selectedType,
                 reporterId: currentUserId,
                 reportedUserId: reportedUserId,
                 reason: reason.trim(),
@@ -143,16 +153,31 @@ export default function ReportModal({ isOpen, onClose, reportedUserId, currentUs
                             exit={{ opacity: 0 }}
                             onClick={onClose}
                             className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-                        >
-                        </motion.div>
-
+                        />
                         <motion.div
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.95, opacity: 0 }}
                         className="fixed z-[100] lg:w-[32%] translate-x-[-50%] translate-y-[-50%] bg-bgSecondary rounded-[15px] p-6"
                     >
-                        <h2 className="text-2xl text-center font-bold text-fontPrimary mb-4">Report User</h2>
+                        <h2 className="text-2xl text-center font-bold text-fontPrimary mb-4">Report</h2>
+                        
+                        {/* Add Report Type Selection */}
+                        <div className="mb-4">
+                            <label className="block text-fontPrimary mb-2">Report Type</label>
+                            <select
+                                value={selectedType}
+                                onChange={(e) => setSelectedType(e.target.value)}
+                                className="w-full p-3 rounded-lg bg-bgPrimary text-fontPrimary border-[2px] border-transparent focus:outline-none focus:border-[#888]"
+                            >
+                                {reportTypes.map((type) => (
+                                    <option key={type.value} value={type.value}>
+                                        {type.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <textarea
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}

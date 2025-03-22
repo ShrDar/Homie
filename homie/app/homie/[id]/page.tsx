@@ -272,6 +272,7 @@ export default function HomieIndividual() {
                     onClose={() => setShowReportModal(false)}
                     reportedUserId={user?._id || ""}
                     currentUserId={currentUser?._id || session?.user?.id || ""}
+                    reportType="user"
                 />
             )}
 

@@ -7,9 +7,10 @@ import { RxCross2 } from "react-icons/rx";
 import { storage, ID } from "@/config/AppWriteClient";
 import { toast } from 'sonner';
 import TextareaAutosize from 'react-textarea-autosize';
+import { getProfileUrl } from '@/extra/helpers';
 
 export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, setPosts }: { openPostAddModal: boolean, setOpenPostAddModal: any, user: any, setPosts: any }) {
-    const [content, setContent] = useState('Preview');
+    const [content, setContent] = useState('');
     const [currentImage, setCurrentImage] = useState('');
     const [currentFile, setCurrentFile] = useState<File | null>(null);
     const [isPosting, setIsPosting] = useState(false);
@@ -135,13 +136,13 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                         </button>
                     </div>
 
-                    <div className="flex flex-row gap-4">
-                        <div className='w-[50%] flex flex-col justify-center items-stretch gap-4'>
+                    <div className="flex flex-row gap-4 h-full">
+                        <div className='w-[50%] flex flex-col min-h-full justify-center items-stretch gap-4'>
                             <TextareaAutosize
                                 placeholder="What's on your mind?"
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                className="w-full min-h-[8rem] p-3 rounded-lg bg-bgPrimary outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap"
+                                className="w-full min-h-[8rem] p-3 rounded-lg h-full bg-bgPrimary outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap"
                                 maxRows={10}
                             />
                             
@@ -157,7 +158,7 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                                 </label>
                                 <button
                                     onClick={handleSubmit}
-                                    className="ml-auto bg-bgPrimary hover:bg-blue-600 px-6 py-2 rounded-full transition-colors"
+                                    className="ml-auto bg-bgPrimary hover:bg-[#242424] px-6 py-2 rounded-full transition-colors"
                                 >
                                     Post
                                 </button>
@@ -167,15 +168,35 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                         {/* Preview Section */}
                         
                             <div className="w-[50%] h-full border-bgPrimary border-l-[3px] border-[#888] pl-4 p-2">
-                                {/* {!content && (
-                                    <h3 className="text-lg mb-4 text-center">Preview</h3>
-                                )} */}
-                                <div className="bg-bgPrimary min-h-[8rem] rounded-[15px] p-4">
+                                <div className="bg-bgPrimary  rounded-[15px] p-4 flex flex-col gap-2">
+                                    <div className='flex justify-start items-center gap-2'>
+                                        <div className="w-10 h-10 rounded-full overflow-hidden bg-bgPrimary">
+                                            {user?.image ? (
+                                            <Image
+                                                key={`user-image-${user._id}`}
+                                                src={getProfileUrl(user.image)}
+                                                alt={user.name || 'User'}
+                                                width={40}
+                                                height={40}
+                                                className="w-full h-full aspect-auto object-cover"
+                                            />
+                                            ) : (
+                                            <div className="w-full h-full bg-bgPrimary" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-fontPrimary text-md">{user?.name || 'Anonymous'}</h3>
+                                            <p className="text-sm opacity-60">
+                                                Just Now
+                                            </p>
+                                        </div>
+                                    </div>
+
                                     {content ?
                                         (
-                                            <p className="text-sm mb-4 whitespace-pre-wrap max-h-[10rem] overflow-y-auto">{content}</p>
+                                            <p className="text-sm whitespace-pre-wrap max-h-[10rem] break-words overflow-y-auto">{content}</p>
                                         ) : (
-                                            <p className="text-sm mb-4 whitespace-pre-wrap max-h-[10rem] overflow-y-auto">Preview</p>
+                                            <p className="text-sm whitespace-pre-wrap max-h-[10rem] overflow-y-auto">{`What's in you mind ?`}</p>
                                         )
                                     }
                                     {currentImage && (
