@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import TextareaAutosize from 'react-textarea-autosize';
 
 export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, setPosts }: { openPostAddModal: boolean, setOpenPostAddModal: any, user: any, setPosts: any }) {
-    const [content, setContent] = useState('');
+    const [content, setContent] = useState('Preview');
     const [currentImage, setCurrentImage] = useState('');
     const [currentFile, setCurrentFile] = useState<File | null>(null);
     const [isPosting, setIsPosting] = useState(false);
@@ -135,39 +135,49 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                         </button>
                     </div>
 
-                    <div className="flex flex-col gap-4">
-                        <TextareaAutosize
-                            placeholder="What's on your mind?"
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            className="w-full min-h-[8rem] p-3 rounded-lg bg-bgPrimary outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap"
-                            maxRows={10}
-                        />
-                        
-                        <div className="flex gap-4 items-center">
-                            <label className="cursor-pointer hover:brightness-[1.2] transition-all duration-100 flex items-center gap-2 border-2 border-[#c9c9c9] p-2 rounded-full">
-                                <IoIosImages color="#c9c9c9" size={20}/>
-                                <input 
-                                    type="file" 
-                                    accept="image/*" 
-                                    onChange={(e) => handleImageChange(e.target.files?.[0])}
-                                    className="hidden" 
-                                />
-                            </label>
-                            <button
-                                onClick={handleSubmit}
-                                className="ml-auto bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded-full transition-colors"
-                            >
-                                Post
-                            </button>
+                    <div className="flex flex-row gap-4">
+                        <div className='w-[50%] flex flex-col justify-center items-stretch gap-4'>
+                            <TextareaAutosize
+                                placeholder="What's on your mind?"
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                className="w-full min-h-[8rem] p-3 rounded-lg bg-bgPrimary outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap"
+                                maxRows={10}
+                            />
+                            
+                            <div className="flex gap-4 items-center">
+                                <label className="cursor-pointer hover:brightness-[1.2] transition-all duration-100 flex items-center gap-2 border-2 border-[#c9c9c9] p-2 rounded-full">
+                                    <IoIosImages color="#c9c9c9" size={20}/>
+                                    <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        onChange={(e) => handleImageChange(e.target.files?.[0])}
+                                        className="hidden" 
+                                    />
+                                </label>
+                                <button
+                                    onClick={handleSubmit}
+                                    className="ml-auto bg-bgPrimary hover:bg-blue-600 px-6 py-2 rounded-full transition-colors"
+                                >
+                                    Post
+                                </button>
+                            </div>
                         </div>
 
                         {/* Preview Section */}
-                        {(content || currentImage) && (
-                            <div className="mt-4 border-t border-bgPrimary pt-4">
-                                <h3 className="text-lg mb-4">Preview</h3>
-                                <div className="bg-bgPrimary rounded-[15px] p-4">
-                                    {content && <p className="text-sm mb-4 whitespace-pre-wrap">{content}</p>}
+                        
+                            <div className="w-[50%] h-full border-bgPrimary border-l-[3px] border-[#888] pl-4 p-2">
+                                {/* {!content && (
+                                    <h3 className="text-lg mb-4 text-center">Preview</h3>
+                                )} */}
+                                <div className="bg-bgPrimary min-h-[8rem] rounded-[15px] p-4">
+                                    {content ?
+                                        (
+                                            <p className="text-sm mb-4 whitespace-pre-wrap max-h-[10rem] overflow-y-auto">{content}</p>
+                                        ) : (
+                                            <p className="text-sm mb-4 whitespace-pre-wrap max-h-[10rem] overflow-y-auto">Preview</p>
+                                        )
+                                    }
                                     {currentImage && (
                                         <div className="relative w-full h-48">
                                             <Image
@@ -180,7 +190,7 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                                     )}
                                 </div>
                             </div>
-                        )}
+                        
                     </div>
                 </div>
             </div>
