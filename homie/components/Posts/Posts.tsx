@@ -117,7 +117,7 @@ export default function Posts({session} : {session: Session}) {
       window.removeEventListener('mousemove', handleMouseMove);
       clearTimeout(timeoutId);
     };
-  }, [lastActivityTime]);
+  }, [lastActivityTime, isButtonVisible]);
 
   useEffect(() => {
     
@@ -196,7 +196,7 @@ export default function Posts({session} : {session: Session}) {
     <>
       <motion.div 
         ref={containerRef}
-        onMouseMove={(e) => {
+        onMouseMove={() => {
           handleMovementForAddPost();
         }}
         onScroll={() => handleMovementForAddPost()}

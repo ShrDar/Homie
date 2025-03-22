@@ -16,62 +16,49 @@ interface ReportModalProps {
 
 export default function ReportModal({ isOpen, onClose, reportedContentId, currentUserId, reportType }: ReportModalProps) {
     const [reason, setReason] = useState("");
-    const [selectedType, setSelectedType] = useState(reportType);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
     const [canShowModal, setCanShowModal] = useState(false);
 
+    const checkExistingReport = async () => {
+        if (!isOpen) {
+            setCanShowModal(false);
+            return;
+        }
+        
+        setIsChecking(true);
+        try {
+            const reportsRef = collection(db, "Reports");
+            const querySnapshot = await getDocs(
+                query(reportsRef, 
+                    where("reporterId", "==", currentUserId),
+                    where("reportedContentId", "==", reportedContentId)
+                )
+            );
+
+            if (!querySnapshot.empty) {
+                toast.error("You have already reported this user 🙅🏻‍♂️", {
+                    style: {
+                        backgroundColor: "#2a2a2a",
+                        color: "#fff",
+                        borderColor: "#FF6F6F"
+                    }
+                });
+                onClose();
+            } else {
+                setCanShowModal(true);
+            }
+        } catch (error) {
+            console.error("Error checking existing report:", error);
+            onClose();
+        } finally {
+            setIsChecking(false);
+        }
+    };
 
     useEffect(() => {
-        let isActive = true; 
-
-        const checkExistingReport = async () => {
-            if (!isOpen) {
-                setCanShowModal(false);
-                return;
-            }
-            
-            setIsChecking(true);
-            try {
-                const reportsRef = collection(db, "Reports");
-                const querySnapshot = await getDocs(
-                    query(reportsRef, 
-                        where("reporterId", "==", currentUserId),
-                        where("reportedContentId", "==", reportedContentId)
-                    )
-                );
-
-                if (!querySnapshot.empty && isActive) { // Check if component is still mounted
-                    toast.error("You have already reported this user 🙅🏻‍♂️", {
-                        style: {
-                            backgroundColor: "#2a2a2a",
-                            color: "#fff",
-                            borderColor: "#FF6F6F"
-                        }
-                    });
-                    onClose();
-                } else if (isActive) {
-                    setCanShowModal(true);
-                }
-            } catch (error) {
-                if (isActive) {
-                    console.error("Error checking existing report:", error);
-                    onClose();
-                }
-            } finally {
-                if (isActive) {
-                    setIsChecking(false);
-                }
-            }
-        };
-
         checkExistingReport();
-
-        // Cleanup function
-        return () => {
-            isActive = false;
-        };
-    }, []);
+    }, []); // Empty dependency array means it runs only once when component mounts
 
     const handleSubmit = async () => {
         if (!reason.trim()) {
@@ -88,7 +75,7 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
         setIsSubmitting(true);
         try {
             await addDoc(collection(db, "Reports"), {
-                reportType: selectedType,
+                reportType: reportType,
                 reporterId: currentUserId,
                 reportedContentId: reportedContentId,
                 reason: reason.trim(),
