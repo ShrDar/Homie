@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import ReportModal from "@/components/Report/ReportModal";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 
 export default function HomieIndividual() {
     const params = useParams();
@@ -257,7 +258,18 @@ export default function HomieIndividual() {
                 animate={{ opacity: 1 }}
                 className="flex flex-col sulphur items-center justify-center min-h-screen text-fontPrimary text-3xl"
             >
-                {error ? "No Such Homie" : "Loading..."}
+                {error ? "No Such Homie" : 
+                <TextShimmerWave
+                    className="[--base-color:#bbb] [--base-gradient-color:#2a2a2a]"
+                    duration={1.3}
+                    spread={1}
+                    zDistance={1}
+                    scaleDistance={1.1}
+                    rotateYDistance={20}
+                    >
+                        Wait . . .
+                </TextShimmerWave>
+            }
             </motion.div>
         );
     }
@@ -270,7 +282,7 @@ export default function HomieIndividual() {
                 <ReportModal 
                     isOpen={showReportModal}
                     onClose={() => setShowReportModal(false)}
-                    reportedUserId={user?._id || ""}
+                    reportedContentId={user?._id || ""}
                     currentUserId={currentUser?._id || session?.user?.id || ""}
                     reportType="user"
                 />

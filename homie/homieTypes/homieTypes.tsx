@@ -24,3 +24,22 @@ export type HomieUser = {
     lastSenderId: string;
     status: 'sent' | 'delivered' | 'read'; // Assuming 'sent', 'delivered', or 'read' are possible statuses
   };
+
+  export type Post = {
+    _id: string;
+    title: string;
+    content: string;
+    userId: string;
+    image?: string;
+    commentId?: string;
+    reactions: {
+      dap: number;
+      love: number;
+      laugh: number;
+      angry: number;
+      cheeky: number;
+    };
+    isEdited: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };

@@ -9,25 +9,18 @@ import { db } from "@/config/firebase";
 interface ReportModalProps {
     isOpen: boolean;
     onClose: () => void;
-    reportedUserId: string;
+    reportedContentId: string;
     currentUserId: string;
     reportType?: string; // Make it optional to maintain backward compatibility
 }
 
-export default function ReportModal({ isOpen, onClose, reportedUserId, currentUserId, reportType = "user" }: ReportModalProps) {
+export default function ReportModal({ isOpen, onClose, reportedContentId, currentUserId, reportType }: ReportModalProps) {
     const [reason, setReason] = useState("");
     const [selectedType, setSelectedType] = useState(reportType);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
     const [canShowModal, setCanShowModal] = useState(false);
 
-    const reportTypes = [
-        { value: "user", label: "User Report" },
-        { value: "content", label: "Content Report" },
-        { value: "harassment", label: "Harassment" },
-        { value: "spam", label: "Spam" },
-        { value: "other", label: "Other" }
-    ];
 
     useEffect(() => {
         let isActive = true; 
@@ -44,12 +37,12 @@ export default function ReportModal({ isOpen, onClose, reportedUserId, currentUs
                 const querySnapshot = await getDocs(
                     query(reportsRef, 
                         where("reporterId", "==", currentUserId),
-                        where("reportedUserId", "==", reportedUserId)
+                        where("reportedContentId", "==", reportedContentId)
                     )
                 );
 
                 if (!querySnapshot.empty && isActive) { // Check if component is still mounted
-                    toast.error("You have already reported this user", {
+                    toast.error("You have already reported this user 🙅🏻‍♂️", {
                         style: {
                             backgroundColor: "#2a2a2a",
                             color: "#fff",
@@ -78,7 +71,7 @@ export default function ReportModal({ isOpen, onClose, reportedUserId, currentUs
         return () => {
             isActive = false;
         };
-    }, [isOpen, currentUserId, reportedUserId, onClose]);
+    }, []);
 
     const handleSubmit = async () => {
         if (!reason.trim()) {
@@ -97,7 +90,7 @@ export default function ReportModal({ isOpen, onClose, reportedUserId, currentUs
             await addDoc(collection(db, "Reports"), {
                 reportType: selectedType,
                 reporterId: currentUserId,
-                reportedUserId: reportedUserId,
+                reportedContentId: reportedContentId,
                 reason: reason.trim(),
                 createdAt: new Date().toISOString()
             });
@@ -162,21 +155,6 @@ export default function ReportModal({ isOpen, onClose, reportedUserId, currentUs
                     >
                         <h2 className="text-2xl text-center font-bold text-fontPrimary mb-4">Report</h2>
                         
-                        {/* Add Report Type Selection */}
-                        <div className="mb-4">
-                            <label className="block text-fontPrimary mb-2">Report Type</label>
-                            <select
-                                value={selectedType}
-                                onChange={(e) => setSelectedType(e.target.value)}
-                                className="w-full p-3 rounded-lg bg-bgPrimary text-fontPrimary border-[2px] border-transparent focus:outline-none focus:border-[#888]"
-                            >
-                                {reportTypes.map((type) => (
-                                    <option key={type.value} value={type.value}>
-                                        {type.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
 
                         <textarea
                             value={reason}
