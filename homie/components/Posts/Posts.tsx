@@ -21,6 +21,10 @@ import { toast } from 'sonner';
 import { storage } from '@/config/AppWriteClient';
 import { useRouter } from 'next/navigation';
 import DefaultLoading from '../Loading/DefaultLoading';
+import PostsComment from './PostsComment';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from '@/config/firebase';
+import ShimmerLoading from '../Loading/ShimmerLoading';
 
 function getRelativeTime(dateString: string): string {
   const date = new Date(dateString);
@@ -45,8 +49,10 @@ export default function Posts({session} : {session: Session}) {
   const [user, setUser] = useState<any>(null);
   const [users, setUsers] = useState<HomieUser[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);  // Add this line
   const [openPostAddModal, setOpenPostAddModal] = useState(false);
   const [openPostEditModal, setOpenPostEditModal] = useState(false);
+  const [openPostCommentModal, setOpenPostCommentModal] = useState(false);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
   // const { scrollY } = useScroll({ container: containerRef });
   // const mouseX = useMotionValue(0);
@@ -55,6 +61,7 @@ export default function Posts({session} : {session: Session}) {
   const [showReportModal, setShowReportModal] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string>("");
   const [currentEditPost, setCurrentEditPost] = useState<Post | null>(null);
+  const [currentCommentPost, setCurrentCommentPost] = useState<Post | null>(null);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
 
   // Add user fetch effect
@@ -125,18 +132,34 @@ export default function Posts({session} : {session: Session}) {
   }, []);
   
   const fetchPosts = async () => {
+    setIsLoadingPosts(true);
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`);
       const postsData = await response.json();
       setPosts(postsData);
     } catch (err) {
       console.error('Error fetching posts:', err);
+    } finally {
+      setIsLoadingPosts(false);
     }
   };
 
   const handleDeletePost = async (postId: string, imageId: string | undefined) => {
     setIsDeletingPost(true);
     try {
+        // Get the post data to access the commentId
+        const postResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${postId}`);
+        const postData = await postResponse.json();
+
+        if (postData.commentId) {
+            try {
+                const commentRef = doc(db, "Comments", postData.commentId);
+                await deleteDoc(commentRef);
+            } catch (err) {
+                console.error("Error deleting comment document:", err);
+            }
+        }
+
         // Delete image from AppWrite if exists
         if (imageId && !imageId.startsWith("http")) {
             try {
@@ -190,8 +213,45 @@ export default function Posts({session} : {session: Session}) {
     } finally {
         setIsDeletingPost(false);
     }
-  };
+};
 
+  if(isLoadingPosts) {
+    return (
+      <ShimmerLoading displayText='Posts Incoming' />
+    )
+  }
+
+  if(posts.length === 0) {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4">
+        <div className="w-24 h-24 bg-bgPrimary rounded-full flex items-center justify-center">
+          <MdOutlinePostAdd className="w-12 h-12 text-fontPrimary opacity-50" />
+        </div>
+        <div className="text-center">
+          <h2 className="text-fontPrimary text-2xl font-semibold mb-2">No Posts Yet</h2>
+          <p className="text-[#888] max-w-md">Be the first one to share something amazing with your homies!</p>
+        </div>
+        <motion.button 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          onClick={() => setOpenPostAddModal(true)}
+          className="px-6 py-3 bg-bgSecondary text-fontPrimary rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 flex items-center gap-2"
+        >
+          <MdOutlinePostAdd className="w-5 h-5" />
+          <span>Create Post</span>
+        </motion.button>
+        <PostsAdd 
+          openPostAddModal={openPostAddModal} 
+          setOpenPostAddModal={setOpenPostAddModal} 
+          setPosts={setPosts}
+          user={user} 
+        />
+      </div>
+    )
+  }
   return (
     <>
       <motion.div 
@@ -282,7 +342,7 @@ export default function Posts({session} : {session: Session}) {
                           </DropdownMenu>
                         </div>
     
-                        <p className={`text-fontPrimary leading-[30px] text-justify whitespace-pre-wrap ${post.image ? "lg:h-[20vh]" : "max-h-[60vh]"} p-2 overflow-y-auto`}>
+                        <p className={`text-fontPrimary leading-[30px] text-justify whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[60vh]"} p-2 overflow-y-auto`}>
                           {post.content}
                         </p>
     
@@ -306,7 +366,10 @@ export default function Posts({session} : {session: Session}) {
                                 </button>
                             </div>
                         </div>
-                        <button className="text-fontPrimary px-4 py-2 rounded-full bg-bgPrimary hover:brightness-110 transition-all flex justify-center items-center gap-2">
+                        <button onClick={() => {
+                          setOpenPostCommentModal(true)
+                          setCurrentCommentPost(post)
+                        }} className="text-fontPrimary px-4 py-2 rounded-full bg-bgPrimary hover:brightness-110 transition-all flex justify-center items-center gap-2">
                             <BiCommentDetail className="w-5 h-5 text-fontPrimary" />
                             <p>Comment</p>
                         </button>
@@ -357,6 +420,16 @@ export default function Posts({session} : {session: Session}) {
           reportType="post"
         />
       )}
+      {
+        setOpenPostCommentModal && (
+          <PostsComment
+            openPostCommentModal={openPostCommentModal}
+            setOpenPostCommentModal={setOpenPostCommentModal}
+            user={user}
+            currentCommentPost={currentCommentPost}
+          />
+        )
+      }
       
       {isDeletingPost && <DefaultLoading displayText="Deleting Post" />}
     </>

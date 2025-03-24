@@ -8,6 +8,8 @@ import { storage, ID } from "@/config/AppWriteClient";
 import { toast } from 'sonner';
 import TextareaAutosize from 'react-textarea-autosize';
 import { getProfileUrl } from '@/extra/helpers';
+import { db } from "@/config/firebase";
+import { collection, doc, setDoc } from "firebase/firestore";
 
 export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, setPosts }: { openPostAddModal: boolean, setOpenPostAddModal: any, user: any, setPosts: any }) {
     const [content, setContent] = useState('');
@@ -44,6 +46,7 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
 
         setIsPosting(true);
         let imageId = "";
+        let commentChannelId = "";
         
         try {
             // Upload image if exists
@@ -64,7 +67,23 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                 }
             }
 
-            // Create post
+            // Create comment channel in Firestore
+            try {
+                const commentsRef = doc(collection(db, "Comments"));
+                commentChannelId = commentsRef.id; // Get the auto-generated ID
+
+                await setDoc(commentsRef, {
+                    comments: [],
+                    createdAt: new Date().toISOString()
+                });
+            } catch (err) {
+                console.error("Failed to create comment channel:", err);
+                toast.error("Failed to create comment channel");
+                setIsPosting(false);
+                return;
+            }
+
+            // Create post with comment channel ID
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`, {
                 method: 'POST',
                 headers: {
@@ -75,6 +94,7 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                     content,
                     image: imageId || null,
                     userId: user._id,
+                    commentId: commentChannelId, // Add the comment channel ID
                     reactions: {
                         dap: 0,
                         love: 0,

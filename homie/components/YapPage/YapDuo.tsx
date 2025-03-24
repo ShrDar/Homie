@@ -33,8 +33,6 @@ interface Message {
     type: 'text' | 'image' | 'gif';
     imageId?: string;
     gifUrl?: string;
-    sending?: boolean;
-    deleting?: boolean; // Add this property
 }
 
 interface MessageGroup {
@@ -180,27 +178,18 @@ export default function YapDuo({ session } : { session: Session }) {
 
         if (!newMessage.trim() || !yapId || !session?.user?.id) return;
 
-        // Create temporary message with the string yapId
-        const tempMessage: Message = {
-            id: 'temp-' + Date.now(),
-            yapId: yapId, // Now this is guaranteed to be a string
-            senderId: session.user.id,
-            content: newMessage.replace(/\n$/, ''),
-            timestamp: Timestamp.now(),
-            status: 'sent',
-            type: 'text',
-            sending: true
-        };
-
-        // Add temporary message to state
-        setMessages(prev => [...prev, tempMessage]);
-        
-        // Clear input immediately
-        setNewMessage("");
-
         try {
+            // Existing Firebase code
+            await addDoc(collection(db, 'Messages'), {
+                yapId,
+                senderId: session.user.id,
+                content: newMessage.replace(/\n$/, ''),
+                timestamp: serverTimestamp(),
+                status: 'sent',
+                type: 'text'
+            });
 
-            const previewText = tempMessage.content.replace(/\n/g, ' ').trim();
+            const previewText = newMessage.replace(/\n/g, ' ').trim();
             const yapRef = doc(db, 'Yap', yapId as string);
             await updateDoc(yapRef, {
                 lastMessage: previewText,
@@ -208,7 +197,7 @@ export default function YapDuo({ session } : { session: Session }) {
                 lastSenderId: session.user.id
             });
 
-            // Update MongoDB
+            // Add MongoDB update
             await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session.user.id}/update-yap/${yapId}`, {
                 method: 'PUT',
                 headers: {
@@ -223,14 +212,9 @@ export default function YapDuo({ session } : { session: Session }) {
                 }),
             });
 
+            setNewMessage("");
         } catch (error) {
             console.error("Error sending message:", error);
-            // Remove the temporary message on error
-            setMessages(prev => prev.filter(msg => msg.id !== tempMessage.id));
-            // Show error toast
-            toast.error("Failed to send message");
-            // Restore the message in the input
-            setNewMessage(tempMessage.content);
         }
     };
 
@@ -532,7 +516,7 @@ export default function YapDuo({ session } : { session: Session }) {
                                                     )}
                                                     <div className={`${message.type === "gif" || message.type === "image" ? "px-2" : "px-4"} py-2 rounded-[20px] ${
                                                         message.senderId === session?.user?.id 
-                                                            ? `bg-bgSecondary text-fontPrimary overflow-hidden ${message.sending || message.deleting ? 'opacity-50' : ''}` 
+                                                            ? 'bg-bgSecondary text-fontPrimary overflow-hidden' 
                                                             : 'bg-[#1b1b1b] text-fontPrimary'
                                                     }`}>
                                                         {message.type === 'image' ? (
