@@ -110,7 +110,7 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+                        className="fixed inset-0 bg-[#000] bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                     >
                         <motion.div
                             initial={{ scale: 0.95, opacity: 0 }}
@@ -132,7 +132,7 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={onClose}
-                            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+                            className="fixed inset-0 bg-[#000] bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                         />
                         <motion.div
                         initial={{ scale: 0.95, opacity: 0 }}

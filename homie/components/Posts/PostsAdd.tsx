@@ -118,7 +118,7 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                 setOpenPostAddModal(false)
                 fetchPosts();
             }} 
-                className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000052]">
+                className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm">
             </div>
             <div className="fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] text-fontPrimary">
                 <div className="w-full px-8 flex flex-col gap-6">

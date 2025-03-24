@@ -276,7 +276,7 @@ export default function HomiesDash({session} : {session: Session}) {
                     setBackdrop(false)
                     setHomieUsername("")
                     }} 
-                    className="fixed top-[50%] z-[11] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#00000068] " 
+                    className="fixed top-[50%] z-[11] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-[2px] transition-all duration-100" 
                 />
             }
                 
