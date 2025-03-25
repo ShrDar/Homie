@@ -218,94 +218,86 @@ export default function YapDuo({ session } : { session: Session }) {
         }
     };
 
-    // const formatMessageTime = (timestamp: Timestamp | null) => {
-    //     if (!timestamp) return '';
-        
-    //     const messageDate = timestamp.toDate();
-    //     const now = new Date();
-    //     const hoursDiff = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
-
-    //     if (hoursDiff < 1) {
-    //         const minutes = Math.floor(hoursDiff * 60);
-    //         return `${minutes}m`;
-    //     } else if (hoursDiff < 24) {
-    //         const hours = Math.floor(hoursDiff);
-    //         return `${hours}h`;
-    //     } else if (hoursDiff < 168) { // 7 days
-    //         const days = Math.floor(hoursDiff / 24);
-    //         return `${days}d`;
-    //     } else {
-    //         return messageDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
-    //     }
-    // };
-
-    const unsendMessage = async (messageId: string) => {
-        try {
-            // First get the message data to check if it has an image
-            const messageDoc = doc(db, 'Messages', messageId);
-            const messageSnapshot = await getDoc(messageDoc);
-            const messageData = messageSnapshot.data();
-
-            // If message has an imageId, delete from Appwrite storage first
-            if (messageData?.type === 'image' && messageData?.imageId) {
-                try {
-                    await storage.deleteFile(
-                        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", 
-                        messageData.imageId
-                    );
-                } catch (error) {
-                    console.error("Error deleting image from storage:", error);
-                    toast.error("Failed to delete image");
-                }
-            }
-
-            // Delete message from Firebase
-            await deleteDoc(messageDoc);
-
-            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session?.user?.id}/update-yap/${yapId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    lastMessage: "Message Unsent",
-                    lastMessageTime: new Date().toISOString(),
-                    lastSenderId: yapper1?._id,
-                    status: 'sent',
-                    participants: yapData[0].participants
-                }),
-            });
-
-        } catch (error) {
-            console.error("Error unsending message:", error);
-            toast.error("Failed to unsend message");
-        }
-    };
-
     const groupMessagesByDate = (messages: Message[]): MessageGroup[] => {
         const groups: { [key: string]: Message[] } = {};
         
         messages.forEach(message => {
             if (!message.timestamp) return;
             
-            const date = message.timestamp.toDate().toLocaleDateString([], { 
-                weekday: 'short', 
-                hour: 'numeric', 
-                minute: 'numeric',
-                hour12: true 
-            });
-            if (!groups[date]) {
-                groups[date] = [];
+            const messageDate = message.timestamp.toDate();
+            const now = new Date();
+            const daysDiff = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60 * 24);
+            
+            // Format date based on age
+            const date = daysDiff >= 7 
+                ? messageDate.toLocaleDateString([], { 
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                })
+                : messageDate.toLocaleDateString([], { 
+                    weekday: 'short',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true 
+                });
+        if (!groups[date]) {
+            groups[date] = [];
+        }
+        groups[date].push(message);
+    });
+
+    return Object.entries(groups).map(([date, messages]) => ({
+        date,
+        messages
+    }));
+};
+const unsendMessage = async (messageId: string) => {
+    try {
+        // First get the message data to check if it has an image
+        const messageDoc = doc(db, 'Messages', messageId);
+        const messageSnapshot = await getDoc(messageDoc);
+        const messageData = messageSnapshot.data();
+
+        // If message has an imageId, delete from Appwrite storage first
+        if (messageData?.type === 'image' && messageData?.imageId) {
+            try {
+                await storage.deleteFile(
+                    process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "", 
+                    messageData.imageId
+                );
+            } catch (error) {
+                console.error("Error deleting image from storage:", error);
+                toast.error("Failed to delete image");
             }
-            groups[date].push(message);
+        }
+
+        // Delete message from Firebase
+        await deleteDoc(messageDoc);
+
+        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session?.user?.id}/update-yap/${yapId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                lastMessage: "Message Unsent",
+                lastMessageTime: new Date().toISOString(),
+                lastSenderId: yapper1?._id,
+                status: 'sent',
+                participants: yapData[0].participants
+            }),
         });
 
-        return Object.entries(groups).map(([date, messages]) => ({
-            date,
-            messages
-        }));
-    };
-
+    } catch (error) {
+        console.error("Error unsending message:", error);
+        toast.error("Failed to unsend message");
+    }
+};
     const handleImageSelect = async (file: File | undefined) => {
         if (!file) return;
         
