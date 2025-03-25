@@ -122,10 +122,18 @@ router.delete("/:id", async (req, res) => {
 // Update post reactions
 router.patch("/:id/reactions", async (req, res) => {
   const { id } = req.params;
-  const { reactions } = req.body;
+  const { reactionType, action } = req.body;
 
-  if (!reactions) {
-    return res.status(400).send("Reactions data is required");
+  if (!reactionType || !action) {
+    return res.status(400).send("reactionType and action (increment/decrement) are required");
+  }
+
+  if (!['dap', 'love', 'laugh', 'angry', 'cheeky'].includes(reactionType)) {
+    return res.status(400).send("Invalid reaction type");
+  }
+
+  if (!['increment', 'decrement'].includes(action)) {
+    return res.status(400).send("Action must be either 'increment' or 'decrement'");
   }
 
   let collection = await db.collection("Post");
@@ -133,16 +141,19 @@ router.patch("/:id/reactions", async (req, res) => {
   try {
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: { reactions, updatedAt: new Date() } }
+      { 
+        $inc: { [`reactions.${reactionType}`]: action === 'increment' ? 1 : -1 },
+        $set: { updatedAt: new Date() }
+      }
     );
 
     if (result.matchedCount === 0) {
       return res.status(404).send("Post not found");
     }
 
-    res.status(200).json({ message: "Reactions updated successfully" });
+    res.status(200).json({ message: "Reaction updated successfully" });
   } catch (err) {
-    console.error("Error updating reactions:", err);
+    console.error("Error updating reaction:", err);
     res.status(500).send("Internal Server Error");
   }
 });

@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, JSX } from 'react';
 import Image from 'next/image';
 import { CiMenuKebab } from "react-icons/ci";
 import { BiCommentDetail } from "react-icons/bi";
@@ -25,6 +25,7 @@ import PostsComment from './PostsComment';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import ShimmerLoading from '../Loading/ShimmerLoading';
+import PostReactions from './PostReactions';
 
 function getRelativeTime(dateString: string): string {
   const date = new Date(dateString);
@@ -64,7 +65,7 @@ export default function Posts({session} : {session: Session}) {
   const [currentCommentPost, setCurrentCommentPost] = useState<Post | null>(null);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
 
-  // Add user fetch effect
+
   useEffect(() => {
     const fetchUserData = async() => {
       try {
@@ -359,13 +360,7 @@ export default function Posts({session} : {session: Session}) {
                         )}
     
                         <div className="w-full flex justify-between gap-0">
-                        <div className={`postReactions`}>
-                            <div>
-                                <button className="text-fontPrimary px-4 py-2 rounded-full bg-bgPrimary hover:brightness-110 transition-all">
-                                    Dap ({post.reactions.dap})
-                                </button>
-                            </div>
-                        </div>
+                        <PostReactions post={post} />
                         <button onClick={() => {
                           setOpenPostCommentModal(true)
                           setCurrentCommentPost(post)
