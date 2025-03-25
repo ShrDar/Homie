@@ -55,10 +55,10 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
             setIsChecking(false);
         }
     };
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         checkExistingReport();
-    }, []); // Empty dependency array means it runs only once when component mounts
+    }, []); 
 
     const handleSubmit = async () => {
         if (!reason.trim()) {

@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, useRef, JSX } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { CiMenuKebab } from "react-icons/ci";
 import { BiCommentDetail } from "react-icons/bi";
@@ -269,7 +269,7 @@ export default function Posts({session} : {session: Session}) {
       >
 
         {posts.map((post) => {
-          // const postUser = users?.find((homie : HomieUser) => homie._id === post.userId);
+          const postUser = users?.find((homie : HomieUser) => homie._id === post.userId);
           const currentUserId = session?.user?.id;
           const hasUserReacted = post.reactions?.some(reaction => reaction.reactUserId === currentUserId);
           let currentColor = "";
@@ -295,7 +295,6 @@ export default function Posts({session} : {session: Session}) {
           }
           if(hasUserReacted && post.reactions?.length > 1) {
             isMoreThanOne = true;
-            const reactionCount = post.reactions.length;
             currentEmoji = <div className="flex -space-x-2">
               {post.reactions.slice(0, 2).map((reaction, index) => {
                 const reactionButton = reactionButtons.find(button => button.type === reaction.reactionType);
@@ -323,11 +322,11 @@ export default function Posts({session} : {session: Session}) {
                         <div className="flex justify-between items-center gap-3">
                           <div className='flex items-center gap-3'>
                             <div onClick={() => router.push(`homie/${user?._id}`)} className="w-12 h-12 cursor-pointer rounded-full overflow-hidden bg-bgPrimary">
-                                {user?.image ? (
+                                {postUser?.image ? (
                                 <Image
-                                    key={`user-image-${user._id}`}
-                                    src={getProfileUrl(user.image)}
-                                    alt={user.name || 'User'}
+                                    key={`user-image-${postUser._id}`}
+                                    src={getProfileUrl(postUser.image)}
+                                    alt={postUser.name || 'User'}
                                     width={40}
                                     height={40}
                                     className="w-full h-full aspect-auto object-cover"
@@ -337,7 +336,7 @@ export default function Posts({session} : {session: Session}) {
                                 )}
                             </div>
                             <div>
-                                <h3 className="text-fontPrimary text-xl">{user?.name || 'Anonymous'}</h3>
+                                <h3 className="text-fontPrimary text-xl">{postUser?.name || 'Anonymous'}</h3>
                                 <p className="text-sm opacity-60">
                                   {getRelativeTime(post.createdAt)}
                                   {post.isEdited && post.updatedAt !== post.createdAt && 

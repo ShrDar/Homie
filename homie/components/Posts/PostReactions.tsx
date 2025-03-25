@@ -51,7 +51,7 @@ export default function PostReactions({ post, setPosts, setShowPostReaction, use
                 throw new Error('Failed to update reaction');
             }
 
-            const data = await response.json();
+            // const data = await response.json();
             
 
             // setShowPostReaction(false);

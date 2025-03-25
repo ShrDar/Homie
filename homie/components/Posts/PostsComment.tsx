@@ -5,7 +5,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import GifPicker from "../YapPage/GifPicker";
 import { toast } from "sonner";
 import { db } from "@/config/firebase";
-import { doc, updateDoc, arrayUnion, getDoc, onSnapshot, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, onSnapshot, arrayRemove } from "firebase/firestore";
 import { getProfileUrl } from '@/extra/helpers';
 import Image from 'next/image';
 import { CiMenuKebab } from "react-icons/ci";
