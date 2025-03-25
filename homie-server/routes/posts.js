@@ -45,13 +45,7 @@ router.post("/", async (req, res) => {
     userId: new ObjectId(userId),
     image,
     commentId,
-    reactions: {
-      dap: 0,
-      love: 0,
-      laugh: 0,
-      angry: 0,
-      cheeky: 0
-    },
+    reactions: [], // Changed from object to array
     isEdited: false,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -122,36 +116,63 @@ router.delete("/:id", async (req, res) => {
 // Update post reactions
 router.patch("/:id/reactions", async (req, res) => {
   const { id } = req.params;
-  const { reactionType, action } = req.body;
+  const { reactionType, userId } = req.body;
 
-  if (!reactionType || !action) {
-    return res.status(400).send("reactionType and action (increment/decrement) are required");
+  if (!reactionType || !userId) {
+    return res.status(400).send("reactionType and userId are required");
   }
 
-  if (!['dap', 'love', 'laugh', 'angry', 'cheeky'].includes(reactionType)) {
+  if (!['dap', 'love', 'laugh', 'angry', 'cheeky', 'fire', 'sus', 'pissed'].includes(reactionType)) {
     return res.status(400).send("Invalid reaction type");
-  }
-
-  if (!['increment', 'decrement'].includes(action)) {
-    return res.status(400).send("Action must be either 'increment' or 'decrement'");
   }
 
   let collection = await db.collection("Post");
 
   try {
+    // First, check if the user has already reacted
+    const post = await collection.findOne({ _id: new ObjectId(id) });
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+
+    const existingReaction = post.reactions.find(
+      reaction => reaction.reactUserId === userId && reaction.reactionType === reactionType
+    );
+
+    let updateOperation;
+    if (existingReaction) {
+      // Remove the reaction if it exists
+      updateOperation = {
+        $pull: {
+          reactions: {
+            reactUserId: userId,
+            reactionType: reactionType
+          }
+        }
+      };
+    } else {
+      // Add the reaction if it doesn't exist
+      updateOperation = {
+        $push: {
+          reactions: {
+            reactionType: reactionType,
+            reactUserId: userId
+          }
+        }
+      };
+    }
+
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
-      { 
-        $inc: { [`reactions.${reactionType}`]: action === 'increment' ? 1 : -1 },
+      {
+        ...updateOperation,
         $set: { updatedAt: new Date() }
       }
     );
 
-    if (result.matchedCount === 0) {
-      return res.status(404).send("Post not found");
-    }
-
-    res.status(200).json({ message: "Reaction updated successfully" });
+    res.status(200).json({
+      message: existingReaction ? "Reaction removed successfully" : "Reaction added successfully"
+    });
   } catch (err) {
     console.error("Error updating reaction:", err);
     res.status(500).send("Internal Server Error");

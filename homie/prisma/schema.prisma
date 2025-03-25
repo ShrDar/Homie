@@ -83,11 +83,16 @@ model Post {
   image   String?  // Optional image for the post
   commentId  String?  // Stores the Firebase comment thread ID
 
-  reactions  Json     @default("{}") // Stores reaction counts as JSON
+  reactions  Reaction[]
   isEdited   Boolean  @default(false) // Indicates if post was edited
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+type Reaction {
+  reactionType String  // "dap", "love", "laugh", "angry", "cheeky"
+  reactUserId  String  // ID of the user who reacted
 }
 
 model Session {

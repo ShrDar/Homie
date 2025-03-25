@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Jim_Nightshade, Sulphur_Point } from "next/font/google";
+import { Geist, Geist_Mono, Jim_Nightshade, Pixelify_Sans, Sulphur_Point, Tiny5 } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
@@ -28,6 +28,18 @@ const jimNightShade = Jim_Nightshade({
   variable: "--font-jim"
 })
 
+const pixelify = Pixelify_Sans({
+  subsets: ['latin'],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-pixelify"
+})
+
+const tiny = Tiny5({
+  subsets: ['latin'],
+  weight: ["400"],
+  variable: "--font-tiny"
+})
+
 export const metadata: Metadata = {
   title: "Homie",
   description: "",
@@ -43,7 +55,7 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} selection:bg-bgPrimary bg-bgPrimary antialiased min-h-screen w-full relative flex justify-center items-center`}
+          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} ${pixelify.variable} ${tiny.variable} selection:bg-bgPrimary bg-bgPrimary antialiased min-h-screen w-full relative flex justify-center items-center`}
         >
           {session && <SlideBar session={session} />}
           {children}

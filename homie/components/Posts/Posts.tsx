@@ -4,10 +4,11 @@ import Image from 'next/image';
 import { CiMenuKebab } from "react-icons/ci";
 import { BiCommentDetail } from "react-icons/bi";
 import { MdOutlinePostAdd } from "react-icons/md";
-import { motion } from 'motion/react';
+import { ImCool } from "react-icons/im";
+import { AnimatePresence, motion } from 'motion/react';
 import { Session } from "next-auth"
 import PostsAdd from './PostsAdd';
-import { getProfileUrl } from "@/extra/helpers";
+import { getProfileUrl, reactionButtons } from "@/extra/helpers";
 import { HomieUser, Post } from '@/homieTypes/homieTypes';
 import {
     DropdownMenu,
@@ -64,6 +65,7 @@ export default function Posts({session} : {session: Session}) {
   const [currentEditPost, setCurrentEditPost] = useState<Post | null>(null);
   const [currentCommentPost, setCurrentCommentPost] = useState<Post | null>(null);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
+  const [showPostReaction, setShowPostReactions] = useState(false);
 
 
   useEffect(() => {
@@ -202,7 +204,7 @@ export default function Posts({session} : {session: Session}) {
         }
     } catch (err) {
         console.error("Error deleting post:", err);
-        toast.error("Houston, we have a problem! 🚀", {
+        toast.error("Oh Mann... We have a problem! 🚀", {
             style: {
                 backgroundColor: "#2a2a2a",
                 color: "#fff",
@@ -215,6 +217,8 @@ export default function Posts({session} : {session: Session}) {
         setIsDeletingPost(false);
     }
 };
+
+
 
   if(isLoadingPosts) {
     return (
@@ -265,7 +269,50 @@ export default function Posts({session} : {session: Session}) {
       >
 
         {posts.map((post) => {
-          const user = users?.find((homie : HomieUser) => homie._id === post.userId)
+          // const postUser = users?.find((homie : HomieUser) => homie._id === post.userId);
+          const currentUserId = session?.user?.id;
+          const hasUserReacted = post.reactions?.some(reaction => reaction.reactUserId === currentUserId);
+          let currentColor = "";
+          let currentReactionName = "";
+          let currentReactionClass = `bg-bgPrimary`
+          let currentEmoji = <ImCool size={20} className='hover:text-[#fff]' />;
+          let isMoreThanOne = false;
+
+          if(hasUserReacted && post.reactions?.length >= 1) {
+            const currentReaction = post.reactions?.find(reaction => reaction.reactUserId === currentUserId);
+            const currentReactionHelp = reactionButtons.find(button => button.type === currentReaction?.reactionType);
+            
+            currentEmoji = currentReactionHelp?.icon;
+            currentColor = currentReactionHelp?.color || "";
+            currentReactionClass = `bg-bgPrimary`;
+            currentReactionName = currentReactionHelp?.label || "";
+
+            // If there are other reactions besides the user's
+            if(post.reactions.length > 1) {
+              const otherReactionsCount = post.reactions.length - 1;
+              currentReactionName = `${currentReactionHelp?.label} ${otherReactionsCount > 0 ? `(+${otherReactionsCount})` : ''}`;
+            }
+          }
+          if(hasUserReacted && post.reactions?.length > 1) {
+            isMoreThanOne = true;
+            const reactionCount = post.reactions.length;
+            currentEmoji = <div className="flex -space-x-2">
+              {post.reactions.slice(0, 2).map((reaction, index) => {
+                const reactionButton = reactionButtons.find(button => button.type === reaction.reactionType);
+                return (
+                  <div key={index} className="w-5 h-5 ">
+                    {reactionButton?.icon}
+                  </div>
+                );
+              })}
+            </div>;
+            currentColor = "#888";
+            currentReactionClass = `bg-bgPrimary`;
+            currentReactionName = `Reactions`;
+          }
+          
+
+          
           return (
             <div
               key={`post-${post._id}`}
@@ -360,12 +407,59 @@ export default function Posts({session} : {session: Session}) {
                         )}
     
                         <div className="w-full flex justify-between gap-0">
-                        <PostReactions post={post} />
+                          <div className='flex items-center justify-center gap-2 '>
+                            <div className='totalReactionCount bg-bgPrimary text-[#888] aspect-square hover:text-[#fff] border-transparent cursor-pointer min-h-[30px] px-4 py-2 rounded-full flex justify-center items-center border-[2px] gap-2 transition-all duration-300'>
+                                <motion.p 
+                                    key={post.reactions?.length} // Add this line to trigger animation on count change
+                                    initial={{y: 20, filter: "blur(10px)"}} 
+                                    animate={{y: 0, filter: "blur(0px)"}} 
+                                    className='tiny text-xl'
+                                >
+                                    {post.reactions?.length}
+                                </motion.p>
+                            </div>
+                            <div className='showPostReactionsContainer relative'>
+                              <AnimatePresence>
+                                {showPostReaction && (
+                                  <PostReactions 
+                                      post={post} 
+                                      setPosts={setPosts}
+                                      setShowPostReaction={setShowPostReactions} 
+                                      userId={user?._id || session?.user?.id || ""} 
+                                  />
+                                )}
+                              </AnimatePresence>
+                              <motion.div 
+                                onClick={() => setShowPostReactions(prev => !prev)} 
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                style={{ 
+                                  borderColor: currentColor,
+                                  color: currentColor
+                              }}
+                                className={`cursor-pointer min-h-[50px] px-4 py-2 rounded-full flex justify-center items-center border-[2px] gap-2 transition-all duration-300 ${
+                                  hasUserReacted 
+                                    ? currentReactionClass 
+                                    : 'bg-bgPrimary text-[#888] hover:text-[#fff] border-transparent '
+                                }`}
+                              >
+                                <div className={`${isMoreThanOne ? "text-sm" : "text-xl"}`}>
+                                  {currentEmoji}
+                                </div>
+                                <span className={`${
+                                  hasUserReacted ? '' : ''
+                                }`}>
+                                  {hasUserReacted ? currentReactionName : 'Reactions'}
+                                </span>
+                              </motion.div>
+                            </div>
+                          </div>
+                        
                         <button onClick={() => {
                           setOpenPostCommentModal(true)
                           setCurrentCommentPost(post)
-                        }} className="text-fontPrimary px-4 py-2 rounded-full bg-bgPrimary hover:brightness-110 transition-all flex justify-center items-center gap-2">
-                            <BiCommentDetail className="w-5 h-5 text-fontPrimary" />
+                        }} className="text-[#888] px-4 py-2 rounded-full bg-bgPrimary hover:brightness-110 hover:text-[#fff] transition-all flex justify-center items-center gap-2">
+                            <BiCommentDetail className="w-5 h-5" />
                             <p>Comment</p>
                         </button>
                         </div>

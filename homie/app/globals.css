@@ -12,6 +12,13 @@ html {
 .jim {
     font-family: var(--font-jim), sans-serif;
 }
+.pixelify {
+    font-family: var(--font-pixelify), sans-serif;
+}
+.tiny {
+    font-family: var(--font-tiny), monospace;
+}
+
 .grecaptcha-badge {
     filter: brightness(0.3) opacity(0.5);
     transition: all;

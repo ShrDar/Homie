@@ -32,14 +32,22 @@ export type HomieUser = {
     userId: string;
     image?: string;
     commentId?: string;
-    reactions: {
-      dap: number;
-      love: number;
-      laugh: number;
-      angry: number;
-      cheeky: number;
-    };
+    reactions: Reaction[];
     isEdited: boolean;
     createdAt: string;
     updatedAt: string;
   };
+
+  export type Reaction = {
+    reactionType: string;
+    reactUserId: string;
+}
+
+export type ReactionButton = {
+  icon: any;
+  label: string;
+  color: string;
+  gradient?: string;
+  type: string;
+  fontColor: string;
+}

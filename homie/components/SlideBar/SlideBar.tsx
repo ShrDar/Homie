@@ -73,7 +73,7 @@ export default function SlideBar( {session} : {session: Session} ) {
             <div onClick={() => {
                 setHidden((prev) => !prev);
                 handleSidebarInteraction();
-            }} className="absolute flex md:hidden cursor-pointer top-5 right-5">
+            }} className="absolute flex md:hidden cursor-pointer top-5 right-5 z-[100]">
                 <FaBarsStaggered color="#fff" />
             </div>
             <motion.div 
