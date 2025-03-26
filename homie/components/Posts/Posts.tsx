@@ -8,7 +8,7 @@ import { ImCool } from "react-icons/im";
 import { AnimatePresence, motion } from 'motion/react';
 import { Session } from "next-auth"
 import PostsAdd from './PostsAdd';
-import { getProfileUrl, reactionButtons } from "@/extra/helpers";
+import { getProfileUrl, getRelativeTime, reactionButtons } from "@/extra/helpers";
 import { HomieUser, Post } from '@/homieTypes/homieTypes';
 import {
     DropdownMenu,
@@ -27,21 +27,8 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import ShimmerLoading from '../Loading/ShimmerLoading';
 import PostReactions from './PostReactions';
+import PostReactionCounts from './PostReactionCounts';
 
-function getRelativeTime(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (days > 0) return `${days}d ago`;
-  if (hours > 0) return `${hours}hr ago`;
-  if (minutes > 0) return `${minutes}m ago`;
-  return 'Just now';
-}
 
 export default function Posts({session} : {session: Session}) {
 
@@ -64,8 +51,10 @@ export default function Posts({session} : {session: Session}) {
   const [selectedPostId, setSelectedPostId] = useState<string>("");
   const [currentEditPost, setCurrentEditPost] = useState<Post | null>(null);
   const [currentCommentPost, setCurrentCommentPost] = useState<Post | null>(null);
+  const [currentReactionShowPost, setCurrentReactionShowPost] = useState<Post | null>(null);
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const [showPostReaction, setShowPostReactions] = useState(false);
+  const [showPostReactionCount, setShowPostReactionCount] = useState(false);
 
 
   useEffect(() => {
@@ -389,7 +378,7 @@ export default function Posts({session} : {session: Session}) {
                           </DropdownMenu>
                         </div>
     
-                        <p className={`text-fontPrimary leading-[30px] text-justify whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[60vh]"} p-2 overflow-y-auto`}>
+                        <p className={`text-fontPrimary leading-[30px] whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[60vh]"} p-2 overflow-y-auto`}>
                           {post.content}
                         </p>
     
@@ -407,7 +396,10 @@ export default function Posts({session} : {session: Session}) {
     
                         <div className="w-full flex justify-between gap-0">
                           <div className='flex items-center justify-center gap-2 '>
-                            <div className='totalReactionCount bg-bgPrimary text-[#888] aspect-square hover:text-[#fff] border-transparent cursor-pointer min-h-[30px] px-4 py-2 rounded-full flex justify-center items-center border-[2px] gap-2 transition-all duration-300'>
+                            <div onClick={() => { 
+                              setShowPostReactionCount(true)
+                              setCurrentReactionShowPost(post)
+                            }} className='totalReactionCount bg-bgPrimary text-[#888] aspect-square hover:text-[#fff] border-transparent cursor-pointer min-h-[30px] px-4 py-2 rounded-full flex justify-center items-center border-[2px] gap-2 transition-all duration-300'>
                                 <motion.p 
                                     key={post.reactions?.length} // Add this line to trigger animation on count change
                                     initial={{y: 20, filter: "blur(10px)"}} 
@@ -515,6 +507,15 @@ export default function Posts({session} : {session: Session}) {
             setOpenPostCommentModal={setOpenPostCommentModal}
             user={user}
             currentCommentPost={currentCommentPost}
+          />
+        )
+      }
+      {
+        showPostReactionCount && (
+          <PostReactionCounts 
+            showPostReactionCount={showPostReactionCount}
+            setShowPostReactionCount={setShowPostReactionCount}
+            post={currentReactionShowPost}
           />
         )
       }
