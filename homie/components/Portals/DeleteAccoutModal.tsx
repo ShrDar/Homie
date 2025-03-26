@@ -7,10 +7,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 
 export default function DeleteAccountModal({openDeleteModal, setOpenDeleteModal, user}: {openDeleteModal: boolean, setOpenDeleteModal: any, user: any}) {
+    const [stopHover, setStopHover] = useState(false);
     if(!openDeleteModal) {
         return null;
     }
-    const [stopHover, setStopHover] = useState(false);
     const handleDelete = async () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user._id}`, {

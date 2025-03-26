@@ -7,7 +7,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 
 
-export default function PostReactionCounts({ showPostReactionCount, setShowPostReactionCount, post }: { showPostReactionCount: boolean, setShowPostReactionCount: any, post: Post | null }) {
+export default function PostReactionCounts({ setShowPostReactionCount, post }: { showPostReactionCount?: boolean, setShowPostReactionCount: any, post: Post | null }) {
     const router = useRouter();
     
     const [users, setUsers] = useState<HomieUser[]>([]);
@@ -50,41 +50,60 @@ export default function PostReactionCounts({ showPostReactionCount, setShowPostR
                 className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm"
             />
             <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-[100] bg-bgPrimary rounded-xl p-3 w-[90%] md:w-[400px] h-[60vh]">
-                {/* <h2 className="text-xl font-semibold mb-4 text-white">Reactions</h2> */}
                 <div className="flex flex-col items-center justify-center gap-2 h-[calc(100%-2rem)]">
-                    <div className="flex justify-center items-start gap-4 min-h-[60px]">
-                        {!isLoading && reactionButtons.map((button, index) => {
-                            const reactionUsers = getReactionUsers(button.type);
-                            
-                            return (
-                                <div key={index} className={`flex flex-col gap-3 cursor-pointer`} onClick={() => setCurrentSelectedReaction(button.type)}>
-                                    <div 
-                                        className={`flex items-center gap-2 p-2 rounded-lg ${currentSelectedReaction === button.type ? 'scale-110 bg-[#1f1f1f]' : ''}`}
-                                        style={{
-                                            background: `${button.gradient}${currentSelectedReaction === button.type ? '66' : '33'}`,
-                                            border: `2px solid ${button.color}${currentSelectedReaction === button.type ? 'FF' : '66'}`,
-                                            transition: 'all 0.2s ease-in-out'
-                                        }}
-                                    >
-                                        <span className="text-xl">{button.icon}</span>
-                                        <span className="text-white font-semibold">{reactionUsers.length}</span>
-                                    </div>
-                                    
-                                    
-                                </div>
-                            );
-                        })}
-                        {isLoading && (
-                            <div className="animate-pulse flex gap-4">
-                                {[1, 2, 3].map((_, i) => (
-                                    <div key={i} className="w-[80px] h-[40px] bg-[#ffffff22] rounded-lg"></div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
                     <motion.div 
-                        initial={{filter: "blur(5px)"}}
-                        animate={{filter: "blur(0px)"}}
+                        layout
+                        className="flex justify-center items-start gap-4 min-h-[60px]"
+                    >
+                        {!isLoading ? (
+                            reactionButtons.map((button, index) => {
+                                const reactionUsers = getReactionUsers(button.type);
+                                return (
+                                    <motion.div 
+                                        initial={{opacity: 0, y: 20}}
+                                        animate={{opacity: 1, y: 0}}
+                                        transition={{duration: 0.3, delay: index * 0.1}}
+                                        key={index} 
+                                        className={`flex flex-col gap-3 cursor-pointer`} 
+                                        onClick={() => setCurrentSelectedReaction(button.type)}
+                                    >
+                                        <div 
+                                            className={`flex items-center gap-2 p-2 rounded-lg ${currentSelectedReaction === button.type ? 'scale-110 bg-[#1f1f1f]' : ''}`}
+                                            style={{
+                                                background: `${button.gradient}${currentSelectedReaction === button.type ? '66' : '33'}`,
+                                                border: `2px solid ${button.color}${currentSelectedReaction === button.type ? 'FF' : '66'}`,
+                                                transition: 'all 0.2s ease-in-out'
+                                            }}
+                                        >
+                                            <span className="text-xl">{button.icon}</span>
+                                            <span className="text-white font-semibold">{reactionUsers.length}</span>
+                                        </div>
+                                        
+                                        
+                                    </motion.div>
+                                );
+                            })
+                        ) : (
+                            <motion.div 
+                                initial={{opacity: 0}}
+                                animate={{opacity: 1}}
+                                exit={{opacity: 0}}
+                                className="animate-pulse flex gap-4"
+                            >
+                                {[1, 2, 3].map((_, i) => (
+                                    <motion.div 
+                                        key={i}
+                                        initial={{opacity: 0, y: 20}}
+                                        animate={{opacity: 1, y: 0}}
+                                        transition={{duration: 0.3, delay: i * 0.1}}
+                                        className="w-[80px] h-[40px] bg-[#ffffff22] rounded-lg"
+                                    />
+                                ))}
+                            </motion.div>
+                        )}
+                    </motion.div>
+                    <motion.div 
+                        layout
                         className="reacters w-full overflow-y-auto py-0 flex-1"
                     >
                         {!isLoading ? (
@@ -93,7 +112,8 @@ export default function PostReactionCounts({ showPostReactionCount, setShowPostR
                                     const reactionUsers = getReactionUsers(currentSelectedReaction);
                                     if (!reactionUsers.includes(user)) return null;
                                     return (
-                                        <div 
+                                        <motion.div 
+                                        
                                             onClick={() => router.push(`/homie/${user._id}`)}
                                             key={index} 
                                             className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#ffffff11] transition-all cursor-pointer"
@@ -109,7 +129,7 @@ export default function PostReactionCounts({ showPostReactionCount, setShowPostR
                                                 <p className="text-white font-semibold text-md">{user.name}</p>
                                                 <p className="text-[#ffffff77] text-sm">@{user.username}</p>
                                             </div>
-                                        </div>
+                                        </motion.div>
                                     );
                                 })
                             ) : (
@@ -118,17 +138,28 @@ export default function PostReactionCounts({ showPostReactionCount, setShowPostR
                                 </div>
                             )
                         ) : (
-                            <div className="animate-pulse flex flex-col gap-3">
+                            <motion.div 
+                                initial={{opacity: 0}}
+                                animate={{opacity: 1}}
+                                exit={{opacity: 0}}
+                                className="animate-pulse flex flex-col gap-3"
+                            >
                                 {[1, 2, 3, 4].map((_, i) => (
-                                    <div key={i} className="flex items-center gap-2 p-2">
+                                    <motion.div 
+                                        key={i}
+                                        initial={{opacity: 0, x: -20}}
+                                        animate={{opacity: 1, x: 0}}
+                                        transition={{duration: 0.3, delay: i * 0.1}}
+                                        className="flex items-center gap-2 p-2"
+                                    >
                                         <div className="w-[30px] h-[30px] bg-[#ffffff22] rounded-full"></div>
                                         <div className="flex flex-col gap-1">
                                             <div className="w-[100px] h-[12px] bg-[#ffffff22] rounded"></div>
                                             <div className="w-[60px] h-[10px] bg-[#ffffff22] rounded"></div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 ))}
-                            </div>
+                            </motion.div>
                         )}
                     </motion.div>
                 </div>
