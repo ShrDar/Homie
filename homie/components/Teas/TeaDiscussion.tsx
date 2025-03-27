@@ -18,6 +18,7 @@ import { db } from '@/config/firebase';
 import { storage } from "@/config/AppWriteClient";
 import { toast } from "sonner";
 import Image from "next/image"
+import TeaDiscussionReplyThread from "./TeaDiscussionReplyThread"
 
 export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShowTeaEdit }: { setShowTeaDiscussion: any, tea: Tea | null, user: HomieUser | null, setShowTeaEdit: any }) {
     const router = useRouter();
@@ -210,27 +211,11 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                 </div>
 
                 {/* Discussion Container - Add fixed height */}
-                <div className="w-[60%] bg-bgSecondary rounded-[15px] p-5 h-[85vh] flex flex-col">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold">Discussion</h2>
-                        <button 
-                            onClick={() => setShowTeaDiscussion(false)}
-                            className="p-2 hover:bg-bgPrimary rounded-full transition-all"
-                        >
-                            <IoClose className="w-6 h-6" />
-                        </button>
-                    </div>
-
-                    <div className="w-full h-[400px] bg-bgPrimary rounded-[15px] mb-4 p-4 overflow-y-auto">
-                        <p className="text-gray-400 text-center">
-                            No messages yet. Be the first one to join the discussion!
-                        </p>
-                    </div>
-
-                    <div className="mt-4 bg-bgPrimary rounded-lg p-4">
-                        <p className="text-gray-400 text-center">Message input coming soon...</p>
-                    </div>
-                </div>
+                <TeaDiscussionReplyThread
+                    setShowTeaDiscussion={setShowTeaDiscussion}
+                    discussionId={tea?.discussionId || ""}
+                    user={user}
+                />
             </div>
 
             {showReportModal && (

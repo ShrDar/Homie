@@ -315,9 +315,9 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                             initial={{x: 40, filter: 'blur(5px)'}}
                             animate={{x: 0, filter: 'blur(0px)'}}
                             transition={{duration: 0.2}}
-                            className="w-[50%] h-[50vh] overflow-y-auto border-bgPrimary border-l-[3px] border-[#888] pl-4 p-2 flex flex-col justify-center items-center"
+                            className="w-[50%] min-h-[50vh] overflow-y-auto border-bgPrimary border-l-[3px] border-[#888] pl-4 p-2 flex flex-col justify-center items-center"
                         >
-                            <div className="bg-bgPrimary rounded-[15px] p-8 w-full h-[400px] relative transition-all cursor-default">
+                            <div className="bg-bgPrimary rounded-[15px] p-8 w-full h-[70%] relative transition-all cursor-default">
                                 <div className="flex items-center gap-2 absolute top-4 left-4">
                                     {tags.map((tag, index) => (
                                         <motion.span 
@@ -370,7 +370,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     transition={{ duration: 0.2 }}
-                                    className="relative w-full h-[200px] mt-4"
+                                    className="relative w-full h-[30%] mt-4"
                                 >
                                     <Image
                                         src={imagePreview}
@@ -391,7 +391,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     transition={{ duration: 0.2 }}
-                                    className="relative w-full h-[200px] mt-4"
+                                    className="relative w-full h-[30%] mt-4"
                                 >
                                     <Image
                                         src={getProfileUrl(oldImage || "")}
