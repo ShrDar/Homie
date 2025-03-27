@@ -5,24 +5,27 @@ import { IoIosImages } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 import Image from "next/image"
 import TextareaAutosize from 'react-textarea-autosize'
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { storage } from "@/config/AppWriteClient";
 import { ID } from 'appwrite';
 import { toast } from "sonner";
-import { HomieUser } from "@/homieTypes/homieTypes";
+import { HomieUser, Tea } from "@/homieTypes/homieTypes";
 import DefaultLoading from '../Loading/DefaultLoading';
+import { getProfileUrl } from "@/extra/helpers";
+import { IoChevronBack } from "react-icons/io5";
 
-export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, user: HomieUser | null }) {
-    const [title, setTitle] = useState("")
-    const [content, setContent] = useState("")
-    const [tags, setTags] = useState<string[]>([])
+export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussion }: { setShowTeaEdit: any, user: HomieUser | null, tea: Tea | null, setShowTeaDiscussion: any}) {
+    const [title, setTitle] = useState(tea?.title || "")
+    const [content, setContent] = useState(tea?.content || "")
+    const [tags, setTags] = useState<string[]>(tea?.tags || [])
     const [currentTag, setCurrentTag] = useState("")
-    // Add state for image
     const [image, setImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
+    const [oldImage, setOldImage] = useState<string | null>(tea?.image || null);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setOldImage(null);
         const file = e.target.files?.[0];
         if (file) {
             setImage(file);
@@ -63,7 +66,6 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async () => {
-        // Add validation checks
         if (!title.trim()) {
             toast.info("Please add a title for your tea");
             return;
@@ -74,12 +76,52 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
             return;
         }
 
+        // Check if there are any changes when editing
+        if (tea) {
+            const isContentSame = content === tea.content;
+            const isTitleSame = title === tea.title;
+            const areTagsSame = JSON.stringify(tags) === JSON.stringify(tea.tags);
+            const isImageSame = !image && oldImage === tea.image; // Modified this line
+
+            if (isContentSame && isTitleSame && areTagsSame && isImageSame) {
+                toast.info("No changes detected!");
+                return;
+            }
+        }
+
         setIsLoading(true);
         try {
-            let imageId = '';
+            let imageId = tea?.image || '';
             
-            // Handle image upload to Appwrite if exists
+            // Handle image deletion and upload
+            if (tea?.image && !oldImage) {
+                // User wants to delete the old image
+                try {
+                    await storage.deleteFile(
+                        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "",
+                        tea.image
+                    );
+                    imageId = ''; // Clear the image ID
+                } catch (err) {
+                    console.error("Error deleting old image:", err);
+                }
+            }
+
+            // Handle new image upload if exists
             if (image) {
+                // Delete old image if exists
+                if (tea?.image) {
+                    try {
+                        await storage.deleteFile(
+                            process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "",
+                            tea.image
+                        );
+                    } catch (err) {
+                        console.error("Error deleting old image:", err);
+                    }
+                }
+
+                // Upload new image
                 try {
                     imageId = ID.unique();
                     await storage.createFile(
@@ -94,39 +136,56 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                 }
             }
 
-            const discussionRef = collection(db, "Discussions");
-            const discussionDoc = await addDoc(discussionRef, {
-                messages: [],
-                createdAt: new Date()
-            });
+            if (tea) {
+                // Update existing tea
+                const teaRef = doc(db, "Tea", tea._id);
+                await updateDoc(teaRef, {
+                    title,
+                    content,
+                    tags,
+                    image: imageId,
+                    updatedAt: new Date(),
+                    isEdited: true
+                });
 
-            const teaData = {
-                title,
-                content,
-                userId: user?._id,
-                image: imageId || '',
-                tags,
-                reactions: [],
-                createdAt: new Date(),
-                discussionId: discussionDoc.id
-            };
+                toast.success("Tea updated successfully! 🙌🏻");
+            } else {
+                // Create new tea
+                const discussionRef = collection(db, "Discussions");
+                const discussionDoc = await addDoc(discussionRef, {
+                    messages: [],
+                    createdAt: new Date()
+                });
 
-            const teasRef = collection(db, "Tea");
-            await addDoc(teasRef, teaData);
+                const teaData = {
+                    title,
+                    content,
+                    userId: user?._id,
+                    image: imageId,
+                    tags,
+                    reactions: [],
+                    createdAt: new Date(),
+                    discussionId: discussionDoc.id,
+                    isEdited: false
+                };
 
-            // Reset form after successful submission
+                const teasRef = collection(db, "Tea");
+                await addDoc(teasRef, teaData);
+
+                toast.success("Tea brewed successfully! 🙌🏻");
+            }
+
+            // Reset form and close modal
             setTitle('');
             setContent('');
             setTags([]);
             setImage(null);
             setImagePreview('');
-        
-            toast.success("Tea brewed successfully! 🙌🏻");
-            setShowTeaAdd(false);
+            setShowTeaEdit(false);
         
         } catch (error) {
-            console.error("Error adding tea:", error);
-            toast.error("Failed to brew tea");
+            console.error("Error with tea:", error);
+            toast.error(tea ? "Failed to update tea" : "Failed to brew tea");
         } finally {
             setIsLoading(false);
         }
@@ -134,10 +193,10 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
 
     return (
         <>
-            {isLoading && <DefaultLoading displayText="Brewing Tea" />}
+            {isLoading && <DefaultLoading displayText="Rebrewing Tea" />}
             <motion.div 
                 onClick={() => {
-                    setShowTeaAdd(false)
+                    setShowTeaEdit(false)
                 }} 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.7 }}
@@ -146,12 +205,15 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
             <div className="fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] text-fontPrimary">
                 <div className="w-full px-8 flex flex-col gap-6">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-semibold">Brew Tea</h2>
+                        <h2 className="text-2xl font-semibold">Edit Tea</h2>
                         <button 
-                            onClick={() => setShowTeaAdd(false)}
+                            onClick={() => {
+                                setShowTeaEdit(false)
+                                setShowTeaDiscussion(true)
+                            }}
                             className="p-2 hover:bg-bgPrimary rounded-full transition-colors"
                         >
-                            <RxCross2 size={24} />
+                            <IoChevronBack size={24} />
                         </button>
                     </div>
 
@@ -241,7 +303,7 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                                     className="ml-auto bg-bgPrimary hover:bg-[#242424] px-6 py-2 rounded-full transition-colors"
                                     onClick={handleSubmit}
                                 >
-                                    Brew ☕
+                                    Rebrew ☕
                                 </motion.button>
                             </div>
 
@@ -302,7 +364,7 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                                     <span>{new Date().toLocaleDateString()}</span>
                                 </div>
                             </div>
-                            {/* Added image preview here */}
+
                             {imagePreview && (
                                 <motion.div 
                                     initial={{ opacity: 0 }}
@@ -317,7 +379,28 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                                         className="object-cover rounded-lg"
                                     />
                                     <button
-                                        onClick={removeImage}
+                                        onClick={(removeImage)}
+                                        className="absolute top-2 right-2 p-1 bg-bgSecondary rounded-full hover:bg-red-500/20 transition-colors"
+                                    >
+                                        <RxCross2 className="w-5 h-5" />
+                                    </button>
+                                </motion.div>
+                            )}
+                            {oldImage && (
+                                <motion.div 
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="relative w-full h-[200px] mt-4"
+                                >
+                                    <Image
+                                        src={getProfileUrl(oldImage || "")}
+                                        alt="Preview"
+                                        fill
+                                        className="object-cover rounded-lg"
+                                    />
+                                    <button
+                                        onClick={() => setOldImage(null)}
                                         className="absolute top-2 right-2 p-1 bg-bgSecondary rounded-full hover:bg-red-500/20 transition-colors"
                                     >
                                         <RxCross2 className="w-5 h-5" />

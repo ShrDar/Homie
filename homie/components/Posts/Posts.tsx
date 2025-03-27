@@ -306,7 +306,7 @@ export default function Posts({session} : {session: Session}) {
               key={`post-${post._id}`}
               className={`min-h-screen w-[90%] py-5 md:w-[80%] lg:w-[70%] flex flex-col snap-start`}
             >
-                <div className={`w-full h-full flex rounded-[15px] ${post.image ? "bg-bgPrimary" : "bg-[#43434364] px-8"}`}>
+                <div className={`w-full h-full flex rounded-[15px] relative ${post.image ? "bg-bgPrimary" : "bg-[#43434364] px-8"}`}>
                     <div className={`bg-bgSecondary w-full rounded-[15px] p-4 flex flex-col gap-4 ${!post.image ? 'my-auto h-fit' : 'h-full'}`}>
                         <div className="flex justify-between items-center gap-3">
                           <div className='flex items-center gap-3'>
@@ -409,7 +409,7 @@ export default function Posts({session} : {session: Session}) {
                                     {post.reactions?.length}
                                 </motion.p>
                             </div>
-                            <div className='showPostReactionsContainer relative'>
+                            <div className='showPostReactionsContainer'>
                               <AnimatePresence>
                                 {showPostReaction && (
                                   <PostReactions 
@@ -417,6 +417,7 @@ export default function Posts({session} : {session: Session}) {
                                       setPosts={setPosts}
                                       setShowPostReaction={setShowPostReactions} 
                                       userId={user?._id || session?.user?.id || ""} 
+                                      showPostReaction={showPostReaction}
                                   />
                                 )}
                               </AnimatePresence>

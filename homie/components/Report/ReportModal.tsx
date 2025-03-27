@@ -37,12 +37,13 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
             );
 
             if (!querySnapshot.empty) {
-                toast.error("You have already reported this user 🙅🏻‍♂️", {
+                toast.error(`You have already reported this ${reportType} 🙅🏻‍♂️`, {
                     style: {
                         backgroundColor: "#2a2a2a",
                         color: "#fff",
                         borderColor: "#FF6F6F"
-                    }
+                    },
+                    id: `report-${reportedContentId}` // Add unique ID to prevent duplicate toasts
                 });
                 onClose();
             } else {
@@ -110,7 +111,7 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-[#000] bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                        className="fixed inset-0 bg-[#000] bg-opacity-50 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
                     >
                         <motion.div
                             initial={{ scale: 0.95, opacity: 0 }}
@@ -132,13 +133,13 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={onClose}
-                            className="fixed inset-0 bg-[#000] bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                            className="fixed inset-0 bg-[#000] bg-opacity-50 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
                         />
                         <motion.div
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.95, opacity: 0 }}
-                        className="fixed z-[100] lg:w-[32%] translate-x-[-50%] translate-y-[-50%] bg-bgSecondary rounded-[15px] p-6"
+                        className="fixed z-[120] lg:w-[32%] translate-x-[-50%] translate-y-[-50%] bg-bgSecondary rounded-[15px] p-6"
                     >
                         <h2 className="text-2xl text-center font-bold text-fontPrimary mb-4">Report</h2>
                         

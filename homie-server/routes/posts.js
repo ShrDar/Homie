@@ -70,7 +70,7 @@ router.patch("/:id", async (req, res) => {
   const updateData = {
     ...(title && { title }),
     ...(content && { content }),
-    ...(image && { image }),
+    image: image,
     isEdited: true,
     updatedAt: new Date()
   };

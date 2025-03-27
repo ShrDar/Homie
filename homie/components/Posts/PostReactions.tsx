@@ -9,9 +9,10 @@ interface Props {
   setPosts:any;
   setShowPostReaction: (show: boolean) => void;
   userId: string;  // Add userId prop
+  showPostReaction: boolean
 }
 
-export default function PostReactions({ post, setPosts, setShowPostReaction, userId }: Props) {
+export default function PostReactions({ post, setPosts, setShowPostReaction, userId, showPostReaction }: Props) {
 
     
     const hasUserReacted = (reactionType: string) => {
@@ -68,7 +69,7 @@ export default function PostReactions({ post, setPosts, setShowPostReaction, use
             <div onClick={() => {
                 setShowPostReaction(false)
                 fetchPosts();
-            }} className="h-full w-full bg-transparent fixed top-0 left-0" />
+            }} className={`h-full w-full bg-transparent absolute top-0 left-0 ${showPostReaction ? "flex" : "hidden"}`} />
             <motion.div 
                 initial={{ opacity: 0, scale: 0.8, x: window.innerWidth >= 768 ? -60 : 0, y: -60 }}
                 animate={{ y: -60, opacity: 1, scale: 1, x: window.innerWidth >= 768 ? -60 : 0 }}

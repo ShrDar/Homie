@@ -6,9 +6,13 @@ import TeaDiscussion from "./TeaDiscussion";
 import { Tea, HomieUser } from "@/homieTypes/homieTypes";
 import TeaAdd from "./TeaAdd";
 // import TextareaAutosize from 'react-textarea-autosize';
+import ShimmerLoading from '../Loading/ShimmerLoading';
 import { TbCoffee } from "react-icons/tb";
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../../config/firebase';
+import Image from "next/image";
+import { getProfileUrl } from "@/extra/helpers";
+import TeaEdit from "./TeaEdit";
 
 // Add users state near other state declarations
 export default function TeaMain({ session }: { session: Session }) {
@@ -17,6 +21,7 @@ export default function TeaMain({ session }: { session: Session }) {
     const [isLoadingTeas, setIsLoadingTeas] = useState(true);
     const [showTeaDiscussion, setShowTeaDiscussion] = useState(false);
     const [showTeaAdd, setShowTeaAdd] = useState(false);
+    const [showTeaEdit, setShowTeaEdit] = useState(false);
     const [currentTea, setCurrentTea] = useState<Tea | null>(null);
     const [isButtonVisible, setIsButtonVisible] = useState(true);
     const [lastActivityTime, setLastActivityTime] = useState(Date.now());
@@ -57,15 +62,24 @@ export default function TeaMain({ session }: { session: Session }) {
                 setIsLoadingTeas(true);
                 const teasRef = collection(db, "Tea");
                 const q = query(teasRef, orderBy("createdAt", "desc"));
-                const querySnapshot = await getDocs(q);
                 
-                const teasData = querySnapshot.docs.map(doc => ({
-                    _id: doc.id,
-                    ...doc.data(),
-                    createdAt: doc.data().createdAt?.toDate().toISOString() || new Date().toISOString()
-                })) as Tea[];
+                // Replace the old fetch with onSnapshot
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    const teasData = querySnapshot.docs.map(doc => ({
+                        _id: doc.id,
+                        ...doc.data(),
+                        createdAt: doc.data().createdAt?.toDate().toISOString() || new Date().toISOString()
+                    })) as Tea[];
+                    
+                    setTeas(teasData);
+                    setIsLoadingTeas(false);
+                }, (error) => {
+                    console.error("Error fetching teas:", error);
+                    setIsLoadingTeas(false);
+                });
 
-                setTeas(teasData);
+                // Cleanup subscription on unmount
+                return () => unsubscribe();
             } catch (error) {
                 console.error("Error fetching teas:", error);
             } finally {
@@ -109,6 +123,42 @@ export default function TeaMain({ session }: { session: Session }) {
         };
     }, [lastActivityTime, isButtonVisible]);
 
+    if(isLoadingTeas) {
+        return (
+            <ShimmerLoading displayText='Teas Incoming' />
+        )
+    }
+
+    if(teas.length === 0) {
+        return (
+            <div className="min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4">
+                <div className="w-24 h-24 bg-bgPrimary rounded-full flex items-center justify-center">
+                    <TbCoffee className="w-12 h-12 text-fontPrimary opacity-50" />
+                </div>
+                <div className="text-center">
+                    <h2 className="text-fontPrimary text-2xl font-semibold mb-2">No Teas Yet</h2>
+                    <p className="text-[#888] max-w-md">Be the first one to brew a conversation with your homies!</p>
+                </div>
+                <motion.button 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    onClick={() => setShowTeaAdd(true)}
+                    className="px-6 py-3 bg-bgSecondary text-fontPrimary rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 flex items-center gap-2"
+                >
+                    <TbCoffee className="w-5 h-5" />
+                    <span>Brew Tea</span>
+                </motion.button>
+                {showTeaAdd && <TeaAdd 
+                    setShowTeaAdd={setShowTeaAdd} 
+                    user={user}
+                />}
+            </div>
+        )
+    }
+
     return (
         <>
             <motion.div 
@@ -132,44 +182,59 @@ export default function TeaMain({ session }: { session: Session }) {
                                         animate={{ opacity: 1, y: 0 }}
                                         className="snap-start h-screen flex items-center justify-center p-4"
                                         >
-                                        <div onClick={() => {
-                                            setShowTeaDiscussion(true)
-                                            setCurrentTea(tea)  
-                                        }} className="w-full max-w-3xl h-[50%] bg-bgSecondary cursor-pointer hover:bg-[#3a3a3a] p-8 rounded-xl border flex justify-center item-center transition-all relative">
-                                            <div className="flex items-center gap-2 absolute top-4 left-4">
-                                                {tea.tags.map((tag, index) => (
-                                                    <span key={index} className="px-3 py-1 rounded-full bg-primary/10 text-sm">
-                                                        #{tag}
+                                        <div className="flex items-center justify-center w-[60%] h-full gap-2">
+                                            {tea?.image && 
+                                                <div onClick={() => {
+                                                    setShowTeaDiscussion(true)
+                                                    setCurrentTea(tea)
+                                                }} className="teaImage h-1/2 p-3 bg-bgSecondary rounded-[15px] hover:brightness-[0.9] transition-all duration-150 cursor-pointer">
+                                                    <Image
+                                                        src={getProfileUrl(tea?.image || "")}
+                                                        alt={tea.title}
+                                                        width={300}
+                                                        height={300}
+                                                        className="h-full object-cover rounded-[15px]"
+                                                    />
+                                                </div>
+                                            }
+                                            <div onClick={() => {
+                                                setShowTeaDiscussion(true)
+                                                setCurrentTea(tea)  
+                                            }} className="w-full max-w-3xl h-[50%] bg-bgSecondary cursor-pointer hover:bg-[#3a3a3a] p-8 rounded-xl flex justify-center item-center transition-all relative">
+                                                <div className="flex items-center gap-2 absolute top-4 left-4">
+                                                    {tea.tags.map((tag, index) => (
+                                                        <span key={index} className="px-3 py-1 rounded-full bg-bgPrimary text-sm">
+                                                            #{tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                {/* Added creator name */}
+                                                <div className="absolute top-4 right-4">
+                                                    <span className="text-sm text-gray-400">
+                                                        @{teaUser?.username || tea.userId}
                                                     </span>
-                                                ))}
+                                                </div>
+                                                <div className="flex flex-col justify-center items-center gap-6">
+                                                    <h2 className="text-3xl font-bold">
+                                                        {tea.title}
+                                                    </h2>
+                                                    <p className="text-gray-400 text-lg line-clamp-1">
+                                                        {tea.content}
+                                                    </p>
+                                                </div>
+                                                <div className="absolute bottom-4 left-4 text-sm text-gray-400">
+                                                    <span className="flex items-center gap-2">
+                                                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                                                        {2} participants
+                                                    </span>
+                                                </div>
+                                                <div className="absolute bottom-4 right-4 text-sm text-gray-400">
+                                                    <span>{new Date(tea.createdAt).toLocaleDateString()}</span>
+                                                </div>
                                             </div>
-                                            {/* Added creator name */}
-                                            <div className="absolute top-4 right-4">
-                                                <span className="text-sm text-gray-400">
-                                                    @{teaUser?.username || tea.userId}
-                                                </span>
-                                            </div>
-                                            <div className="flex flex-col justify-center items-center gap-6">
-                                                <h2 className="text-3xl font-bold">
-                                                    {tea.title}
-                                                </h2>
-                                                <p className="text-gray-400 text-lg line-clamp-1">
-                                                    {tea.content}
-                                                </p>
-                                            </div>
-                                            <div className="absolute bottom-4 left-4 text-sm text-gray-400">
-                                                <span className="flex items-center gap-2">
-                                                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                                    {2} participants
-                                                </span>
-                                            </div>
-                                            <div className="absolute bottom-4 right-4 text-sm text-gray-400">
-                                                <span>{new Date(tea.createdAt).toLocaleDateString()}</span>
-                                            </div>
-                                        </div>
-                                        <div className="discussionInput">
 
                                         </div>
+                                        
                                     </motion.div>
                                 )
                             })}
@@ -182,7 +247,9 @@ export default function TeaMain({ session }: { session: Session }) {
                 showTeaDiscussion &&
                 <TeaDiscussion
                     setShowTeaDiscussion={setShowTeaDiscussion}
-                    tea = {currentTea}
+                    tea={currentTea}
+                    user={user}
+                    setShowTeaEdit={setShowTeaEdit}
                 />
             }
             {
@@ -190,7 +257,15 @@ export default function TeaMain({ session }: { session: Session }) {
                 <TeaAdd
                     setShowTeaAdd={setShowTeaAdd}
                     user={user}
-                    setTeas={setTeas}
+                />
+            }
+            {
+                showTeaEdit &&
+                <TeaEdit
+                    setShowTeaEdit={setShowTeaEdit}
+                    tea={currentTea}
+                    user={user}
+                    setShowTeaDiscussion={setShowTeaDiscussion}
                 />
             }
             <motion.button 

@@ -9,15 +9,18 @@ import { toast } from 'sonner';
 import TextareaAutosize from 'react-textarea-autosize';
 import { getProfileUrl } from '@/extra/helpers';
 import { Post } from '@/homieTypes/homieTypes';
+import { motion } from 'motion/react';
 
 export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user, setPosts, currentEditPost }: { openPostEditModal: boolean, setOpenPostEditModal: any, user: any, setPosts: any, currentEditPost: Post | null }) {
     const [content, setContent] = useState(currentEditPost?.content || "");
     const [currentImage, setCurrentImage] = useState(currentEditPost?.image || "");
     const [currentFile, setCurrentFile] = useState<File | null>(null);
+    const [oldImage, setOldImage] = useState<string | null>(currentEditPost?.image || null);
     const [isPosting, setIsPosting] = useState(false);
 
     useEffect(() => {
         setContent(currentEditPost?.content || "")
+        setOldImage(currentEditPost?.image || null)
     }, [currentEditPost])
     
     if (!openPostEditModal) {
@@ -26,6 +29,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
 
 
     const handleImageChange = (file: File | undefined) => {
+        setOldImage(null);
         if (file && file.type.startsWith("image/")) {
             // Add size validation
             const maxSizeInMB = 2;
@@ -50,7 +54,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
 
         // Check if there are any changes
         const isContentSame = content === currentEditPost?.content;
-        const isImageSame = !currentFile;
+        const isImageSame = !currentFile && (oldImage === null || oldImage !== "");
         console.log(isContentSame, isImageSame)
         if (isContentSame && isImageSame) {
             toast.info("No changes detected!");
@@ -62,6 +66,43 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
         
         try {
             // Handle image update if there's a new file
+            if(oldImage === "") {
+                if (currentEditPost?.image && !currentEditPost.image.startsWith("http")) {
+                    try {
+                        await storage.deleteFile(
+                            process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "",
+                            currentEditPost.image
+                        );
+                    } catch (err) {
+                        console.error("Error deleting old image:", err);
+                    }
+                }
+
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${currentEditPost?._id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: content.slice(0, 50),
+                        content,
+                        image: null,
+                    }),
+                });
+    
+                if (response.ok) {
+                    toast.success("Post updated successfully!");
+                    setContent('');
+                    setCurrentImage("");
+                    setCurrentFile(null);
+                    fetchPosts();
+                    setOpenPostEditModal(false);
+                } else {
+                    toast.error("Failed to update post");
+                }
+
+            }
+
             if (currentFile) {
                 // Delete old image if exists
                 if (currentEditPost?.image && !currentEditPost.image.startsWith("http")) {
@@ -89,31 +130,31 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                     setIsPosting(false);
                     return;
                 }
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${currentEditPost?._id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            title: content.slice(0, 50),
+                            content,
+                            image: imageId || null,
+                        }),
+                    });
+        
+                    if (response.ok) {
+                        toast.success("Post updated successfully!");
+                        setContent('');
+                        setCurrentImage("");
+                        setCurrentFile(null);
+                        fetchPosts();
+                        setOpenPostEditModal(false);
+                    } else {
+                        toast.error("Failed to update post");
+                    }
             }
 
             // Update post
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${currentEditPost?._id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: content.slice(0, 50),
-                    content,
-                    image: imageId || null,
-                }),
-            });
-
-            if (response.ok) {
-                toast.success("Post updated successfully!");
-                setContent('');
-                setCurrentImage("");
-                setCurrentFile(null);
-                fetchPosts();
-                setOpenPostEditModal(false);
-            } else {
-                toast.error("Failed to update post");
-            }
         } catch (err) {
             console.error(err);
             toast.error("Failed to update post");
@@ -216,7 +257,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                                             <p className="text-sm whitespace-pre-wrap max-h-[10rem] break-words overflow-y-auto">{content}</p>
                                         )
                                     }
-                                    {currentImage && (
+                                    {currentFile && (
                                         <div className="relative w-full h-48">
                                             <Image
                                                 src={currentImage}
@@ -225,6 +266,27 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                                                 className="object-cover rounded-lg"
                                             />
                                         </div>
+                                    )}
+                                    {oldImage && (
+                                        <motion.div 
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="relative w-full h-[200px] mt-4"
+                                        >
+                                            <Image
+                                                src={getProfileUrl(oldImage || "")}
+                                                alt="Preview"
+                                                fill
+                                                className="object-cover rounded-lg"
+                                            />
+                                            <button
+                                                onClick={() => setOldImage("")}
+                                                className="absolute top-2 right-2 p-1 bg-bgSecondary rounded-full hover:bg-red-500/20 transition-colors"
+                                            >
+                                                <RxCross2 className="w-5 h-5" />
+                                            </button>
+                                        </motion.div>
                                     )}
                                 </div>
                             </div>
@@ -238,7 +300,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200]">
                     <div className="bg-bgSecondary p-4 rounded-lg flex items-center gap-2">
                         <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
-                        <span className="text-white tracking-[4px]">Posting</span>
+                        <span className="text-white tracking-[4px]">Updating...</span>
                     </div>
                 </div>
             )}
