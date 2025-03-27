@@ -469,12 +469,17 @@ export default function Posts({session} : {session: Session}) {
           whileHover={{scale: 1.1}}
           whileTap={{scale: 0.9}}
           transition={{ duration: 0.1 , ease: 'linear'}}
-          className={`fixed bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#] transition-all duration-300 z-50 ${
+          className={`fixed bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 z-50 group ${
             !isButtonVisible && 'pointer-events-none'
           }`}
           onClick={() => setOpenPostAddModal(true)}
         >
-          <MdOutlinePostAdd className="w-6 h-6" />
+          <div className="flex items-center">
+            <MdOutlinePostAdd className="w-6 h-6" />
+            <span className="w-0 overflow-hidden group-hover:w-16 transition-all duration-300 ease-in-out">
+              Post
+            </span>
+          </div>
         </motion.button>
 
         <PostsAdd 
