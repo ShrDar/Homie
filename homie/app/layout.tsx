@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { Toaster } from "sonner";
 import SlideBar from "@/components/SlideBar/SlideBar";
+import PageTitle from "@/components/PageTitle/PageTitle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,6 +61,7 @@ export default async function RootLayout({
           {session && <SlideBar session={session} />}
           {children}
           <Toaster richColors />
+          <PageTitle />
           <div id="modal"></div>
         </body>
       </html>

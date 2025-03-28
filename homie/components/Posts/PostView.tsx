@@ -51,7 +51,7 @@ export default function PostView({post} : {post: Post}) {
                 initial={{ scale: 0.98 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className={`w-full h-full flex rounded-[15px] ${post.image ? "bg-bgPrimary" : "bg-[#43434364] px-8"}`}
+                className={`w-full h-full flex rounded-[15px] ${post.image ? "bg-bgPrimary" : "bg-[#43434364]"}`}
             >
                 <div className={`bg-bgSecondary w-full rounded-[15px] p-4 flex flex-col gap-4 ${!post.image ? 'my-auto h-fit' : 'h-full'}`}>
                     <motion.div 

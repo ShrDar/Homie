@@ -161,7 +161,7 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                                         placeholder="Write a comment..."
                                         minRows={1}
                                         maxRows={4}
-                                        className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
+                                        className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-[1.6rem]"
                                     />
                                 </div>
                                 <div className="flex relative justify-center items-center gap-2">
@@ -270,13 +270,13 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                                                             />
                                                         </div>
                                                         {comment.content && (
-                                                            <p className="text-[15px] leading-5 whitespace-pre-wrap break-words px-2 text-justify">
+                                                            <p className="text-[15px] leading-[1.6rem] whitespace-pre-wrap break-words px-2 text-justify">
                                                                 {comment.content}
                                                             </p>
                                                         )}
                                                     </div>
                                                 ) : (
-                                                    <p className="text-[15px] leading-5 whitespace-pre-wrap text-left break-words">{comment.content}</p>
+                                                    <p className="text-[15px] leading-[1.6rem] whitespace-pre-wrap text-left break-words">{comment.content}</p>
                                                 )}
                                             </div>
                                         </div>
@@ -308,7 +308,7 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                                     placeholder="Write a comment..."
                                     minRows={1}
                                     maxRows={4}
-                                    className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
+                                    className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-[1.6rem]"
                                 />
                             </div>
                             <div className="flex relative justify-center items-center gap-2">

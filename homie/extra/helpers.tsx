@@ -15,7 +15,7 @@ export const getProfileUrl = (image: string) => {
 
 export const reactionButtons: ReactionButton[] = [
     { 
-        icon: <p className="aspect aspect-square text-center">🤝🏻</p>, 
+        icon: <p className="aspect aspect-square text-center rotate-180">🤝🏻</p>, 
         label: 'Dap', 
         type: 'dap',
         color: '#4CAF50',

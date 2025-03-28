@@ -254,7 +254,7 @@ export default function Posts({session} : {session: Session}) {
           handleMovementForAddPost();
         }}
         onScroll={() => handleMovementForAddPost()}
-        className="min-h-screen relative w-full flex flex-col justify-start items-center overflow-y-scroll snap-y snap-mandatory"
+        className="min-h-screen relative w-full flex flex-col justify-start items-center overflow-y-auto snap-y snap-mandatory"
       >
 
         {posts.map((post) => {
@@ -310,7 +310,7 @@ export default function Posts({session} : {session: Session}) {
                     <div className={`bg-bgSecondary w-full rounded-[15px] p-4 flex flex-col gap-4 ${!post.image ? 'my-auto h-fit' : 'h-full'}`}>
                         <div className="flex justify-between items-center gap-3">
                           <div className='flex items-center gap-3'>
-                            <div onClick={() => router.push(`homie/${user?._id}`)} className="w-12 h-12 cursor-pointer rounded-full overflow-hidden bg-bgPrimary">
+                            <div onClick={() => router.push(`homie/${postUser?._id}`)} className="w-12 h-12 cursor-pointer rounded-full overflow-hidden bg-bgPrimary">
                                 {postUser?.image ? (
                                 <Image
                                     key={`user-image-${postUser._id}`}
@@ -378,7 +378,7 @@ export default function Posts({session} : {session: Session}) {
                           </DropdownMenu>
                         </div>
     
-                        <p className={`text-fontPrimary leading-[30px] whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[60vh]"} p-2 overflow-y-auto`}>
+                        <p className={`text-fontPrimary leading-[1.6rem] whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[60vh]"} p-2 overflow-y-auto`}>
                           {post.content}
                         </p>
     

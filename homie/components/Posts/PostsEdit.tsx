@@ -46,6 +46,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
         }
     }
 
+
     const handleSubmit = async () => {
         if (!content.trim()) {
             toast.error("Content is required!");
@@ -55,7 +56,6 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
         // Check if there are any changes
         const isContentSame = content === currentEditPost?.content;
         const isImageSame = !currentFile && (oldImage === null || oldImage !== "");
-        console.log(isContentSame, isImageSame)
         if (isContentSame && isImageSame) {
             toast.info("No changes detected!");
             return;
@@ -65,7 +65,44 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
         let imageId = currentEditPost?.image || "";
         
         try {
-            // Handle image update if there's a new file
+
+            if(oldImage === "" && !isContentSame) {
+                if (currentEditPost?.image && !currentEditPost.image.startsWith("http")) {
+                    try {
+                        await storage.deleteFile(
+                            process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "",
+                            currentEditPost.image
+                        );
+                    } catch (err) {
+                        console.error("Error deleting old image:", err);
+                    }
+                }
+
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${currentEditPost?._id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: content.slice(0, 50),
+                        content,
+                        image: null,
+                    }),
+                });
+    
+                if (response.ok) {
+                    toast.success("Post updated successfully!");
+                    setContent('');
+                    setCurrentImage("");
+                    setCurrentFile(null);
+                    fetchPosts();
+                    setOpenPostEditModal(false);
+                } else {
+                    toast.error("Failed to update post");
+                }
+                return;
+            }
+
             if(oldImage === "") {
                 if (currentEditPost?.image && !currentEditPost.image.startsWith("http")) {
                     try {
@@ -152,6 +189,31 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                     } else {
                         toast.error("Failed to update post");
                     }
+            } 
+            
+            if(!isContentSame) {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${currentEditPost?._id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: content.slice(0, 50),
+                        content,
+                        image: imageId || null,
+                    }),
+                });
+    
+                if (response.ok) {
+                    toast.success("Post updated successfully!");
+                    setContent('');
+                    setCurrentImage("");
+                    setCurrentFile(null);
+                    fetchPosts();
+                    setOpenPostEditModal(false);
+                } else {
+                    toast.error("Failed to update post");
+                }
             }
 
             // Update post
