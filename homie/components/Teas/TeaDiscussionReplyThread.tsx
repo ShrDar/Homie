@@ -3,7 +3,6 @@
 import { IoClose } from "react-icons/io5"
 import { useState, KeyboardEvent, useEffect, useRef } from "react"
 import TextareaAutosize from 'react-textarea-autosize';
-import { IoIosImages } from "react-icons/io";
 import { db } from "@/config/firebase";
 import { addDoc, collection, doc, onSnapshot, orderBy, query, deleteDoc } from "firebase/firestore";
 import Image from "next/image";

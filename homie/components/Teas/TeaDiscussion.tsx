@@ -1,7 +1,6 @@
 "use client"
 import { HomieUser, Tea } from "@/homieTypes/homieTypes"
 import { motion, AnimatePresence } from "framer-motion"
-import { IoClose } from "react-icons/io5"
 import { CiMenuKebab } from "react-icons/ci"
 import {
     DropdownMenu,
