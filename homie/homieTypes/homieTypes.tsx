@@ -61,4 +61,5 @@ export type Tea = {
   discussionId: string;  
   image?: string;
   tags: string[];
+  isOpen: boolean;
 }

@@ -108,7 +108,8 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                 tags,
                 reactions: [],
                 createdAt: new Date(),
-                discussionId: discussionDoc.id
+                discussionId: discussionDoc.id,
+                isOpen: true
             };
 
             const teasRef = collection(db, "Tea");
@@ -294,7 +295,7 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                                 <div className="absolute bottom-4 left-4 text-sm text-gray-400">
                                     <span className="flex items-center gap-2">
                                         <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                        0 participants
+                                        Join Now
                                     </span>
                                 </div>
 

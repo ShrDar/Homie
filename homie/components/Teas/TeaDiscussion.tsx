@@ -118,9 +118,16 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                     <div className="flex justify-between items-start mb-1">
                         <div className="flex items-center gap-2 flex-wrap">
                             {tea?.tags.map((tag, index) => (
-                                <span key={index} className="px-3 py-1.5 rounded-full bg-bgPrimary text-sm cursor-default selection:bg-bgSecondary hover:bg-opacity-80 transition-all">
+                                <motion.span
+                                    initial={{filter: 'blur(5px)'}}
+                                    animate={{x: 0, filter: 'blur(0px)'}}
+                                    transition={{ 
+                                        delay: index * 0.05 
+                                    }}
+                                    key={index} className="px-3 py-1.5 rounded-full bg-bgPrimary text-sm cursor-default selection:bg-bgSecondary hover:bg-opacity-80 transition-all"
+                                >
                                     #{tag}
-                                </span>
+                                </motion.span>
                             ))}
                         </div>
                         <DropdownMenu>
@@ -198,8 +205,12 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                         </div>
 
                             <div className="bottom-3 text-gray-400 text-sm left-6 absolute flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                <span className="hover:text-gray-300 transition-colors">{0} participants</span>
+                                {
+                                    tea?.isOpen ?
+                                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>:
+                                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                }
+                                {tea?.isOpen ? <span className="hover:text-gray-300 transition-colors">Discuss</span> : <span className="hover:text-gray-300 transition-colors">Discussed</span>}
                             </div>
                             <div>
                                 <span className="bottom-3 text-gray-400 text-sm right-6 absolute hover:text-gray-300 transition-colors">
@@ -214,6 +225,7 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                     setShowTeaDiscussion={setShowTeaDiscussion}
                     discussionId={tea?.discussionId || ""}
                     user={user}
+                    tea={tea}
                 />
             </div>
 

@@ -25,7 +25,6 @@ export default function TeaMain({ session }: { session: Session }) {
     const [currentTea, setCurrentTea] = useState<Tea | null>(null);
     const [isButtonVisible, setIsButtonVisible] = useState(true);
     const [lastActivityTime, setLastActivityTime] = useState(Date.now());
-    // Add this new state
     const [user, setUser] = useState<HomieUser | null>(null);
 
     // Add this useEffect for fetching user data
@@ -182,7 +181,7 @@ export default function TeaMain({ session }: { session: Session }) {
                                         animate={{ opacity: 1, y: 0 }}
                                         className="snap-start h-screen flex items-center justify-center p-4"
                                         >
-                                        <div className="flex items-center justify-center w-[60%] h-full gap-2">
+                                        <div className="flex items-center justify-center w-[65%] h-full gap-2 bg-[#4343433e] rounded-[15px] px-5">
                                             {tea?.image && 
                                                 <div onClick={() => {
                                                     setShowTeaDiscussion(true)
@@ -224,8 +223,12 @@ export default function TeaMain({ session }: { session: Session }) {
                                                 </div>
                                                 <div className="absolute bottom-4 left-4 text-sm text-gray-400">
                                                     <span className="flex items-center gap-2">
-                                                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                                        {2} participants
+                                                        {
+                                                            tea.isOpen ?
+                                                            <span className="w-2 h-2 rounded-full bg-green-500"></span> :
+                                                            <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                                        }
+                                                        {tea.isOpen ? "Join Tea" : " Tea Closed"}
                                                     </span>
                                                 </div>
                                                 <div className="absolute bottom-4 right-4 text-sm text-gray-400">

@@ -19,10 +19,11 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
     const [title, setTitle] = useState(tea?.title || "")
     const [content, setContent] = useState(tea?.content || "")
     const [tags, setTags] = useState<string[]>(tea?.tags || [])
+    const [isTeaOpen, setIsTeaOpen] = useState<boolean>(tea?.isOpen ?? true);
     const [currentTag, setCurrentTag] = useState("")
     const [image, setImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
-    const [oldImage, setOldImage] = useState<string | null>(tea?.image || null);
+    const [oldImage, setOldImage] = useState<string | null>(tea?.image ?? null);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setOldImage(null);
@@ -76,14 +77,16 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
             return;
         }
 
-        // Check if there are any changes when editing
         if (tea) {
             const isContentSame = content === tea.content;
             const isTitleSame = title === tea.title;
             const areTagsSame = JSON.stringify(tags) === JSON.stringify(tea.tags);
-            const isImageSame = !image && oldImage === tea.image; // Modified this line
+            const isImageSame = !image && oldImage === tea.image; 
+            const isOpenSame = isTeaOpen === tea.isOpen;
 
-            if (isContentSame && isTitleSame && areTagsSame && isImageSame) {
+            console.log(`isContentSame: ${isContentSame}, isTitleSame: ${isTitleSame}, areTagsSame: ${areTagsSame}, isImageSame: ${isImageSame}, isOpenSame: ${isOpenSame}`)
+
+            if (isContentSame && isTitleSame && areTagsSame && isImageSame && isOpenSame) {
                 toast.info("No changes detected!");
                 return;
             }
@@ -145,7 +148,8 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                     tags,
                     image: imageId,
                     updatedAt: new Date(),
-                    isEdited: true
+                    isEdited: true,
+                    isOpen: isTeaOpen
                 });
 
                 toast.success("Tea updated successfully! 🙌🏻");
@@ -205,7 +209,25 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
             <div className="fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] text-fontPrimary">
                 <div className="w-full px-8 flex flex-col gap-6">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-semibold">Edit Tea</h2>
+                        <div className="flex items-center gap-4">
+                            <h2 className="text-2xl font-semibold">Edit Tea</h2>
+                            <button
+                                onClick={() => setIsTeaOpen(prev => !prev)}
+                                className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
+                                    isTeaOpen ? 'bg-bgPrimary' : 'bg-[#3a3a3a]'
+                                }`}
+                            >
+                                <div
+                                    className={`absolute top-1 w-5 h-5 rounded-full bg-fontPrimary transition-all duration-300 ease-in-out ${
+                                        isTeaOpen ? 'left-8' : 'left-1'
+                                    }`}
+                                />
+                                <span className="sr-only">Toggle Tea Status</span>
+                            </button>
+                            <span className="text-sm text-gray-400">
+                                {isTeaOpen ? 'Open' : 'Closed'}
+                            </span>
+                        </div>
                         <button 
                             onClick={() => {
                                 setShowTeaEdit(false)
@@ -355,8 +377,12 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
 
                                 <div className="absolute bottom-4 left-4 text-sm text-gray-400">
                                     <span className="flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                        0 participants
+                                        {
+                                            isTeaOpen ?
+                                            <span className="w-2 h-2 rounded-full bg-green-500"></span> :
+                                            <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                        }
+                                        {isTeaOpen ? "Join Tea" : " Tea Closed"}
                                     </span>
                                 </div>
 

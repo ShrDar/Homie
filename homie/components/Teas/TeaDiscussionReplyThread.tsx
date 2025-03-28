@@ -16,6 +16,7 @@ import {
     DropdownMenuTrigger,
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { Tea } from "@/homieTypes/homieTypes";
 
 
 // Add interface for message type
@@ -36,7 +37,7 @@ interface Message {
     };
 }
 
-export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discussionId, user }: { setShowTeaDiscussion: any, discussionId: string, user: any }) {
+export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discussionId, user, tea }: { setShowTeaDiscussion: any, discussionId: string, user: any, tea: Tea | null }) {
     const [message, setMessage] = useState("")
     const [isMobile, setIsMobile] = useState(false)
     const [messages, setMessages] = useState<Message[]>([])
@@ -326,68 +327,70 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
                 <div ref={messagesEndRef} /> {/* Add this div at the end of messages */}
             </div>
 
-            {/* Message Input */}
-            <div className="yapTypeSection w-full">
-                {replyingTo && (
-                    <div className="flex items-center justify-between bg-bgPrimary rounded-[15px] p-3 mb-2">
-                        <div className="flex items-center gap-2">
-                            <div className="w-1 h-6 bg-[#666] rounded-full"></div>
-                            <div>
-                                <p className="text-sm text-[#666]">
-                                    Replying to <span className="font-semibold">{replyingTo.userName}</span>
-                                </p>
-                                <p className="text-xs opacity-75 truncate max-w-[200px]">{replyingTo.content}</p>
+            {
+                tea?.isOpen &&
+                <div className="yapTypeSection w-full">
+                    {replyingTo && (
+                        <div className="flex items-center justify-between bg-bgPrimary rounded-[15px] p-3 mb-2">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-6 bg-[#666] rounded-full"></div>
+                                <div>
+                                    <p className="text-sm text-[#666]">
+                                        Replying to <span className="font-semibold">{replyingTo.userName}</span>
+                                    </p>
+                                    <p className="text-xs opacity-75 truncate max-w-[200px]">{replyingTo.content}</p>
+                                </div>
                             </div>
-                        </div>
-                        <button 
-                            onClick={() => setReplyingTo(null)}
-                            className="p-1 hover:bg-bgSecondary rounded-full transition-all"
-                        >
-                            <IoClose className="w-4 h-4" />
-                        </button>
-                    </div>
-                )}
-                <form onSubmit={handleSendMessage} className="flex flex-col gap-2">
-                    <div className="flex gap-2 items-center">
-                        <div className="flex w-full items-center justify-center relative">
-                            <TextareaAutosize
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                onKeyDown={handleKeyPress}
-                                placeholder="Type your message..."
-                                minRows={1}
-                                maxRows={4}
-                                className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
-                            />
-                        </div>
-                        <div className="flex relative justify-center items-center gap-2">
-                            <div 
-                                onClick={() => setShowGifPicker(true)}
-                                className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#666] p-2 rounded-full"
+                            <button 
+                                onClick={() => setReplyingTo(null)}
+                                className="p-1 hover:bg-bgSecondary rounded-full transition-all"
                             >
-                                <p className="text-[8px] text-[#666] tracking-[2px] aspect-square flex items-center justify-center">GIF</p>
-                            </div>
-                            <GifPicker
-                                isOpen={showGifPicker}
-                                onClose={() => setShowGifPicker(false)}
-                                onGifSelect={sendGifMessage}
-                                showGifPicker={showGifPicker}
-                            />
+                                <IoClose className="w-4 h-4" />
+                            </button>
                         </div>
-                        <button
-                            type="submit"
-                            disabled={!message.trim()}
-                            className={`px-6 h-10 rounded-full transition-all flex bg-bgPrimary items-center justify-center ${
-                                message.trim() 
-                                    ? 'text-white hover:bg-[#1b1b1b]' 
-                                    : 'brightness-[0.6] hover:cursor-none'
-                            }`}
-                        >
-                            Send
-                        </button>
-                    </div>
-                </form>
-            </div>
+                    )}
+                    <form onSubmit={handleSendMessage} className="flex flex-col gap-2">
+                        <div className="flex gap-2 items-center">
+                            <div className="flex w-full items-center justify-center relative">
+                                <TextareaAutosize
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    onKeyDown={handleKeyPress}
+                                    placeholder="Type your message..."
+                                    minRows={1}
+                                    maxRows={4}
+                                    className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
+                                />
+                            </div>
+                            <div className="flex relative justify-center items-center gap-2">
+                                <div 
+                                    onClick={() => setShowGifPicker(true)}
+                                    className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#666] p-2 rounded-full"
+                                >
+                                    <p className="text-[8px] text-[#666] tracking-[2px] aspect-square flex items-center justify-center">GIF</p>
+                                </div>
+                                <GifPicker
+                                    isOpen={showGifPicker}
+                                    onClose={() => setShowGifPicker(false)}
+                                    onGifSelect={sendGifMessage}
+                                    showGifPicker={showGifPicker}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={!message.trim()}
+                                className={`px-6 h-10 rounded-full transition-all flex bg-bgPrimary items-center justify-center ${
+                                    message.trim() 
+                                        ? 'text-white hover:bg-[#1b1b1b]' 
+                                        : 'brightness-[0.6] hover:cursor-none'
+                                }`}
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            }
         </div>
     )
 }
