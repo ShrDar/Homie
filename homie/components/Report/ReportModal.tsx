@@ -80,7 +80,8 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
                 reporterId: currentUserId,
                 reportedContentId: reportedContentId,
                 reason: reason.trim(),
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                status: "pending"
             });
 
             toast.success("Report submitted successfully", {

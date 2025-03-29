@@ -181,7 +181,7 @@ export default function TeaMain({ session }: { session: Session }) {
                                         animate={{ opacity: 1, y: 0 }}
                                         className="snap-start h-screen flex items-center justify-center p-4"
                                         >
-                                        <div className="flex items-center justify-center w-[65%] h-full gap-2 bg-[#4343433e] rounded-[15px] px-5">
+                                        <div className="flex items-center justify-center w-[65%] h-full gap-2  rounded-[15px] px-5">
                                             {tea?.image && 
                                                 <div onClick={() => {
                                                     setShowTeaDiscussion(true)

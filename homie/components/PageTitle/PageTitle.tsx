@@ -11,10 +11,11 @@ export default function PageTitle() {
         
         if (path === "") return 'Posts';
         
-        if (path.startsWith('profile/')) return 'Profile';
-        if (path.startsWith('homie/')) return 'Homie';
-        if (path.startsWith('yap/')) return 'Yap';
-        
+        if(path.startsWith('profile/')) return 'Profile';
+        if(path.startsWith('homie/')) return 'Homie';
+        if(path.startsWith('yap/')) return 'Yap';
+        if(path.startsWith("admin/")) return '';
+
         return path.charAt(0).toUpperCase() + path.slice(1);
     }
 
