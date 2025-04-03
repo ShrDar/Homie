@@ -5,8 +5,8 @@ import { collection, onSnapshot, query, updateDoc, doc, deleteDoc } from 'fireba
 import { db } from '@/config/firebase';
 import { toast } from 'sonner';
 import { FiUser, FiCoffee, FiFileText, FiFlag, FiX, FiEye, FiRefreshCw } from 'react-icons/fi';
-import ReportDetailModal from '@/components/Report/ReportDetailModal';
-import IndividualReport from '@/components/Report/IndividualReport';
+import ReportDetailModal from '@/components/AdminReport/ReportDetailModal';
+import IndividualReport from '@/components/AdminReport/IndividualReport';
 
 // Updated interface to match your Firestore document structure
 interface Report {
