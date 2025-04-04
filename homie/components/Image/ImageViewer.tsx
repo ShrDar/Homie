@@ -1,5 +1,6 @@
 
 export default function ImageViewer( {image, setOpenImageViewer} : {image: string, setOpenImageViewer: any} ) {
+    console.log(image);
     return (
         <>
             <div 

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { collection, onSnapshot, query, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { toast } from 'sonner';
-import { FiCoffee, FiX, FiEye, FiRefreshCw, FiEdit2 } from 'react-icons/fi';
+import { FiCoffee, FiX, FiRefreshCw, FiEdit2 } from 'react-icons/fi';
 import { Tea } from '@/homieTypes/homieTypes';
 import AdminTeaEdit from '@/components/AdminTeas/AdminTeaEdit';
 

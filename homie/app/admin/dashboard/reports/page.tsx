@@ -66,7 +66,7 @@ export default function ReportsPage() {
     });
 
     return () => unsubscribe();
-  }, [activeFilter, activeTypeFilter, applyFilters]);
+  }, [activeFilter, activeTypeFilter]);
 
 
   const handleFilterChange = (filter: 'pending' | 'resolved' | 'all') => {

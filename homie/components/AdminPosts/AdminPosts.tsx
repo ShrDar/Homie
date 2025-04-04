@@ -7,8 +7,6 @@ import Image from 'next/image'
 import { getProfileUrl, getRelativeTime } from '@/extra/helpers' 
 import { HomieUser, Post } from '@/homieTypes/homieTypes'
 import AdminPostsEdit from './AdminPostsEdit'
-import ImageViewer from '../Image/ImageViewer'
-import { set } from 'date-fns'
 
 
 
@@ -18,7 +16,7 @@ export default function AdminPosts() {
     const [selectedPost, setSelectedPost] = useState<Post | null>(null)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [currentUser, setCurrentUser] = useState<HomieUser | null>(null);
-    const [openImageViewer,setOpenImageViewer] = useState<boolean>(false);
+    // const [openImageViewer,setOpenImageViewer] = useState<boolean>(false);
 
     useEffect(() => {
         fetchPosts()

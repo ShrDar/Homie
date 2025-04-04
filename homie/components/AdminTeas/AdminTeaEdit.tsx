@@ -1,5 +1,5 @@
 "use client"
-import { HomieUser, Tea } from "@/homieTypes/homieTypes"
+import { Tea } from "@/homieTypes/homieTypes"
 import { useState, useRef } from "react";
 import { IoIosImages } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
@@ -149,17 +149,17 @@ export default function AdminTeaEdit({setOpenTeaEditModal, tea} : {setOpenTeaEdi
         }
     };
 
-    const [currentUser, setCurrentUser] = useState<HomieUser | null>(null)
+    // const [currentUser, setCurrentUser] = useState<HomieUser | null>(null)
     
-    const fetchUser = async(userId: string) => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`);
-            const userData = await response.json();
-            setCurrentUser(userData)
-        } catch(err) {
-            console.error(err);
-        }
-    }
+    // const fetchUser = async(userId: string) => {
+    //     try {
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`);
+    //         const userData = await response.json();
+    //         setCurrentUser(userData)
+    //     } catch(err) {
+    //         console.error(err);
+    //     }
+    // }
     
     return (
         <>

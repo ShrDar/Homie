@@ -16,7 +16,6 @@ export default function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<HomieUser | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isAddingUser, setIsAddingUser] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [editForm, setEditForm] = useState({
     name: "",
