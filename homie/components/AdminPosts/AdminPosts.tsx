@@ -2,11 +2,13 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner' 
 import { storage } from '@/config/AppWriteClient' 
-import { FiEdit2, FiTrash2 } from 'react-icons/fi'
+import { FiEdit2, FiFileText, FiTrash2 } from 'react-icons/fi'
 import Image from 'next/image'
 import { getProfileUrl, getRelativeTime } from '@/extra/helpers' 
 import { HomieUser, Post } from '@/homieTypes/homieTypes'
 import AdminPostsEdit from './AdminPostsEdit'
+import ImageViewer from '../Image/ImageViewer'
+import { set } from 'date-fns'
 
 
 
@@ -16,6 +18,7 @@ export default function AdminPosts() {
     const [selectedPost, setSelectedPost] = useState<Post | null>(null)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [currentUser, setCurrentUser] = useState<HomieUser | null>(null);
+    const [openImageViewer,setOpenImageViewer] = useState<boolean>(false);
 
     useEffect(() => {
         fetchPosts()
@@ -81,36 +84,68 @@ export default function AdminPosts() {
     }, [])
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="bg-bgSecondary rounded-xl shadow-lg p-6 mb-8">
-                <h1 className="text-3xl font-bold">Posts Management</h1>
-                <p className="text-gray-500 mt-2">Manage all user posts from one place</p>
+        <div className="min-h-screen bg-bgPrimary p-8">
+            {/* Header Section */}
+            <div className="mb-8">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-fontPrimary flex items-center gap-3">
+                            <FiFileText className="text-fontPrimary" />
+                            Posts Dashboard
+                        </h1>
+                        <p className="mt-2 text-gray-400">
+                            Monitor and manage all user posts across the platform
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <div className="bg-bgSecondary rounded-lg px-4 py-2">
+                            <p className="text-sm text-gray-400">Total Posts</p>
+                            <p className="text-2xl font-bold text-fontPrimary">{posts.length}</p>
+                        </div>
+                        <div className="bg-bgSecondary rounded-lg px-4 py-2">
+                            <p className="text-sm text-gray-400">With Images</p>
+                            <p className="text-2xl font-bold text-blue-400">
+                                {posts.filter(post => post.image).length}
+                            </p>
+                        </div>
+                        <div className="bg-bgSecondary rounded-lg px-4 py-2">
+                            <p className="text-sm text-gray-400">Total Reactions</p>
+                            <p className="text-2xl font-bold text-green-400">
+                                {posts.reduce((acc, post) => acc + (post.reactions?.length || 0), 0)}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
+
+            {/* Main Content */}
             {loading ? (
-                <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                <div className="flex items-center justify-center p-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
                 </div>
             ) : (
-                <div className="bg-bgSecondary rounded-xl shadow-lg overflow-hidden">
+                <div className="bg-bgSecondary rounded-xl shadow-xl overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-700">
-                            <thead className="bg-bgPrimary">
-                                <tr>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Content</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Image</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Created</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Reactions</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Actions</th>
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-gray-700">
+                                    <th className="text-left py-4 px-6 text-gray-400 font-medium">Content</th>
+                                    <th className="text-left py-4 px-6 text-gray-400 font-medium">Image</th>
+                                    <th className="text-left py-4 px-6 text-gray-400 font-medium">Created</th>
+                                    <th className="text-left py-4 px-6 text-gray-400 font-medium">Reactions</th>
+                                    <th className="text-right py-4 px-6 text-gray-400 font-medium">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-700">
+                            <tbody>
                                 {posts.map((post) => (
-                                    <tr key={post._id} className="hover:bg-bgPrimary transition duration-150">
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm">{post.content.slice(0, 100)}...</div>
+                                    <tr 
+                                        key={post._id} 
+                                        className="border-b border-gray-700/50 hover:bg-bgPrimary/30 transition-colors"
+                                    >
+                                        <td className="py-4 px-6">
+                                            <div className="text-sm text-fontPrimary">{post.content.slice(0, 100)}...</div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="py-4 px-6">
                                             {post.image && (
                                                 <div className="h-24 w-24 relative rounded-lg overflow-hidden">
                                                     <Image
@@ -122,37 +157,38 @@ export default function AdminPosts() {
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm opacity-80">
+                                        <td className="py-4 px-6">
+                                            <div className="text-sm text-gray-400">
                                                 {getRelativeTime(post.createdAt)}
                                                 {post.isEdited && post.updatedAt !== post.createdAt && 
-                                                    <span className="ml-2 text-primary">🖊</span>
+                                                    <span className="ml-2 text-fontPrimary">🖊</span>
                                                 }
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm">
+                                        <td className="py-4 px-6">
+                                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
                                                 {post.reactions?.length || 0} reactions
-                                            </div>
+                                            </span>
                                         </td>
-                                        
-                                        <td className="px-6 py-4">
-                                            <div className="flex space-x-4">
+                                        <td className="py-4 px-6">
+                                            <div className="flex items-center justify-end gap-2">
                                                 <button
                                                     onClick={() => {
                                                         setSelectedPost(post)
                                                         setIsEditModalOpen(true)
                                                         fetchUser(post?.userId)
                                                     }}
-                                                    className="p-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition duration-150"
+                                                    className="p-2 bg-bgPrimary text-blue-400 rounded-lg hover:bg-bgPrimary/80 transition-colors"
+                                                    title="Edit post"
                                                 >
-                                                    <FiEdit2 className="w-5 h-5" />
+                                                    <FiEdit2 size={18} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(post._id, post.image || "")}
-                                                    className="p-2 rounded-lg bg-red-500 hover:bg-red-600 transition duration-150"
+                                                    className="p-2 bg-bgPrimary text-red-400 rounded-lg hover:bg-bgPrimary/80 transition-colors"
+                                                    title="Delete post"
                                                 >
-                                                    <FiTrash2 className="w-5 h-5" />
+                                                    <FiTrash2 size={18} />
                                                 </button>
                                             </div>
                                         </td>
@@ -164,8 +200,7 @@ export default function AdminPosts() {
                 </div>
             )}
 
-            {/* Modal remains the same */}
-            {/* Add the AdminPostsEdit component */}
+            {/* Modal */}
             {isEditModalOpen && (
                 <AdminPostsEdit
                     openPostEditModal={isEditModalOpen}

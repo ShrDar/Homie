@@ -9,12 +9,15 @@ import { IoIosImages } from "react-icons/io";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { signupWithCreds } from "@/actions/auth";
 import Image from "next/image";
+import { FiUser, FiEdit2 } from "react-icons/fi";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<HomieUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<HomieUser | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isAddingUser, setIsAddingUser] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const [editForm, setEditForm] = useState({
     name: "",
     username: "",
@@ -249,31 +252,79 @@ export default function UsersPage() {
     }
   }
   return (
-    <div className="flex flex-col items-center w-full max-w-5xl mx-auto p-6">
-      <div className="w-full flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold">User Management</h2>
-        <button 
-          onClick={() => setIsAddingUser(true)}
-          className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80"
-        >
-          Add User
-        </button>
+    <div className="min-h-screen bg-bgPrimary p-8">
+      {/* Header Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-fontPrimary flex items-center gap-3">
+              <FiUser className="text-fontPrimary" />
+              User Management
+            </h1>
+            <p className="mt-2 text-gray-400">
+              Monitor and manage all users across the platform
+            </p>
+          </div>
+
+          <div className="searchUsers">
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full p-2 rounded-full bg-bgSecondary text-center"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+            />
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <button 
+                onClick={() => setIsAddingUser(true)}
+                className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 flex items-center gap-2 font-medium shadow-lg transition-all hover:scale-105"
+            >
+              <FiUser size={18} />
+              Add User
+            </button>
+            <div className="bg-bgSecondary rounded-lg px-4 py-2">
+              <p className="text-sm text-gray-400">Total Users</p>
+              <p className="text-2xl font-bold text-fontPrimary">{users.length}</p>
+            </div>
+            <div className="bg-bgSecondary rounded-lg px-4 py-2">
+              <p className="text-sm text-gray-400">Admins</p>
+              <p className="text-2xl font-bold text-blue-400">
+                {users.filter(user => user.role === 'ADMIN').length}
+              </p>
+            </div>
+            <div className="bg-bgSecondary rounded-lg px-4 py-2">
+              <p className="text-sm text-gray-400">Normal Users</p>
+              <p className="text-2xl font-bold text-green-400">
+                {users.filter(user => user.homies && user.homies.length > 0).length}
+              </p>
+            </div>
+            
+          </div>
+        </div>
       </div>
-      <div className="bg-bgSecondary rounded-lg border border-borderPrimary w-full max-h-[80vh] overflow-y-auto p-2 flex flex-col justify-center items-center">
-        <div className="overflow-x-auto w-full">
-          <table className="w-full">
+
+      {/* Main Content */}
+      <div className="bg-bgSecondary rounded-xl shadow-xl overflow-hidden">
+        <div className="overflow-x-auto w-full max-h-[75vh] overflow-y-auto">
+          <table className="w-full ">
             <thead>
-              <tr className="border-b border-borderPrimary">
+              <tr className="border-b border-[#585858]">
                 <th className="text-left p-4 w-12"></th>
-                <th className="text-left p-4">Name</th>
-                <th className="text-left p-4">Username</th>
-                <th className="text-center p-4">Homies</th>
-                <th className="text-center p-4">Actions</th>
+                <th className="text-left p-4 text-gray-400 font-medium">Name</th>
+                <th className="text-left p-4 text-gray-400 font-medium">Username</th>
+                <th className="text-center p-4 text-gray-400 font-medium">Homies</th>
+                <th className="text-center p-4 text-gray-400 font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user: HomieUser) => (
-                <tr key={user._id} className="border-b border-borderPrimary">
+              {users.filter(user => 
+                searchTerm === "" || user.username.toLowerCase().includes(searchTerm.toLowerCase())
+              ).map((user: HomieUser) => (
+                <tr key={user._id} className="border-b border-[#585858] hover:bg-bgPrimary/30 transition-colors">
                   <td className="p-2">
                     <Image 
                       src={getProfileUrl(user.image || "")} 
@@ -285,13 +336,17 @@ export default function UsersPage() {
                   </td>
                   <td className="p-4">{user.name}</td>
                   <td className="p-4">@{user.username}</td>
-                  <td className="p-4 text-center">{user.homies?.length || 0}</td>
+                  <td className="p-4 text-center">
+                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
+                      {user.homies?.length || 0} homies
+                    </span>
+                  </td>
                   <td className="p-4 flex justify-center">
                     <button 
-                      className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80"
+                      className="p-2 bg-bgPrimary text-blue-400 rounded-lg hover:bg-bgPrimary/80 transition-colors"
                       onClick={() => handleEdit(user)}
                     >
-                      Edit
+                      <FiEdit2 size={18} />
                     </button>
                   </td>
                 </tr>
@@ -304,9 +359,9 @@ export default function UsersPage() {
       {/* Edit Modal */}
       {isEditing && selectedUser && (
         <>
-          <div onClick={() => setIsEditing(false)} className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div onClick={() => setIsEditing(false)} className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm">
           </div>
-          <div className="bg-bgPrimary fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] rounded-lg p-6 w-full max-w-2xl">
+          <div className="bg-bgPrimary fixed z-[100] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] rounded-lg p-6 w-full max-w-2xl">
             <div className="flex flex-col items-center mb-8">
               <h3 className="text-2xl font-bold mb-6">Edit User</h3>
               <div className="relative mb-6">
@@ -470,7 +525,7 @@ export default function UsersPage() {
               <h3 className="text-2xl font-bold">Add New User</h3>
               <button
                 onClick={() => setIsAddingUser(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-[#585858]"
               >
                 <X size={24} />
               </button>

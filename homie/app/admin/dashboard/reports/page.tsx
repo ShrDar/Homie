@@ -319,21 +319,18 @@ export default function ReportsPage() {
                                         <button
                                             onClick={() => openReportModal(report)}
                                             className="p-2 bg-bgPrimary text-blue-400 rounded-lg hover:bg-bgPrimary/80 transition-colors"
-                                            title="View details"
                                         >
                                             <FiEye size={18} />
                                         </button>
                                         <button
                                             onClick={() => handleStatusToggle(report.id, report.status)}
                                             className="p-2 bg-bgPrimary text-purple-400 rounded-lg hover:bg-bgPrimary/80 transition-colors"
-                                            title={`Toggle status (currently ${report.status})`}
                                         >
                                             <FiRefreshCw size={18} />
                                         </button>
                                         <button
                                             onClick={() => handleDeleteReport(report.id)}
                                             className="p-2 bg-bgPrimary text-red-400 rounded-lg hover:bg-bgPrimary/80 transition-colors"
-                                            title="Delete report"
                                         >
                                             <FiX size={18} />
                                         </button>

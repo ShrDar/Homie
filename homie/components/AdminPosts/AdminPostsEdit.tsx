@@ -242,7 +242,7 @@ export default function AdminPostsEdit({ openPostEditModal, setOpenPostEditModal
                 <div className="w-full flex flex-col gap-6">
                     <div className="flex justify-between items-center border-b border-gray-700 pb-4">
                         <div>
-                            <h2 className="text-2xl font-bold text-blue-400">Admin Post Editor</h2>
+                            <h2 className="text-2xl font-bold text-[#e1e1e1]">Admin Post Editor</h2>
                             <p className="text-gray-400 text-sm">ID: {currentEditPost?._id}</p>
                         </div>
                         <button 
@@ -268,7 +268,7 @@ export default function AdminPostsEdit({ openPostEditModal, setOpenPostEditModal
                                     placeholder="Edit post content here..."
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
-                                    className="w-full min-h-[12rem] p-4 rounded-lg bg-[#333] outline-none resize-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full min-h-[12rem] p-4 rounded-lg bg-[#333] outline-none resize-none focus:ring-2 focus:ring-[#b7b7b7] text-gray-300"
                                     maxRows={10}
                                 />
                             </div>
@@ -276,7 +276,7 @@ export default function AdminPostsEdit({ openPostEditModal, setOpenPostEditModal
                             <div className="bg-[#2a2a2a] rounded-lg p-4">
                                 <h3 className="text-lg font-semibold mb-2 text-gray-300">Media</h3>
                                 <div className="flex gap-4 items-center">
-                                    <label className="cursor-pointer flex items-center gap-2 bg-[#333] px-4 py-2 rounded-lg hover:bg-[#444] transition-colors">
+                                    <label className="cursor-pointer flex items-center gap-2 bg-[#333] px-4 py-2 rounded-lg hover:bg-[#444] transition-colors border border-[#b7b7b7]">
                                         <IoIosImages size={20}/>
                                         <span>Upload Image</span>
                                         <input 
@@ -288,7 +288,7 @@ export default function AdminPostsEdit({ openPostEditModal, setOpenPostEditModal
                                     </label>
                                     <button
                                         onClick={handleSubmit}
-                                        className="ml-auto bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg transition-colors font-medium"
+                                        className="ml-auto bg-bgPrimary hover:bg-bgSecondary px-6 py-2 rounded-lg transition-colors border border-[#b7b7b7]"
                                     >
                                         Update Post
                                     </button>
@@ -362,8 +362,8 @@ export default function AdminPostsEdit({ openPostEditModal, setOpenPostEditModal
             {isEditing && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[200]">
                     <div className="bg-[#2a2a2a] p-6 rounded-lg flex items-center gap-3">
-                        <div className="w-6 h-6 border-t-2 border-blue-500 rounded-full animate-spin"></div>
-                        <span className="text-blue-400 font-medium">Updating Post...</span>
+                        <div className="w-6 h-6 border-t-2 border-bgPrimary rounded-full animate-spin"></div>
+                        <span className="text-bgPrimary font-medium">Updating Post...</span>
                     </div>
                 </div>
             )}
