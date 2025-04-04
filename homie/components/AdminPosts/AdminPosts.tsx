@@ -128,7 +128,7 @@ export default function AdminPosts() {
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-gray-700">
+                                <tr className="border-b border-[#585858]">
                                     <th className="text-left py-4 px-6 text-gray-400 font-medium">Content</th>
                                     <th className="text-left py-4 px-6 text-gray-400 font-medium">Image</th>
                                     <th className="text-left py-4 px-6 text-gray-400 font-medium">Created</th>
@@ -140,7 +140,7 @@ export default function AdminPosts() {
                                 {posts.map((post) => (
                                     <tr 
                                         key={post._id} 
-                                        className="border-b border-gray-700/50 hover:bg-bgPrimary/30 transition-colors"
+                                        className="border-b border-[#585858] hover:bg-bgPrimary/30 transition-colors"
                                     >
                                         <td className="py-4 px-6">
                                             <div className="text-sm text-fontPrimary">{post.content.slice(0, 100)}...</div>

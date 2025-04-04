@@ -70,6 +70,13 @@ export default function DashboardLayout({
                             Reports
                         </div>
                     </Link>
+                    <Link href="/admin/dashboard/teas">
+                        <div className={`p-3 text-left rounded-[6px] transition-all duration-150 ${
+                            isActive('/admin/dashboard/teas') ? 'bg-bgPrimary' : 'hover:bg-bgPrimary/50'
+                        }`}>
+                            Teas
+                        </div>
+                    </Link>
                 </nav>
                 <Link href="/profile">
                     <div className={`p-4 text-left rounded-[20px] bg-bgSecondary transition-all duration-150 hover:bg-bgPrimary absolute bottom-6 left-6 right-6 flex items-center justify-center gap-2`}>

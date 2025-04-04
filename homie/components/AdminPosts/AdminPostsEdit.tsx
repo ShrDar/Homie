@@ -90,7 +90,7 @@ export default function AdminPostsEdit({ openPostEditModal, setOpenPostEditModal
                 });
     
                 if (response.ok) {
-                    toast.success("Post updated successfully!");
+                    toast.success("Post updated");
                     setContent('');
                     setCurrentImage("");
                     setCurrentFile(null);

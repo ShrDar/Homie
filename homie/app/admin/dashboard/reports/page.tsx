@@ -254,7 +254,7 @@ export default function ReportsPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-700">
+                <tr className="border-b border-[#585858]">
                   <th className="text-left py-4 px-6 text-gray-400 font-medium">Type</th>
                   <th className="text-left py-4 px-6 text-gray-400 font-medium">Reported On</th>
                   <th className="text-left py-4 px-6 text-gray-400 font-medium">Status</th>
@@ -285,7 +285,7 @@ export default function ReportsPage() {
                     return Object.values(groupedReports)
                         .sort((a: any, b: any) => b.reportCount - a.reportCount)
                         .map((report: any) => (
-                            <tr key={report.id} className="border-b border-gray-700/50 hover:bg-bgPrimary/30 transition-colors">
+                            <tr key={report.id} className="border-b border-[#585858]/50 hover:bg-bgPrimary/30 transition-colors">
                                 <td onClick={() => {
                                     setCurrentIndividualReportId(report?.id);
                                     setIsIndividualReportOpen(true);

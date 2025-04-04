@@ -252,7 +252,7 @@ export default function UsersPage() {
     }
   }
   return (
-    <div className="min-h-screen bg-bgPrimary p-8">
+    <div className="max-h-screen bg-bgPrimary p-8">
       {/* Header Section */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -309,11 +309,11 @@ export default function UsersPage() {
 
       {/* Main Content */}
       <div className="bg-bgSecondary rounded-xl shadow-xl overflow-hidden">
-        <div className="overflow-x-auto w-full max-h-[75vh] overflow-y-auto">
+        <div className="overflow-x-auto w-full max-h-[80vh] overflow-y-auto">
           <table className="w-full ">
             <thead>
               <tr className="border-b border-[#585858]">
-                <th className="text-left p-4 w-12"></th>
+                <th className="text-left px-12 py-6 m w-16"></th>
                 <th className="text-left p-4 text-gray-400 font-medium">Name</th>
                 <th className="text-left p-4 text-gray-400 font-medium">Username</th>
                 <th className="text-center p-4 text-gray-400 font-medium">Homies</th>
@@ -325,7 +325,7 @@ export default function UsersPage() {
                 searchTerm === "" || user.username.toLowerCase().includes(searchTerm.toLowerCase())
               ).map((user: HomieUser) => (
                 <tr key={user._id} className="border-b border-[#585858] hover:bg-bgPrimary/30 transition-colors">
-                  <td className="p-2">
+                  <td className="p-6">
                     <Image 
                       src={getProfileUrl(user.image || "")} 
                       alt={user.name} 
@@ -341,7 +341,7 @@ export default function UsersPage() {
                       {user.homies?.length || 0} homies
                     </span>
                   </td>
-                  <td className="p-4 flex justify-center">
+                  <td className="p-4 text-center">
                     <button 
                       className="p-2 bg-bgPrimary text-blue-400 rounded-lg hover:bg-bgPrimary/80 transition-colors"
                       onClick={() => handleEdit(user)}
