@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { FiFileText, FiAlertCircle, FiCoffee, FiUsers, FiActivity } from 'react-icons/fi';
+import { FiFileText, FiAlertCircle, FiCoffee, FiUsers } from 'react-icons/fi';
 import { motion } from 'motion/react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/config/firebase';
