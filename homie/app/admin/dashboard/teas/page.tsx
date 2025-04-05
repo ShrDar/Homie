@@ -106,10 +106,10 @@ export default function AdminTeas() {
                     <div>
                         <h1 className="text-3xl font-bold text-fontPrimary flex items-center gap-3">
                             <FiCoffee className="text-[#FF9F6F]" />
-                            Teas Dashboard
+                            Teas
                         </h1>
                         <p className="mt-2 text-gray-400">
-                            Monitor and manage tea discussions across the platform
+                            Monitor and manage tea discussions across Homie
                         </p>
                     </div>
                     <div className="flex items-center gap-4">

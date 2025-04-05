@@ -169,7 +169,7 @@ export default function ReportsPage() {
               Reports Dashboard
             </h1>
             <p className="mt-2 text-gray-400">
-              Monitor and manage reported content across the platform
+              Monitor and manage reported content across Homie
             </p>
           </div>
           <div className="flex items-center gap-4">

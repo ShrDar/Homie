@@ -258,10 +258,10 @@ export default function UsersPage() {
           <div>
             <h1 className="text-3xl font-bold text-fontPrimary flex items-center gap-3">
               <FiUser className="text-fontPrimary" />
-              User Management
+              Users
             </h1>
             <p className="mt-2 text-gray-400">
-              Monitor and manage all users across the platform
+              Monitor and manage all users across Homie
             </p>
           </div>
 
@@ -282,8 +282,8 @@ export default function UsersPage() {
                 onClick={() => setIsAddingUser(true)}
                 className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 flex items-center gap-2 font-medium shadow-lg transition-all hover:scale-105"
             >
+              Add
               <FiUser size={18} />
-              Add User
             </button>
             <div className="bg-bgSecondary rounded-lg px-4 py-2">
               <p className="text-sm text-gray-400">Total Users</p>
@@ -518,7 +518,7 @@ export default function UsersPage() {
     {/* Add User Modal */}
       {isAddingUser && (
         <>
-          <div onClick={() => setIsAddingUser(false)} className="fixed inset-0 bg-black/50 z-40" />
+          <div onClick={() => setIsAddingUser(false)} className="fixed inset-0 bg-[#000] bg-opacity-50 backdrop-blur-sm z-40 " />
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-bgPrimary p-8 rounded-lg w-full max-w-md z-50">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold">Add New User</h3>

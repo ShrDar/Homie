@@ -89,10 +89,10 @@ export default function AdminPosts() {
                     <div>
                         <h1 className="text-3xl font-bold text-fontPrimary flex items-center gap-3">
                             <FiFileText className="text-fontPrimary" />
-                            Posts Dashboard
+                            Posts
                         </h1>
                         <p className="mt-2 text-gray-400">
-                            Monitor and manage all user posts across the platform
+                            Monitor and manage all user posts across Homie
                         </p>
                     </div>
                     <div className="flex items-center gap-4">
