@@ -1,7 +1,7 @@
 'use client';
 
 import { getProfileUrl } from "@/extra/helpers";
-import { HomieUser } from "@/homieTypes/homieTypes";
+import { HomieUser, Post } from "@/homieTypes/homieTypes";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,6 +22,7 @@ import {
 import ReportModal from "@/components/Report/ReportModal";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
+import HomieIndividualPostPreview from "@/components/HomieIndividual/HomieIndividualPostPreview";
 
 export default function HomieIndividual() {
     const params = useParams();
@@ -30,10 +31,16 @@ export default function HomieIndividual() {
     const [user, setUser] = useState<HomieUser | null>(null);
     const [currentUser, setCurrentUser] = useState<HomieUser | null>(null);
     const [error, setError] = useState(false);
+
     const [showHomies, setShowHomies] = useState(false);
+    const [showPosts, setShowPosts] = useState(false);
+    
     const [homiesData, setHomiesData] = useState<any[]>([]);
     const [isCreatingChat, setIsCreatingChat] = useState(false);
     const [showReportModal, setShowReportModal] = useState(false);
+    const [posts, setPosts] = useState<Post[]>([]);
+
+    console.log(posts)
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -68,7 +75,21 @@ export default function HomieIndividual() {
             }
         };
 
+        const fetchUserPosts = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/user/${params.id}`);
+                if (!response.ok) {
+                    throw new Error("Posts not found");
+                } 
+                const postData = await response.json();
+                setPosts(postData);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
         fetchUsers();
+        fetchUserPosts();
     }, [params.id, session?.user?.id]);
 
     const createChat = async () => {
@@ -373,7 +394,7 @@ export default function HomieIndividual() {
                         <motion.div 
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => setShowHomies(!showHomies)}
+                            onClick={() => setShowHomies((prev) => !prev)}
                             className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4 cursor-pointer"
                         >
                             <p className="font-bold">HOMIES</p>
@@ -383,14 +404,19 @@ export default function HomieIndividual() {
                             <p className="lg:hidden"> - </p>
                             <p>{user?.homies?.length || 0}</p>
                         </motion.div>
-                        <div className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4">
+                        <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setShowPosts((prev) => !prev)}
+                            className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4"
+                        >
                             <p>POSTS</p>
                             <div className="justify-center items-center hidden lg:flex">
                                 <Image src="/figmaIcons/squiggly.svg" className="w-[90%]" alt="squiggly" width={100} height={100} />
                             </div>
                             <p className="lg:hidden"> - </p>
-                            <p>{0}</p>
-                        </div>
+                            <p>{posts?.length || 0}</p>
+                        </motion.div>
                         <div className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4">
                             <p>TEAS</p>
                             <div className="justify-center items-center hidden lg:flex">
@@ -503,54 +529,59 @@ export default function HomieIndividual() {
 
               
             </motion.div>
-            <AnimatePresence mode="popLayout">
-                {showHomies && (
-                    <motion.div 
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 50 }}
-                        transition={{ 
-                            type: "spring", 
-                            stiffness: 200, 
-                            damping: 20,
-                            duration: 0.6
-                        }}
-                        className="hidden lg:flex w-[400px] h-[600px] bg-[#434343ae] backdrop-blur-sm border-[2px] border-[#888] rounded-[15px] p-4 flex-col gap-4"
-                    >
-                        <div className="flex flex-col gap-3 h-full">
-                            {homiesData.length > 0 ? (
-                                homiesData.map((homie, index) => (
-                                    <motion.div 
-                                        onClick={() => router.push(`/homie/${homie._id}`)}
-                                        key={homie._id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.1 }}
-                                        whileHover={{ scale: 1.02 }}
-                                        className="flex items-center gap-3 bg-bgPrimary p-3 rounded-lg cursor-pointer"
-                                    >
-                                        <Image 
-                                            src={getProfileUrl(homie.image || "")}
-                                            alt={homie.name}
-                                            width={50}
-                                            height={50}
-                                            className="rounded-full w-[50px] h-[50px] object-cover"
-                                        />
-                                        <div>
-                                            <p className="font-bold">{homie.name}</p>
-                                            <p className="text-sm text-[#aaa]">@{homie.username}</p>
-                                        </div>
-                                    </motion.div>
-                                ))
-                            ) : (
-                                <div className="flex items-center justify-center h-full">
-                                    <p className="text-[#aaa] text-lg">No homies yet</p>
-                                </div>
-                            )}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            
+            {showHomies && (
+                <motion.div 
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 50 }}
+                    transition={{ 
+                        type: "spring", 
+                        stiffness: 200, 
+                        damping: 20,
+                        duration: 0.6
+                    }}
+                    layout="position"
+                    className="hidden lg:flex w-[400px] h-[600px] bg-[#434343ae] backdrop-blur-sm border-[2px] border-[#888] rounded-[15px] p-4 flex-col gap-4"
+                >
+                    <div className="flex flex-col gap-3 h-full">
+                        {homiesData.length > 0 ? (
+                            homiesData.map((homie, index) => (
+                                <motion.div 
+                                    onClick={() => router.push(`/homie/${homie._id}`)}
+                                    key={homie._id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    whileHover={{ scale: 1.02 }}
+                                    className="flex items-center gap-3 bg-bgPrimary p-3 rounded-lg cursor-pointer"
+                                >
+                                    <Image 
+                                        src={getProfileUrl(homie.image || "")}
+                                        alt={homie.name}
+                                        width={50}
+                                        height={50}
+                                        className="rounded-full w-[50px] h-[50px] object-cover"
+                                    />
+                                    <div>
+                                        <p className="font-bold">{homie.name}</p>
+                                        <p className="text-sm text-[#aaa]">@{homie.username}</p>
+                                    </div>
+                                </motion.div>
+                            ))
+                        ) : (
+                            <div className="flex items-center justify-center h-full">
+                                <p className="text-[#aaa] text-lg">No homies yet</p>
+                            </div>
+                        )}
+                    </div>
+                </motion.div>
+            )}
+            {
+                showPosts && (
+                <HomieIndividualPostPreview posts={posts} />
+                )
+            }
         </div>
     );
 }

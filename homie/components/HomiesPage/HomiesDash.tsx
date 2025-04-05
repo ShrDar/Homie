@@ -319,7 +319,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 const isHomie = user?.homies.includes(homie._id);
                                 
                                 return (
-                                    <motion.div key={homie._id} initial={{y: -50, opacity: 0, filter: "blur(10px)"}} transition={{delay: index*0.1}} whileInView={{y: 0, opacity: 1, filter: "blur(0px)"}} className="w-full bg-bgSecondary hover:bg-[#3f3f3f] cursor-default p-4 rounded-[15px] flex justify-center items-center">
+                                    <motion.div key={homie._id} initial={{y: -50, opacity: 0, filter: "blur(10px)"}} transition={{delay: index*0.1}} whileInView={{y: 0, opacity: 1, filter: "blur(0px)"}} viewport={{ once: true}} className="w-full bg-bgSecondary hover:bg-[#3f3f3f] cursor-default p-4 rounded-[15px] flex justify-center items-center">
                                         <div onClick={() => router.push(`/homie/${homie?._id}`)} className="w-[90%] homie cursor-pointer flex justify-start items-center gap-4">
                                             <div className="bg-bgPrimary p-2 rounded-full">
                                                 <Image 

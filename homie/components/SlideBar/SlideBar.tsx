@@ -8,9 +8,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { FaUserAstronaut } from "react-icons/fa6";
-import { RiMessage3Fill } from "react-icons/ri"
-import { GiEarthAsiaOceania } from "react-icons/gi";
-// import { FiFileText } from "react-icons/fi";
+import { RiMessage3Line } from "react-icons/ri";
+import { FaRegHandshake } from "react-icons/fa6";
+import { LuEarth } from "react-icons/lu";
 import { TbCoffee } from "react-icons/tb"
 import { logout } from "@/actions/auth";
 import { IoLogOutOutline } from "react-icons/io5";
@@ -129,7 +129,7 @@ export default function SlideBar( {session} : {session: Session} ) {
                     <div className="flex flex-col items-center justify-start w-full gap-10">
                         <div className={`w-[70%] text-lg font-thin ${pathname !== "/" ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`} onClick={() => setHidden(true)}>
                             <Link href="/" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6">
-                                <GiEarthAsiaOceania size={28} className="group-hover:scale-1 transition-transform duration-300" />
+                                <LuEarth size={28} className="group-hover:scale-1 transition-transform duration-300" />
                                 <p className="group-hover:translate-x-1 transition-transform duration-300">Home</p>
                             </Link>
                         </div>
@@ -141,19 +141,13 @@ export default function SlideBar( {session} : {session: Session} ) {
                         </div>
                         <div className={`w-[70%] text-lg font-thin ${pathname !== "/homies" ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`}>
                             <Link href="/homies" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6" onClick={() => setHidden(true)}>
-                                <Image 
-                                    src={"/slideBarIcons/homies.svg"} 
-                                    alt="" 
-                                    height={200} 
-                                    width={200} 
-                                    className="h-[30px] w-[30px] group-hover:scale-1 transition-transform duration-300"
-                                />
+                                <FaRegHandshake size={28} className="group-hover:scale-1 transition-transform duration-300" />
                                 <p className="group-hover:translate-x-1 transition-transform duration-300">Homies</p>
                             </Link>
                         </div>
                         <div className={`w-[70%] text-lg font-thin ${!pathname.includes("/yap") ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`}>
                             <Link href="/yap" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6" onClick={() => setHidden(true)}>
-                                <RiMessage3Fill size={28} className="group-hover:scale-1 transition-transform duration-300" />
+                                <RiMessage3Line size={28} className="group-hover:scale-1 transition-transform duration-300" />
                                 <p className="group-hover:translate-x-1 transition-transform duration-300">Yap</p>
                             </Link>
                         </div>

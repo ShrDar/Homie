@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu"
 import ReportModal from "@/components/Report/ReportModal"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { getProfileUrl } from "@/extra/helpers"
 import { useRouter } from "next/navigation"
 import { deleteDoc, doc } from 'firebase/firestore';
@@ -24,6 +24,18 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
     const [showReportModal, setShowReportModal] = useState(false);
     const [selectedTeaId, setSelectedTeaId] = useState<string>("");
     const [author, setAuthor] = useState<HomieUser | null>(null);
+    const gradients = [
+        "from-purple-400 to-pink-400",
+        "from-blue-400 to-cyan-400",
+        "from-green-400 to-emerald-400",
+        "from-orange-400 to-red-400",
+        "from-violet-400 to-indigo-400",
+        "from-yellow-400 to-orange-400"
+    ];
+    const gradientVar = useMemo(() => 
+        gradients[Math.floor(Math.random() * gradients.length)],
+        [tea?._id]
+    );
 
     useEffect(() => {
         const fetchAuthor = async () => {
@@ -169,7 +181,7 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
 
                     <div className="flex flex-col gap-4 overflow-y-auto py-2">
                         <div className="flex flex-col justify-center items-start pl-2 gap-2 w-full text-start">
-                            <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                            <h1 className={`text-3xl font-bold text-center bg-gradient-to-r ${gradientVar} bg-clip-text text-transparent`}>
                                 {tea?.title}
                             </h1>
                             <span onClick={() => router.push(`homie/${author?._id}`)} className="text-sm text-gray-400 hover:text-gray-300 cursor-pointer">

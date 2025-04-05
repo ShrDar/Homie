@@ -206,7 +206,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                 animate={{ opacity: 0.7 }}
                 className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm"
             />
-            <div className="fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] text-fontPrimary">
+            <div className="fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] text-fontPrimary overflow-hidden">
                 <div className="w-full px-8 flex flex-col gap-6">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-4">

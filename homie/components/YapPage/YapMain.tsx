@@ -3,10 +3,7 @@ import { Session } from "next-auth";
 import Image from "next/image";
 // import { useState } from "react";
 
-export default function YapMain({ session } : { session: Session }) {
-
-    // const [user, setUser] = useState();
-    console.log(session) //temp fix for build error
+export default function YapMain() {
 
     return (
         <div className="w-full bg-bgSecondary h-[75dvh] rounded-[15px] flex flex-col justify-center lg:justify-start lg:pt-[120px] items-center">

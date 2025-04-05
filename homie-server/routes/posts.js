@@ -179,4 +179,21 @@ router.patch("/:id/reactions", async (req, res) => {
   }
 });
 
+// Get posts by userId
+router.get("/user/:userId", async (req, res) => {
+  const { userId } = req.params;
+  let collection = await db.collection("Post");
+  
+  try {
+    let results = await collection.find({ 
+      userId: new ObjectId(userId) 
+    }).toArray();
+    
+    res.status(200).json(results);
+  } catch (err) {
+    console.error("Error fetching user posts:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 export default router;
