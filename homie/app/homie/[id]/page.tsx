@@ -1,13 +1,13 @@
 'use client';
 
 import { getProfileUrl } from "@/extra/helpers";
-import { HomieUser, Post } from "@/homieTypes/homieTypes";
+import { HomieUser, Post, Tea } from "@/homieTypes/homieTypes";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { FiWatch } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
@@ -23,6 +23,7 @@ import ReportModal from "@/components/Report/ReportModal";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 import HomieIndividualPostPreview from "@/components/HomieIndividual/HomieIndividualPostPreview";
+import HomieIndividualTeaPreview from "@/components/HomieIndividual/HomieIndividualTeaPreview";
 
 export default function HomieIndividual() {
     const params = useParams();
@@ -34,13 +35,16 @@ export default function HomieIndividual() {
 
     const [showHomies, setShowHomies] = useState(false);
     const [showPosts, setShowPosts] = useState(false);
+    const [showTeas, setShowTeas] = useState(false);
     
     const [homiesData, setHomiesData] = useState<any[]>([]);
     const [isCreatingChat, setIsCreatingChat] = useState(false);
     const [showReportModal, setShowReportModal] = useState(false);
     const [posts, setPosts] = useState<Post[]>([]);
+    const [teas, setTeas] = useState<Tea[]>([]);
 
-    console.log(posts)
+    // console.log(posts)
+    console.log(teas)
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -88,8 +92,40 @@ export default function HomieIndividual() {
             }
         }
 
+        const fetchUserTeas = () => {
+            try {
+                const teasRef = collection(db, "Tea");
+                const q = query(teasRef, where("userId", "==", params.id));
+                
+                // Set up real-time listener
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    const teasData = querySnapshot.docs.map(doc => ({
+                        _id: doc.id,
+                        ...doc.data(),
+                        createdAt: doc.data().createdAt?.toDate().toISOString() || new Date().toISOString()
+                    })) as Tea[];
+                    
+                    setTeas(teasData);
+                }, (error) => {
+                    console.error("Error fetching teas:", error);
+                });
+    
+                // Return cleanup function
+                return unsubscribe;
+            } catch (error) {
+                console.error("Error setting up tea listener:", error);
+                return () => {};
+            }
+        };
+    
         fetchUsers();
         fetchUserPosts();
+        const unsubscribeTeas = fetchUserTeas();
+    
+        // Cleanup on component unmount
+        return () => {
+            unsubscribeTeas();
+        };
     }, [params.id, session?.user?.id]);
 
     const createChat = async () => {
@@ -417,14 +453,19 @@ export default function HomieIndividual() {
                             <p className="lg:hidden"> - </p>
                             <p>{posts?.length || 0}</p>
                         </motion.div>
-                        <div className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4">
+                        <motion.div 
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setShowTeas((prev) => !prev)}
+                            className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4"
+                        >
                             <p>TEAS</p>
                             <div className="justify-center items-center hidden lg:flex">
                                 <Image src="/figmaIcons/squiggly.svg" className="w-[90%]" alt="squiggly" width={100} height={100} />
                             </div>
                             <p className="lg:hidden"> - </p>
-                            <p>{0}</p>
-                        </div>
+                            <p>{teas.length}</p>
+                        </motion.div>
                     </div>
                 </div>
 
@@ -580,6 +621,11 @@ export default function HomieIndividual() {
             {
                 showPosts && (
                 <HomieIndividualPostPreview posts={posts} />
+                )
+            }
+            {
+                showTeas && (
+                    <HomieIndividualTeaPreview teas={teas} /> 
                 )
             }
         </div>
