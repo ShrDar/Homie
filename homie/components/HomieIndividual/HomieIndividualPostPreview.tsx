@@ -1,12 +1,12 @@
 import { Post } from "@/homieTypes/homieTypes";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from 'date-fns';
 import { getProfileUrl } from "@/extra/helpers";
 
 export default function HomieIndividualPostPreview({ posts }: { posts: Post[] }) {
-    const router = useRouter();
+    // const router = useRouter();
 
     return (
         <motion.div 

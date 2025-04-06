@@ -5,7 +5,7 @@ import { HomieUser, Post } from "@/homieTypes/homieTypes";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "@/config/firebase";
