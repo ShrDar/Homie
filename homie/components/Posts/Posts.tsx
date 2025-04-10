@@ -253,7 +253,10 @@ export default function Posts({session} : {session: Session}) {
         onMouseMove={() => {
           handleMovementForAddPost();
         }}
-        onScroll={() => handleMovementForAddPost()}
+        onScroll={() => {
+          handleMovementForAddPost();
+          setShowPostReactions(false);
+        }}
         className="min-h-screen relative w-full flex flex-col justify-start items-center overflow-y-auto snap-y snap-mandatory"
       >
 
