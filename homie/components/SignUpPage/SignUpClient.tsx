@@ -8,6 +8,7 @@ import { signupWithCreds } from "@/actions/auth";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 export default function SignUpClient() {
     const defaultImages = ['https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa0bcf002e60148154/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa130a0027cba1a4ac/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa131a003596256ea6/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa132700151f0a8682/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa1336000dac6ec818/view?project=67aa0803002c7db860ad&mode=admin'];
@@ -88,7 +89,6 @@ export default function SignUpClient() {
     }
 
     const handleSubmit = async() => {
-        // Validate all fields before submission
         validateEmail(email);
         validatePassword(password);
         validateConfirmPassword(confirmPassword);
@@ -148,10 +148,38 @@ export default function SignUpClient() {
         }
     }
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 20
+            }
+        }
+    };
+
     return (
-        <div className="w-full flex flex-col justify-center items-center gap-8">
-            <div className="typeBoxContainer w-full flex flex-col justify-center selection:bg-[#2d2d2d] items-center gap-8" >
-                <div className="w-full flex justify-center items-center gap-4">
+        <motion.div 
+            className="w-full flex flex-col justify-center items-center gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
+            <motion.div className="typeBoxContainer w-full flex flex-col justify-center selection:bg-[#2d2d2d] items-center gap-8" >
+                <motion.div variants={itemVariants} className="w-full flex justify-center items-center gap-4">
                     <div className="w-full">
                         <input 
                             onChange={(e) => setFName(e.target.value)} 
@@ -170,8 +198,8 @@ export default function SignUpClient() {
                             placeholder="Last Name" 
                         />
                     </div>
-                </div>
-                <div className="w-full">
+                </motion.div>
+                <motion.div variants={itemVariants} className="w-full">
                     <input 
                         onChange={(e) => {
                             setUsername(e.target.value);
@@ -179,35 +207,24 @@ export default function SignUpClient() {
                         }} 
                         value={username} 
                         maxLength={20}
-                        className={`w-full bg-[#666666] border-2 focus:outline-none ${
-                            usernameError 
-                                ? 'border-red-500' 
-                                : 'border-transparent focus:border-[#2a2a2a]'
-                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
+                        className={`w-full bg-[#666666] border-2 focus:outline-none ${usernameError ? 'border-red-500' : 'border-transparent focus:border-[#2a2a2a]'} text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type="text" 
                         placeholder="Username" 
                     />
-                </div>
-                <div className="w-full">
+                </motion.div>
+                <motion.div variants={itemVariants} className="w-full">
                     <input 
                         onChange={(e) => {
                             setEmail(e.target.value);
                             validateEmail(e.target.value);
                         }} 
                         value={email} 
-                        className={`w-full bg-[#666666] border-2 focus:outline-none ${
-                            emailError 
-                                ? 'border-red-500' 
-                                : 'border-transparent focus:border-[#2a2a2a]'
-                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
+                        className={`w-full bg-[#666666] border-2 focus:outline-none ${emailError ? 'border-red-500' : 'border-transparent focus:border-[#2a2a2a]'} text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type="email" 
                         placeholder="Email" 
                     />
-                    {/* {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>} */}
-                </div>
-                
-
-                <div className="w-full relative">
+                </motion.div>
+                <motion.div variants={itemVariants} className="w-full relative">
                     <input 
                         onChange={(e) => {
                             setPassword(e.target.value);
@@ -215,11 +232,7 @@ export default function SignUpClient() {
                         }} 
                         value={password} 
                         maxLength={128}
-                        className={`w-full bg-[#666666] border-2 focus:outline-none ${
-                            passwordError 
-                                ? 'border-red-500' 
-                                : 'border-transparent focus:border-[#2a2a2a]'
-                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
+                        className={`w-full bg-[#666666] border-2 focus:outline-none ${passwordError ? 'border-red-500' : 'border-transparent focus:border-[#2a2a2a]'} text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type={showPassword ? "text" : "password"}
                         placeholder="Password" 
                     />
@@ -228,39 +241,31 @@ export default function SignUpClient() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
                     >
-                        {showPassword ? (
-                            <FaRegEyeSlash />
-                        ) : (
-                            <FaRegEye/>
-                        )}
+                        {showPassword ? <FaRegEyeSlash /> : <FaRegEye/>}
                     </button>
-                    {/* {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>} */}
-                </div>
-
-                <div className="w-full relative">
+                </motion.div>
+                <motion.div variants={itemVariants} className="w-full relative">
                     <input 
                         onChange={(e) => {
                             setConfirmPassword(e.target.value);
                             validateConfirmPassword(e.target.value);
                         }} 
                         value={confirmPassword} 
-                        className={`w-full bg-[#666666] border-2 focus:outline-none ${
-                            confirmPasswordError 
-                                ? 'border-red-500' 
-                                : 'border-transparent focus:border-[#2a2a2a]'
-                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
+                        className={`w-full bg-[#666666] border-2 focus:outline-none ${confirmPasswordError ? 'border-red-500' : 'border-transparent focus:border-[#2a2a2a]'} text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm password" 
                     />
-                    
-                    {/* {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>} */}
-                </div>
-                
-                <EntryBtn name={submitting ? "Signing Up" : "Sign Up"} click={handleSubmit} />
-            </div>
-            <div className="w-full flex justify-center items-center">
+                </motion.div>
+                <motion.div variants={itemVariants} className="w-full">
+                    <EntryBtn name={submitting ? "Signing Up" : "Sign Up"} click={handleSubmit} />
+                </motion.div>
+            </motion.div>
+            <motion.div 
+                variants={itemVariants} 
+                className="w-full flex justify-center items-center"
+            >
                 <p className="text-xs">Already a Homie? <span className="text-lg font-bold hover:text-bgPrimary transition-all duration-100"><Link href={'/login'}>Log In</Link></span> dawg</p>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     )
 }

@@ -305,8 +305,12 @@ export default function Posts({session} : {session: Session}) {
 
           
           return (
-            <div
+            <motion.div 
               key={`post-${post._id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
               className={`min-h-screen w-[90%] py-5 md:w-[80%] lg:w-[70%] flex flex-col snap-start`}
             >
                 <div className={`w-full h-full flex rounded-[15px] relative ${post.image ? "bg-bgPrimary" : "bg-[#43434364] px-8"}`}>
@@ -460,7 +464,7 @@ export default function Posts({session} : {session: Session}) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
           )
         } 
         )}
