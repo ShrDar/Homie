@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { Toaster } from "sonner";
 import SlideBar from "@/components/SlideBar/SlideBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
+import SlideBarHorizental from "@/components/SlideBar/SlideBarHorizental";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,7 +59,8 @@ export default async function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} ${pixelify.variable} ${tiny.variable} selection:bg-bgPrimary bg-bgPrimary antialiased min-h-screen w-full relative flex justify-center items-center`}
         >
-          {session && <SlideBar session={session} />}
+          {session && <SlideBarHorizental />}
+          {session && <SlideBar session={session} />} 
           {children}
           <Toaster richColors />
           <PageTitle />

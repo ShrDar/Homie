@@ -148,6 +148,12 @@ export default function SignUpClient() {
         }
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSubmit();
+        }
+    }
+
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -186,6 +192,7 @@ export default function SignUpClient() {
                             value={fName} 
                             maxLength={50}
                             className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]" 
+                            onKeyDown={handleKeyDown}
                             placeholder="First Name" 
                         />
                     </div>
@@ -195,6 +202,7 @@ export default function SignUpClient() {
                             value={lName} 
                             maxLength={50}
                             className="w-full bg-[#666666] border-2 border-transparent focus:border-[#2a2a2a] focus:outline-none text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]" 
+                            onKeyDown={handleKeyDown}
                             placeholder="Last Name" 
                         />
                     </div>
@@ -209,6 +217,7 @@ export default function SignUpClient() {
                         maxLength={20}
                         className={`w-full bg-[#666666] border-2 focus:outline-none ${usernameError ? 'border-red-500' : 'border-transparent focus:border-[#2a2a2a]'} text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type="text" 
+                        onKeyDown={handleKeyDown}
                         placeholder="Username" 
                     />
                 </motion.div>
@@ -221,6 +230,7 @@ export default function SignUpClient() {
                         value={email} 
                         className={`w-full bg-[#666666] border-2 focus:outline-none ${emailError ? 'border-red-500' : 'border-transparent focus:border-[#2a2a2a]'} text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type="email" 
+                        onKeyDown={handleKeyDown}
                         placeholder="Email" 
                     />
                 </motion.div>
@@ -234,6 +244,7 @@ export default function SignUpClient() {
                         maxLength={128}
                         className={`w-full bg-[#666666] border-2 focus:outline-none ${passwordError ? 'border-red-500' : 'border-transparent focus:border-[#2a2a2a]'} text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type={showPassword ? "text" : "password"}
+                        onKeyDown={handleKeyDown}
                         placeholder="Password" 
                     />
                     <button 
@@ -253,6 +264,7 @@ export default function SignUpClient() {
                         value={confirmPassword} 
                         className={`w-full bg-[#666666] border-2 focus:outline-none ${confirmPasswordError ? 'border-red-500' : 'border-transparent focus:border-[#2a2a2a]'} text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
                         type={showPassword ? "text" : "password"}
+                        onKeyDown={handleKeyDown}
                         placeholder="Confirm password" 
                     />
                 </motion.div>

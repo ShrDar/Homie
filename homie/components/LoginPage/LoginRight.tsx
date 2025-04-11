@@ -60,6 +60,11 @@ export default function LoginRight() {
 
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSubmit();
+        }
+    }
 
     return (
         <motion.div 
@@ -81,6 +86,7 @@ export default function LoginRight() {
                     whileFocus={{ scale: 1.02 }}
                     onChange={(e) => setEmail(e.target.value)} 
                     value={email} 
+                    onKeyDown={handleKeyDown}
                     className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]" 
                     type="text" 
                     placeholder="Email" 
@@ -96,6 +102,7 @@ export default function LoginRight() {
                         transition={{ type: "spring", stiffness: 400, duration: 0.4 }}
                         onChange={(e) => setPassword(e.target.value)} 
                         value={password} 
+                        onKeyDown={handleKeyDown}
                         className="w-full bg-[#666666] focus:border-[2px] focus:outline-none focus:border-[#2a2a2a] text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]" 
                         type={showPassword ? "text" : "password"} 
                         placeholder="Enter your password" 
@@ -154,7 +161,10 @@ export default function LoginRight() {
                         animate={{ opacity: 1, y: 0 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => login("google")} 
+                        onClick={() => {
+                            login("google")
+                            setLoggingIn(true)
+                        }} 
                         className="thirdPartyGoogle cursor-pointer w-full flex items-center border-[1px] border-fontPrimary p-2 rounded-[10px] justify-center gap-5 hover:bg-bgPrimary transition-all duration-100"
                     >
                         <Image src={"/logo/googlePlain.png"} alt="" width={500} height={500} className="w-[30px]" />
@@ -165,7 +175,10 @@ export default function LoginRight() {
                         animate={{ opacity: 1, y: 0 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => login("github")} 
+                        onClick={() => {
+                            login("github")
+                            setLoggingIn(true)
+                        }} 
                         className="thirdPartyGoogle cursor-pointer w-full flex items-center border-[1px] border-fontPrimary p-2 rounded-[10px] justify-center gap-5 hover:bg-bgPrimary transition-all duration-100"
                     >
                         <Image src={"/logo/githubPlain.png"} alt="" width={500} height={500} className="w-[30px]" />
