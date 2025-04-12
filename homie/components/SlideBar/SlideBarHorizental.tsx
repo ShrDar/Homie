@@ -7,15 +7,30 @@ import { FaUserAstronaut } from "react-icons/fa6";
 import { FaRegHandshake } from "react-icons/fa6";
 import { RiMessage3Line } from "react-icons/ri";
 import { TbCoffee } from "react-icons/tb";
-import { IoLogOutOutline } from "react-icons/io5";
+import { LuSettings2 } from "react-icons/lu";
 import { motion } from "framer-motion";
 // import { Session } from "next-auth";
 // import { HomieUser } from "@/homieTypes/homieTypes";
-// import { useEffect, useState } from "react";
-import { logout } from "@/actions/auth";
+import { useEffect, useState } from "react";
+import LogOutModal from "../Portals/LogOutModal";
 
 export default function SlideBarHorizental() {
     const pathname = usePathname();
+    const [openLogOutModal, setOpenLogOutModal] = useState(false);
+
+    useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            if (event.ctrlKey && event.key.toLowerCase() === 'q') {
+                event.preventDefault();
+                setOpenLogOutModal(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, []);
 
     // const [user, setUser] = useState<HomieUser>();
     
@@ -39,7 +54,7 @@ export default function SlideBarHorizental() {
         <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="fixed hidden left-0 top-0 h-full lg:flex flex-col  pl-2 z-50"
+            className="fixed hidden left-0 top-0 h-full lg:flex flex-col  pl-2 z-[50]"
         >
             <div className="flex flex-col gap-14 h-full items-center justify-center">
                 {/* <Link href="/profile" className={`flex flex-col items-center gap-2 translate-x-[14px] ${pathname === "/profile" ? "opacity-0" : ""}`}>
@@ -141,10 +156,28 @@ export default function SlideBarHorizental() {
                     </motion.div>
                     <p className="text-sm capitalize tracking-[2px] [writing-mode:vertical-lr] rotate-180">Teas</p>
                 </Link>
+
+                <Link href="/more" 
+                    className={`flex flex-row items-center gap-1 hover:text-fontPrimary transition-colors
+                        ${pathname === "/more" ? "text-fontPrimary" : "text-[#666666]"}`}
+                >
+                    <motion.div
+                        initial={{ x: -10, opacity: 0 }}
+                        animate={{ 
+                            x: pathname === "/more" ? 0 : -10,
+                            opacity: pathname === "/more" ? 1 : 0,
+                        }}
+                        transition={{ duration: 0.1 }}
+                    >
+                        <LuSettings2 size={18} className="rotate-[-90deg]" />
+                    </motion.div>
+                    <p className="text-sm capitalize tracking-[2px] [writing-mode:vertical-lr] rotate-180">More</p>
+                </Link>
             </div>
-            <div>
-                <IoLogOutOutline size={45} className="text-[#666666] fixed bottom-5 cursor-pointer hover:text-red-400 transition-colors translate-x-[14px] rounded-full p-3" onClick={() => logout()} />
-            </div>
+            {
+                openLogOutModal && 
+                <LogOutModal setOpenLogOutModal={setOpenLogOutModal} />
+            }
         </motion.div>
     );
 }

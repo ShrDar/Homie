@@ -298,7 +298,7 @@ export default function HomiesDash({session} : {session: Session}) {
                     </div>
 
                     {homieUsername && 
-                        <div className="w-full absolute top-full left-0 mt-2 max-h-[50vh] overflow-y-auto z-[20] border-[2px] border-[#6d6d6d] bg-bgPrimary p-2 rounded-[15px] shadow-[0px_50px_50px_#292929] flex flex-col justify-start items-center gap-2">
+                        <div className="w-full absolute top-full left-0 mt-2 max-h-[50vh] overflow-y-auto z-[100] border-[2px] border-[#6d6d6d] bg-bgPrimary p-2 rounded-[15px] shadow-[0px_50px_50px_#292929] flex flex-col justify-start items-center gap-2">
                             {homies.filter(homie => {
                                 if(homieUsername === "") {
                                     return homie
