@@ -1,12 +1,12 @@
-import { Post } from "@/homieTypes/homieTypes";
+import { HomieUser, Post } from "@/homieTypes/homieTypes";
 import { motion } from "framer-motion";
 import Image from "next/image";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from 'date-fns';
 import { getProfileUrl } from "@/extra/helpers";
 
-export default function HomieIndividualPostPreview({ posts }: { posts: Post[] }) {
-    // const router = useRouter();
+export default function HomieIndividualPostPreview({ posts, user }: { posts: Post[], user: HomieUser }) {
+    const router = useRouter();
 
     return (
         <motion.div 
@@ -31,6 +31,7 @@ export default function HomieIndividualPostPreview({ posts }: { posts: Post[] })
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
                             className="flex flex-col gap-2 bg-bgPrimary p-3 rounded-lg cursor-pointer"
+                            onClick={() => router.push(`/posts/${user?._id}`)}
                         >
                             <p className="text-sm text-[#aaa] line-clamp-2">{post.content}</p>
                             

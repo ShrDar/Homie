@@ -16,6 +16,7 @@ export default function PageTitle() {
         if(path.startsWith('yap/')) return 'Yap';
         if(path.startsWith("admin/")) return '';
         if(path.startsWith("posts")) return 'Posts';
+        if(path.startsWith("teas")) return 'Teas';
 
         return path.charAt(0).toUpperCase() + path.slice(1);
     }

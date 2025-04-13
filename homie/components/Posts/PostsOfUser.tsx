@@ -223,8 +223,8 @@ export default function PostsOfUser({session} : {session: Session}) {
           <MdOutlinePostAdd className="w-12 h-12 text-fontPrimary opacity-50" />
         </div>
         <div className="text-center">
-          <h2 className="text-fontPrimary text-2xl font-semibold mb-2">No Posts Yet</h2>
-          <p className="text-[#888] max-w-md">Be the first one to share something amazing with your homies!</p>
+          <h2 className="text-fontPrimary text-2xl font-semibold mb-2">No Posts By the User</h2>
+          <p className="text-[#888] max-w-md">Check out Other Posts</p>
         </div>
         <motion.button 
           initial={{ scale: 0 }}
@@ -232,11 +232,11 @@ export default function PostsOfUser({session} : {session: Session}) {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          onClick={() => setOpenPostAddModal(true)}
+          onClick={() => router.push('/posts')}
           className="px-6 py-3 bg-bgSecondary text-fontPrimary rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 flex items-center gap-2"
         >
           <MdOutlinePostAdd className="w-5 h-5" />
-          <span>Create Post</span>
+          <span>Back to Posts</span>
         </motion.button>
         <PostsAdd 
           openPostAddModal={openPostAddModal} 

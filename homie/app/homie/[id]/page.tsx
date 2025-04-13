@@ -620,7 +620,7 @@ export default function HomieIndividual() {
             )}
             {
                 showPosts && (
-                <HomieIndividualPostPreview posts={posts} />
+                <HomieIndividualPostPreview posts={posts} user={user} />
                 )
             }
             {
