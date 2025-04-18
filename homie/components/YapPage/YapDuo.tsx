@@ -22,6 +22,8 @@ import GifPicker from "./GifPicker";
 import Lenis from "lenis"
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
+import ImageViewer from "../Image/ImageViewer";
+import GIFViewer from "../Image/GIFViewer";
 
 interface Message {
     id: string;
@@ -61,6 +63,12 @@ export default function YapDuo({ session } : { session: Session }) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [showGifPicker, setShowGifPicker] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isSending, setIsSending] = useState(false);
+    const [unsendingMessageId, setUnsendingMessageId] = useState<string | null>(null);
+
+    const [openImageViewer,setOpenImageViewer] = useState<boolean>(false);
+    const [openGIFViewer,setOpenGIFViewer] = useState<boolean>(false);
+    const [currentViewerImage, setCurrentViewerImage] = useState<string | null>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -71,10 +79,9 @@ export default function YapDuo({ session } : { session: Session }) {
   useEffect(() => {
     if (!smoothContainerRef.current) return;
 
-    // Initialize Lenis only for the specific container
     const lenis = new Lenis({
-      wrapper: smoothContainerRef.current, // Apply Lenis to the specific container
-      content: smoothContainerRef.current.children[0], // The content inside the scrollable container
+      wrapper: smoothContainerRef.current, 
+      content: smoothContainerRef.current.children[0], 
     });
 
     function raf(time: number) {
@@ -97,7 +104,6 @@ export default function YapDuo({ session } : { session: Session }) {
         }
     }, []);
 
-    console.log(yapper1, yapData)
     useEffect(() => {
         const yapCollection = collection(db, 'Yap');
         const messagesCollection = collection(db, 'Messages');
@@ -168,15 +174,20 @@ export default function YapDuo({ session } : { session: Session }) {
 
     const sendMessage = async (e: React.FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault();
-        
+        setIsSending(true); // Set sending state to true
+
         if (selectedFile) {
             await sendImageMessage(selectedFile);
             setImagePreview(null);
             setSelectedFile(null);
+            setIsSending(false); // Reset sending state
             return;
         }
 
-        if (!newMessage.trim() || !yapId || !session?.user?.id) return;
+        if (!newMessage.trim() || !yapId || !session?.user?.id) {
+            setIsSending(false); // Reset sending state if validation fails
+            return;
+        }
 
         try {
             // Existing Firebase code
@@ -215,6 +226,8 @@ export default function YapDuo({ session } : { session: Session }) {
             setNewMessage("");
         } catch (error) {
             console.error("Error sending message:", error);
+        } finally {
+            setIsSending(false); // Reset sending state
         }
     };
 
@@ -257,6 +270,7 @@ export default function YapDuo({ session } : { session: Session }) {
     }));
 };
 const unsendMessage = async (messageId: string) => {
+    setUnsendingMessageId(messageId); // Set the ID of the message being unsent
     try {
         // First get the message data to check if it has an image
         const messageDoc = doc(db, 'Messages', messageId);
@@ -296,6 +310,8 @@ const unsendMessage = async (messageId: string) => {
     } catch (error) {
         console.error("Error unsending message:", error);
         toast.error("Failed to unsend message");
+    } finally {
+        setUnsendingMessageId(null); // Reset unsending state
     }
 };
     const handleImageSelect = async (file: File | undefined) => {
@@ -323,6 +339,7 @@ const unsendMessage = async (messageId: string) => {
 
     const sendImageMessage = async (file: File) => {
         if (!yapId || !session?.user?.id) return;
+        setIsSending(true); // Set sending state to true
 
         try {
             // Upload to Appwrite storage
@@ -372,11 +389,14 @@ const unsendMessage = async (messageId: string) => {
         } catch (error) {
             console.error("Error sending image:", error);
             toast.error("Failed to send image");
+        } finally {
+            setIsSending(false); // Reset sending state
         }
     };
 
     const sendGifMessage = async (gif: any) => {
         if (!yapId || !session?.user?.id) return;
+        setIsSending(true); // Set sending state to true
 
         try {
             // Add message to Firebase
@@ -417,6 +437,8 @@ const unsendMessage = async (messageId: string) => {
         } catch (error) {
             console.error("Error sending GIF:", error);
             toast.error("Failed to send GIF");
+        } finally {
+            setIsSending(false); // Reset sending state
         }
     };
 
@@ -431,7 +453,7 @@ const unsendMessage = async (messageId: string) => {
 
 
     return (
-        <div className="w-full h-[80dvh] z-[10] flex bg-bgSecondary text-fontPrimary rounded-[15px] p-5 flex-col justify-center items-center gap-2">
+        <div className="w-full h-[80dvh] z-[50] flex bg-bgSecondary text-fontPrimary rounded-[15px] p-5 flex-col justify-center items-center gap-2 ">
             <div onClick={() => router.push(`/homie/${yapper2?._id}`)} className="yapTopBar cursor-pointer w-full flex justify-start items-center gap-2">
                 <div className="rounded-full overflow-hidden bg-bgPrimary p-2">
                     <Image 
@@ -448,7 +470,7 @@ const unsendMessage = async (messageId: string) => {
                 </div>
             </div>
 
-            <div ref={smoothContainerRef} className="yapsContainer relative w-full bg-bgPrimary h-[70dvh] overflow-y-auto overflow-x-hidden rounded-[15px] flex flex-col justify-start items-center p-4">
+            <div ref={smoothContainerRef} className="yapsContainer relative w-full bg-bgPrimary h-[70dvh] overflow-y-auto z-[50] overflow-x-hidden rounded-[15px] flex flex-col justify-start items-center p-4">
                 <div className="w-full flex flex-col gap-1">
                     {groupMessagesByDate(messages).map((group, groupIndex) => {
                         // Get all messages from current user
@@ -491,34 +513,42 @@ const unsendMessage = async (messageId: string) => {
                                                     {message.senderId === session?.user?.id && (
                                                         <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[24px] opacity-0 group-hover:opacity-100 transition-opacity">
                                                             <DropdownMenu>
-                                                                <DropdownMenuTrigger>
+                                                                <DropdownMenuTrigger disabled={unsendingMessageId === message.id}> {/* Disable trigger if unsending */}
                                                                     <div className="p-1 hover:bg-bgSecondary rounded-full transition-colors">
                                                                         <CiMenuKebab size={14} className="text-fontPrimary opacity-60" />
                                                                     </div>
                                                                 </DropdownMenuTrigger>
                                                                 <DropdownMenuContent align="start" side="left" sideOffset={8} className="bg-bgPrimary text-fontPrimary text-sm border-[#666] p-1">
-                                                                    <div onClick={() => unsendMessage(message.id)} className="sulphur cursor-pointer">
+                                                                    <div
+                                                                        onClick={() => unsendingMessageId !== message.id && unsendMessage(message.id)} // Prevent clicking if already unsending
+                                                                        className={`sulphur cursor-pointer ${unsendingMessageId === message.id ? 'opacity-50 cursor-not-allowed' : ''}`} // Style if unsending
+                                                                    >
                                                                         <p className="w-full text-center hover:bg-[#1B1B1B] p-1 rounded-[6px] text-[#FF6F6F]">
-                                                                            Unsend
+                                                                            {unsendingMessageId === message.id ? 'Unsending...' : 'Unsend'} {/* Change text based on state */}
                                                                         </p>
                                                                     </div>
                                                                 </DropdownMenuContent>
                                                             </DropdownMenu>
                                                         </div>
                                                     )}
-                                                    <div className={`${message.type === "gif" || message.type === "image" ? "px-2" : "px-4"} py-2 rounded-[20px] ${
+                                                    <motion.div initial={{x: 20}} animate={{x: 0}} className={`${message.type === "gif" || message.type === "image" ? "px-2" : "px-4"} py-2 rounded-[20px] ${
                                                         message.senderId === session?.user?.id 
                                                             ? 'bg-bgSecondary text-fontPrimary overflow-hidden' 
                                                             : 'bg-[#1b1b1b] text-fontPrimary'
                                                     }`}>
                                                         {message.type === 'image' ? (
                                                             <div className="flex flex-col gap-2">
-                                                                <div className="relative w-[200px] h-[200px]">
+                                                                <div className="relative w-[200px] h-[200px]" 
+                                                                    onClick={() => {
+                                                                        setCurrentViewerImage(message.imageId || "");
+                                                                        setOpenImageViewer(true);
+                                                                    }}
+                                                                >
                                                                     <Image 
                                                                         src={getProfileUrl(message.imageId || "")}
                                                                         alt="Sent image"
                                                                         fill
-                                                                        className="object-cover rounded-[15px]"
+                                                                        className="object-cover rounded-[15px] cursor-pointer"
                                                                     />
                                                                 </div>
                                                                 {message.content && (
@@ -529,13 +559,18 @@ const unsendMessage = async (messageId: string) => {
                                                             </div>
                                                         ) : message.type === 'gif' ? (
                                                             <div className="flex justify-center items-center flex-col gap-2">
-                                                                <div className="relative">
+                                                                <div className="relative"
+                                                                    onClick={() => {
+                                                                        setCurrentViewerImage(message.gifUrl || "");
+                                                                        setOpenGIFViewer(true);
+                                                                    }}
+                                                                >
                                                                     <Image 
                                                                         src={message.gifUrl || ""}
                                                                         alt="GIF"
                                                                         width={200}
                                                                         height={200}
-                                                                        className="rounded-[15px]"
+                                                                        className="rounded-[15px] cursor-pointer"
                                                                         unoptimized
                                                                     />
                                                                 </div>
@@ -548,7 +583,7 @@ const unsendMessage = async (messageId: string) => {
                                                         ) : (
                                                             <p className="text-[15px] leading-5 whitespace-pre-wrap text-start">{message.content}</p>
                                                         )}
-                                                    </div>
+                                                    </motion.div>
                                                 </div>
                                             </div>
                                             
@@ -638,13 +673,30 @@ const unsendMessage = async (messageId: string) => {
                         </div>
                         <button
                             type="submit"
-                            className="bg-bgPrimary text-fontPrimary px-6 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center"
+                            disabled={isSending} // Disable button when sending
+                            className="bg-bgPrimary text-fontPrimary w-32 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Send
+                            {isSending ? (<span className="animate-pulse">Sending...</span>) : (<span>Send</span>)}
                         </button>
                     </div>
                 </form>
             </div>
+            {
+                openImageViewer && (
+                    <ImageViewer 
+                        image={currentViewerImage}
+                        setOpenImageViewer={setOpenImageViewer}
+                    />
+                )
+            }
+            {
+                openGIFViewer && (
+                    <GIFViewer 
+                        image={currentViewerImage ?? ""}
+                        setOpenImageViewer={setOpenGIFViewer}
+                    />
+                )
+            }
             
         </div>
     );

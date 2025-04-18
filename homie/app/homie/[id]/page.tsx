@@ -24,6 +24,7 @@ import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 import HomieIndividualPostPreview from "@/components/HomieIndividual/HomieIndividualPostPreview";
 import HomieIndividualTeaPreview from "@/components/HomieIndividual/HomieIndividualTeaPreview";
+import ProfileImageViewer from "@/components/Image/ProfileImageViewer";
 
 export default function HomieIndividual() {
     const params = useParams();
@@ -36,6 +37,9 @@ export default function HomieIndividual() {
     const [showHomies, setShowHomies] = useState(true);
     const [showPosts, setShowPosts] = useState(false);
     const [showTeas, setShowTeas] = useState(false);
+
+    const [openImageViewer,setOpenImageViewer] = useState<boolean>(false);
+    const [currentViewerImage, setCurrentViewerImage] = useState<string | null>(null);
     
     const [homiesData, setHomiesData] = useState<any[]>([]);
     const [isCreatingChat, setIsCreatingChat] = useState(false);
@@ -406,7 +410,11 @@ export default function HomieIndividual() {
                             height={400}
                             alt="profilePic"
                             src={getProfileUrl(user?.image || "")}
-                            className="w-[30vw] md:w-[20vw] lg:w-[150px] rounded-full aspect-square object-cover"
+                            onClick={() => {
+                                setOpenImageViewer(true);
+                                setCurrentViewerImage(getProfileUrl(user?.image || ""));
+                            }}
+                            className="w-[30vw] md:w-[20vw] lg:w-[150px] rounded-full aspect-square object-cover cursor-pointer"
                         />
                     </motion.div>
                     <motion.p 
@@ -645,6 +653,11 @@ export default function HomieIndividual() {
             {
                 showTeas && (
                     <HomieIndividualTeaPreview teas={teas} userId={params?.id} /> 
+                )
+            }
+            {
+                openImageViewer && (
+                    <ProfileImageViewer image={currentViewerImage} setOpenImageViewer={setOpenImageViewer} />
                 )
             }
         </div>

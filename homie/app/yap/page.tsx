@@ -11,7 +11,7 @@ export default async function Yap() {
     }
 
     return (
-        <div className="sulphur w-[90%] md:w-[80%] lg:w-[70%] z-[10] text-fontPrimary">
+        <div className="sulphur w-[90%] md:w-[80%] lg:w-[70%] z-[50] text-fontPrimary">
             <YapMain />
         </div>
     )

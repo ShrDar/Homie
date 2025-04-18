@@ -5,7 +5,7 @@ import { createPortal } from "react-dom"
 import { useEffect, useState } from "react"
 import { RxCross2 } from "react-icons/rx"
 
-export default function ImageViewer({ image, setOpenImageViewer }: { image: string | null, setOpenImageViewer: any }) {
+export default function GIFViewer({ image, setOpenImageViewer }: { image: string, setOpenImageViewer: any }) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -29,13 +29,13 @@ export default function ImageViewer({ image, setOpenImageViewer }: { image: stri
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
                 className="fixed w-[80vw] lg:w-[40vw] top-[50%] left-[50%] z-[1000] translate-x-[-50%] translate-y-[-50%] flex justify-center items-center"
-            >
+            >   
                 <Image
-                    src={getProfileUrl(image || "")}
+                    src={image}
                     alt="imageView"
                     width={1200}
                     height={1200}
-                    className="w-full h-auto object-contain rounded-[15px]"
+                    className="object-contain rounded-[15px]"
                 />
                 <motion.div 
                     whileHover={{scale: 1.2}}

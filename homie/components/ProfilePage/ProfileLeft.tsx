@@ -77,8 +77,19 @@ export default function ProfileLeft({ user, setUser }: { user: HomieUser | null,
 
     if (!user) {
         return (
-            <div className="profileLeftContainer w-[90%] lg:w-[35%] flex flex-col justify-center items-center gap-6">
-                <div>Loading...</div>
+            <div className="profileLeftContainer w-[90%] lg:w-[35%] flex flex-col justify-center items-center gap-6 brightness-[0.9]">
+                <div className="w-full flex flex-col items-center gap-6">
+                    <div className="w-[40%] lg:w-[50%] aspect-square rounded-full bg-bgSecondary animate-pulse"></div>
+                    <div className="w-1/3 h-4 bg-bgSecondary rounded animate-pulse"></div>
+                </div>
+                <div className="w-2/3 h-4 bg-bgSecondary rounded animate-pulse"></div>
+                <div className="w-full bg-bgSecondary rounded-[15px] px-8 py-10">
+                    <div className="flex lg:flex-col gap-4">
+                        {[1, 2, 3].map((_, index) => (
+                            <div key={index} className="w-full h-12 bg-bgSecondary rounded-[15px] animate-pulse"></div>
+                        ))}
+                    </div>
+                </div>
             </div>
         );
     }

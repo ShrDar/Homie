@@ -45,7 +45,6 @@ export default function SlideBar( {session} : {session: Session} ) {
     }, [firstVisit, hasInteracted]);
 
     const handleSidebarInteraction = () => {
-        setHidden(false);
         setFirstVisit(false);
         setHasInteracted(true);
     };
@@ -76,7 +75,7 @@ export default function SlideBar( {session} : {session: Session} ) {
             <div onClick={() => {
                 setHidden((prev) => !prev);
                 handleSidebarInteraction();
-            }} className="absolute flex lg:hidden cursor-pointer top-5 right-5 z-[100]">
+            }} className="absolute flex lg:hidden cursor-pointer top-5 right-5 z-[150]">
                 <FaBarsStaggered color="#fff" />
             </div>
             <motion.div 
