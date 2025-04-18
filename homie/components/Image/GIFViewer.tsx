@@ -1,4 +1,3 @@
-import { getProfileUrl } from "@/extra/helpers"
 import Image from "next/image"
 import { motion } from "motion/react"
 import { createPortal } from "react-dom"

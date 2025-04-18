@@ -524,7 +524,7 @@ const unsendMessage = async (messageId: string) => {
                                                                         className={`sulphur cursor-pointer ${unsendingMessageId === message.id ? 'opacity-50 cursor-not-allowed' : ''}`} // Style if unsending
                                                                     >
                                                                         <p className="w-full text-center hover:bg-[#1B1B1B] p-1 rounded-[6px] text-[#FF6F6F]">
-                                                                            {unsendingMessageId === message.id ? 'Unsending...' : 'Unsend'} {/* Change text based on state */}
+                                                                            {unsendingMessageId === message.id ? (<span className="animate-pulse">Unsending...</span>) : (<span>Unsend</span>)} {/* Change text based on state */}
                                                                         </p>
                                                                     </div>
                                                                 </DropdownMenuContent>
