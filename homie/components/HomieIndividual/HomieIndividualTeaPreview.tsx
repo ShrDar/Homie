@@ -2,8 +2,10 @@ import { Tea } from "@/homieTypes/homieTypes";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { getProfileUrl } from "@/extra/helpers";
+import { useRouter } from "next/navigation";
 
-export default function HomieIndividualTeaPreview({ teas }: { teas: Tea[] }) {
+export default function HomieIndividualTeaPreview({ teas, userId }: { teas: Tea[], userId: string | string[] | undefined }) {
+    const router = useRouter();
     return (
         <motion.div 
             initial={{ opacity: 0, x: 50 }}
@@ -26,6 +28,7 @@ export default function HomieIndividualTeaPreview({ teas }: { teas: Tea[] }) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
+                            onClick={() => router.push(`/teas/${userId}`)}
                             className="flex flex-col gap-2 bg-bgPrimary p-3 rounded-lg cursor-pointer"
                         >
                             

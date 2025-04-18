@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { CiMenuKebab } from "react-icons/ci";
 import { BiCommentDetail } from "react-icons/bi";
 import { MdOutlinePostAdd } from "react-icons/md";
+import { IoReturnDownBack } from "react-icons/io5";
+import { IoChevronBack } from "react-icons/io5";
 import { ImCool } from "react-icons/im";
 import { AnimatePresence, motion } from 'motion/react';
 import { Session } from "next-auth"
@@ -318,7 +320,7 @@ export default function PostsOfUser({session} : {session: Session}) {
                     <div className={`bg-bgSecondary w-full rounded-[15px] p-4 flex flex-col gap-4 ${!post.image ? 'my-auto h-fit' : 'h-full'}`}>
                         <div className="flex justify-between items-center gap-3">
                           <div className='flex items-center gap-3'>
-                            <div onClick={() => router.push(`homie/${postUser?._id}`)} className="w-12 h-12 cursor-pointer rounded-full overflow-hidden bg-bgPrimary">
+                            <div onClick={() => router.push(`/homie/${postUser?._id}`)} className="w-12 h-12 cursor-pointer rounded-full overflow-hidden bg-bgPrimary">
                                 {postUser?.image ? (
                                 <Image
                                     key={`user-image-${postUser._id}`}
@@ -426,6 +428,7 @@ export default function PostsOfUser({session} : {session: Session}) {
                                       setShowPostReaction={setShowPostReactions} 
                                       userId={user?._id || session?.user?.id || ""} 
                                       showPostReaction={showPostReaction}
+                                      postFrom='PostsOfUser'
                                   />
                                 )}
                               </AnimatePresence>
@@ -481,15 +484,26 @@ export default function PostsOfUser({session} : {session: Session}) {
           className={`fixed bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 z-50 group ${
             !isButtonVisible && 'pointer-events-none'
           }`}
-          onClick={() => setOpenPostAddModal(true)}
+          onClick={() => router.push('/')}
         >
           <div className="flex items-center">
-            <MdOutlinePostAdd className="w-6 h-6" />
+            <IoReturnDownBack className="w-6 h-6" />
             <span className="w-0 overflow-hidden group-hover:w-16 transition-all duration-300 ease-in-out">
-              Post
+              Posts
             </span>
           </div>
         </motion.button>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          onClick={() => router.push(`/homie/${params?.id}`)}
+          title='Back to User'
+          className='fixed top-6 bg-bgSecondary p-2 rounded-full shadow-[1px_1px_40px_#222] hover:bg-[#242424] transition-all duration-300 cursor-pointer'
+          >
+            <IoChevronBack size={20}/>
+          </motion.div>
 
         <PostsAdd 
           openPostAddModal={openPostAddModal} 

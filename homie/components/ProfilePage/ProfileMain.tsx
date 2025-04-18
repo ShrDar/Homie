@@ -7,9 +7,10 @@ import ProfileLeft from "./ProfileLeft";
 import ProfileRight from "./ProfileRight";
 import { MdAdminPanelSettings } from "react-icons/md";
 import Link from "next/link";
+import { HomieUser } from "@/homieTypes/homieTypes";
 
 export default function ProfileMain({ session }: { session: Session }) {
-    const [user, setUser] = useState({username: "", bio: "", role: "USER"});
+    const [user, setUser] = useState<HomieUser | null>(null);
 
     useEffect(() => {
         const fetchUserData = async() => {

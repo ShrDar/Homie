@@ -10,9 +10,10 @@ interface Props {
   setShowPostReaction: (show: boolean) => void;
   userId: string;  // Add userId prop
   showPostReaction: boolean
+  postFrom: string;
 }
 
-export default function PostReactions({ post, setPosts, setShowPostReaction, userId, showPostReaction }: Props) {
+export default function PostReactions({ post, setPosts, setShowPostReaction, userId, showPostReaction, postFrom }: Props) {
 
     
     const hasUserReacted = (reactionType: string) => {
@@ -24,11 +25,17 @@ export default function PostReactions({ post, setPosts, setShowPostReaction, use
 
     const fetchPosts = async () => {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`);
-          const postsData = await response.json();
-          setPosts(postsData);
+            let response;
+            if(postFrom === "PostsOfUser") {
+                response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/user/${userId}`);
+            }
+            else {
+                response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`);
+            }
+            const postsData = await response.json();
+            setPosts(postsData);
         } catch (err) {
-          console.error('Error fetching posts:', err);
+            console.error('Error fetching posts:', err);
         }
       };
 

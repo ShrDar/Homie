@@ -6,10 +6,10 @@ import ChangeProfilePic from "../Portals/ChangeProfilePicModal";
 import { getProfileUrl } from "@/extra/helpers";
 import { useRouter } from "next/navigation";
 import { HomieUser, Post, Tea } from "@/homieTypes/homieTypes";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/config/firebase";
 
-export default function ProfileLeft({ user, setUser }: { user: HomieUser, setUser: any}) {
+export default function ProfileLeft({ user, setUser }: { user: HomieUser | null, setUser: any}) {
     const router = useRouter();
     const [openChangeProfileModal, setOpenChangeProfileModal] = useState(false);
     const [posts, setPosts] = useState<Post[] | null>(null);
@@ -104,13 +104,13 @@ export default function ProfileLeft({ user, setUser }: { user: HomieUser, setUse
                             <p>Change</p>
                         </div> */}
                     </motion.div>
-                    <p className="tracking-[1px]">@{user.username}</p>
+                    <p className="tracking-[1px]">@{user?.username}</p>
                 </motion.div>
                 <motion.div 
                     variants={itemVariants}
                     className="bioContainer text-center w-full"
                 >
-                    <p className="tracking-[1px] text-xl w-full jim">{user.bio}</p>
+                    <p className="tracking-[1px] text-xl w-full jim">{user?.bio}</p>
                 </motion.div>
                 <motion.div 
                     variants={itemVariants}

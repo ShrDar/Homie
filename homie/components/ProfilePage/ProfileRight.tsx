@@ -12,21 +12,20 @@ import ChangePassModal from "../Portals/ChangePassModal";
 
 export default function ProfileRight({ session, user, setUser }: {session: Session, user: any, setUser: any}) {
     // Split the full name into first and last name
-    const [tdbFirstName, tdbLastName] = session.user?.name?.split(' ') || ['', ''];
-    const [dbFirstName, setDbFirstName] = useState(tdbFirstName);
-    const [dbLastName, setDbLastName] = useState(tdbLastName);
-    const [firstName, setFirstName] = useState(dbFirstName);
-    const [lastName, setLastName] = useState(dbLastName);
-    const [bio, setBio] = useState(user.bio);
-    const [username, setUsername] = useState(user.username);
-    const [usernameError, setUsernameError] = useState("")
+    const [dbFirstName, setDbFirstName] = useState('');
+    const [dbLastName, setDbLastName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [bio, setBio] = useState('');
+    const [username, setUsername] = useState('');
+    const [usernameError, setUsernameError] = useState('');
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openChangePassModal, setOpenChangePassModal] = useState(false);
 
     useEffect(() => {
         const [tdbFirstName, tdbLastName] = user?.name?.split(' ') || ['', ''];
-        setBio(user.bio || "");
-        setUsername(user.username || "");
+        setBio(user?.bio || "");
+        setUsername(user?.username || "");
         setFirstName(tdbFirstName);
         setLastName(tdbLastName)
     }, [user]);
@@ -201,7 +200,7 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                 <motion.div whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} onClick={() => setOpenDeleteModal(true)} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 right-4 rounded-full border-[2px] border-[#FF6F6F] scale-[0.8] cursor-pointer">
                         <MdDelete color="#FF6F6F" size={12} />
                 </motion.div>
-                {user.hashedPassword &&
+                {user?.hashedPassword &&
                     <motion.div onClick={() => setOpenChangePassModal(true)} whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 left-4 rounded-full border-[2px] border-bgPrimary scale-[0.8] cursor-pointer">
                         <Image 
                             src={`/figmaIcons/changePass.svg`}

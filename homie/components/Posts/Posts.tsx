@@ -425,6 +425,7 @@ export default function Posts({session} : {session: Session}) {
                                       setShowPostReaction={setShowPostReactions} 
                                       userId={user?._id || session?.user?.id || ""} 
                                       showPostReaction={showPostReaction}
+                                      postFrom="Posts"
                                   />
                                 )}
                               </AnimatePresence>

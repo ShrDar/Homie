@@ -33,7 +33,7 @@ export default function HomieIndividual() {
     const [currentUser, setCurrentUser] = useState<HomieUser | null>(null);
     const [error, setError] = useState(false);
 
-    const [showHomies, setShowHomies] = useState(false);
+    const [showHomies, setShowHomies] = useState(true);
     const [showPosts, setShowPosts] = useState(false);
     const [showTeas, setShowTeas] = useState(false);
     
@@ -43,8 +43,11 @@ export default function HomieIndividual() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [teas, setTeas] = useState<Tea[]>([]);
 
-    // console.log(posts)
-    console.log(teas)
+    const [currentSelected, setCurrentSelected] = useState<"homies" | "posts" | "teas" | "none">("homies");
+
+    const handleSelection = (name: "homies" | "posts" | "teas" | "none") => {
+        setCurrentSelected((prev)  => prev === name ? "none" : name)
+    };
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -430,8 +433,14 @@ export default function HomieIndividual() {
                         <motion.div 
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => setShowHomies((prev) => !prev)}
-                            className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4 cursor-pointer"
+                            onClick={() => {
+                                setShowHomies((prev) => !prev)
+                                setShowPosts(false)
+                                setShowTeas(false)
+                                handleSelection("homies")
+                                
+                            }}
+                            className={`profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4 cursor-pointer ${currentSelected === "homies" ? 'bg-[#161616] shadow-[1px_1px_20px_#2a2a2a] border-[#aaa]' : ''}`}
                         >
                             <p className="font-bold">HOMIES</p>
                             <div className="justify-center items-center hidden lg:flex">
@@ -443,8 +452,13 @@ export default function HomieIndividual() {
                         <motion.div
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => setShowPosts((prev) => !prev)}
-                            className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4"
+                            onClick={() => {
+                                setShowPosts((prev) => !prev)
+                                setShowHomies(false)
+                                setShowTeas(false)
+                                handleSelection("posts")
+                            }}
+                            className={`profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4 cursor-pointer ${currentSelected === "posts" ? 'bg-[#161616] shadow-[1px_1px_20px_#2a2a2a] border-[#aaa]' : ''}`}
                         >
                             <p>POSTS</p>
                             <div className="justify-center items-center hidden lg:flex">
@@ -456,8 +470,13 @@ export default function HomieIndividual() {
                         <motion.div 
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => setShowTeas((prev) => !prev)}
-                            className="profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4"
+                            onClick={() => {
+                                setShowTeas((prev) => !prev)
+                                setShowHomies(false)
+                                setShowPosts(false)
+                                handleSelection("teas")
+                            }}
+                            className={`profileStat w-full flex justify-center lg:justify-between items-center border-[2px] border-[#888] text-center bg-bgPrimary rounded-[15px] px-2 lg:px-6 py-4 gap-4 cursor-pointer ${currentSelected === "teas" ? 'bg-[#161616] shadow-[1px_1px_20px_#2a2a2a] border-[#aaa]' : ''}`}
                         >
                             <p>TEAS</p>
                             <div className="justify-center items-center hidden lg:flex">
@@ -625,7 +644,7 @@ export default function HomieIndividual() {
             }
             {
                 showTeas && (
-                    <HomieIndividualTeaPreview teas={teas} /> 
+                    <HomieIndividualTeaPreview teas={teas} userId={params?.id} /> 
                 )
             }
         </div>
