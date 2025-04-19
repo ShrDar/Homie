@@ -209,8 +209,8 @@ export default function Onboarding({ session }: { session: Session | null }) {
                     <div className="flex justify-between items-center"> {/* Changed to justify-between */}
                         <button
                             onClick={handleBack}
-                            disabled={currentStep === 0} // Adjust condition for 0-based index
-                            className={`px-6 py-2.5 rounded-lg font-medium text-[#AAAAAA] border border-[#666666] hover:bg-bgSecondary hover:text-fontPrimary transition-colors duration-200 ${currentStep === 0 ? 'opacity-50 cursor-none' : ''}`}
+                            disabled={currentStep === 0}
+                            className={`px-6 py-2.5 rounded-lg font-medium text-[#aaaaaa] border border-[#666666] hover:bg-bgSecondary hover:text-fontPrimary transition-colors duration-200 ${currentStep === 0 ? 'opacity-50 cursor-none' : ''}`}
                         >
                             Back
                         </button>
