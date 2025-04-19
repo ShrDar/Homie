@@ -5,13 +5,17 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'motion/react';
 import Image from 'next/image';
+import { Session } from 'next-auth';
+import { doc, setDoc } from "firebase/firestore";
+import { db } from '@/config/firebase';
 
-
-export default function Onboarding() {
+export default function Onboarding({ session }: { session: Session | null }) {
+    const userId = session?.user?.id;
     const [currentStep, setCurrentStep] = useState(0); 
     const [isClient, setIsClient] = useState(false);
     const [showOnboarding, setShowOnboarding] = useState(true);
     const [allowNotification, setAllowNotification] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     const WelcomeStep = () => (
         <div className="text-center flex flex-col justify-center items-center gap-2">
@@ -51,35 +55,56 @@ export default function Onboarding() {
         </div>
     );
     
-    const NotificationsStep = () => (
-        <div className="text-center flex flex-col justify-center items-center gap-5">
-            <h2 className="text-2xl font-semibold text-fontPrimary">Notifications</h2>
-            <p className="text-[#aaa]">Stay updated with notifications</p>
-            <div>
-                <motion.div 
-                    className="flex items-center cursor-pointer"
-                    // whileTap={{ scale: 0.95 }}
-                    // transition={{ type: "spring", stiffness: 200}}
-                >
-                    <button
-                        onClick={() => setAllowNotification(prev => !prev)}
-                        className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
-                            allowNotification ? 'bg-bgSecondary' : 'bg-[#1d1d1d]'
-                        }`}
+    useEffect(() => {
+        if (isClient && Notification.permission === 'granted') {
+            setAllowNotification(true);
+        }
+    }, [isClient]);
+
+    const NotificationsStep = () => {
+        const handleToggle = async () => {
+            if (!allowNotification) {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    setAllowNotification(true);
+                } else {
+                    setAllowNotification(false);
+                }
+            } else {
+                setAllowNotification(false);
+            }
+        };
+
+        return (
+            <div className="text-center flex flex-col justify-center items-center gap-5">
+                <h2 className="text-2xl font-semibold text-fontPrimary">Notifications</h2>
+                <p className="text-[#aaa]">Stay updated with notifications</p>
+                <div>
+                    <motion.div 
+                        className="flex items-center cursor-pointer"
+                        // whileTap={{ scale: 0.95 }}
+                        // transition={{ type: "spring", stiffness: 200}}
                     >
-                        <motion.div
-                            className="absolute top-1 w-5 h-5 rounded-full bg-fontPrimary"
-                            animate={{
-                                left: allowNotification ? '1.95rem' : '0.25rem'
-                            }}
-                            transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                        />
-                    </button>
-                    <span className="ms-3 text-sm font-medium text-fontPrimary">{allowNotification ? 'Enabled ✔' : 'Disabled ❌'}</span>
-                </motion.div>
+                        <button
+                            onClick={handleToggle}
+                            className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
+                                allowNotification ? 'bg-bgSecondary' : 'bg-[#1d1d1d]'
+                            }`}
+                        >
+                            <motion.div
+                                className="absolute top-1 w-5 h-5 rounded-full bg-fontPrimary"
+                                animate={{
+                                    left: allowNotification ? '1.95rem' : '0.25rem'
+                                }}
+                                transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                            />
+                        </button>
+                        <span className="ms-3 text-sm font-medium text-fontPrimary">{allowNotification ? 'Enabled ✔' : 'Disabled ❌'}</span>
+                    </motion.div>
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
     
     const stepsContent = [
         {
@@ -103,10 +128,32 @@ export default function Onboarding() {
         }
     }, []);
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (currentStep < totalSteps - 1) { 
             setCurrentStep(currentStep + 1);
         } else if (currentStep === totalSteps - 1) { 
+            setIsSubmitting(true);
+            try {
+                if (userId) {
+                    await setDoc(doc(db, "Notifications", userId), {
+                        userId,
+                        allowNoti: allowNotification,
+                        preferences: {
+                            allowPostNofi: false,
+                            allowTeasNoti: false,
+                            allowMessagesNoti: false
+                        },
+                        notifications: [],
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    }, { merge: true });
+                }
+            } catch (error) {
+                console.error("Error saving notification preferences:", error);
+            } finally {
+                setIsSubmitting(false);
+            }
+            
             setShowOnboarding(false);
             localStorage.setItem('hasCompletedOnboarding', 'true');
         }
@@ -169,9 +216,12 @@ export default function Onboarding() {
                         </button>
                         <button
                             onClick={handleNext}
-                            className={`px-6 py-2.5 rounded-lg border-[2px] border-bgSecondary font-medium text-[#fff] transition-colors duration-200 ${currentStep === totalSteps - 1 ? 'bg-bgSecondary hover:bg-bgPrimary' : 'bg-bgSecondary hover:bg-bgPrimary'}`}
+                            disabled={isSubmitting}
+                            className={`px-6 py-2.5 rounded-lg border-[2px] border-bgSecondary font-medium text-[#fff] transition-colors duration-200 ${
+                                currentStep === totalSteps - 1 ? 'bg-bgSecondary hover:bg-bgPrimary' : 'bg-bgSecondary hover:bg-bgPrimary'
+                            }`}
                         >
-                            {currentStep === totalSteps - 1 ? 'Finish' : 'Next'}
+                            {isSubmitting ? 'Finishing...' : (currentStep === totalSteps - 1 ? 'Finish' : 'Next')}
                         </button>
                     </div>
                 </motion.div>

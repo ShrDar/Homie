@@ -65,7 +65,7 @@ export default async function RootLayout({
           {children}
           <Toaster richColors />
           <PageTitle />
-          <Onboarding />
+          <Onboarding session={session} />
           <div id="modal"></div>
         </body>
       </html>
