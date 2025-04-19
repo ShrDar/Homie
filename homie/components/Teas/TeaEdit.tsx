@@ -222,7 +222,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                         isTeaOpen ? 'left-8' : 'left-1'
                                     }`}
                                 />
-                                <span className="sr-only">Toggle Tea Status</span>
+                                {/* <span className="sr-only">Toggle Tea Status</span> */}
                             </button>
                             <span className="text-sm text-gray-400">
                                 {isTeaOpen ? 'Open' : 'Closed'}

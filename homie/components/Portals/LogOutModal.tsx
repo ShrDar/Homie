@@ -2,14 +2,24 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { logout } from "@/actions/auth"
+import { createPortal } from "react-dom"
+import { useEffect, useState } from "react"
 
 export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal: (value: boolean) => void }) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
     
     const handleLogout = async () => {
         await logout();
     };
 
-    return (
+    if (!mounted) return null;
+
+    return createPortal(
         <AnimatePresence>
             <motion.div 
                 key="backdrop"
@@ -17,11 +27,11 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setOpenLogOutModal(false)} 
-                className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm"
+                className="fixed top-[50%] z-[305] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm"
             />
             <div 
                 key="modal"
-                className="fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary"
+                className="fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] bg-bgSecondary top-[50%] z-[310] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary"
             >
                 <motion.p 
                     initial={{ y: -20 }}
@@ -57,6 +67,7 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
                     </motion.div>
                 </div>
             </div>
-        </AnimatePresence>
-    )
+        </AnimatePresence>,
+        document.body
+    );
 }

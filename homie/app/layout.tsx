@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import SlideBar from "@/components/SlideBar/SlideBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
 import SlideBarHorizental from "@/components/SlideBar/SlideBarHorizental";
+import Onboarding from "@/components/Onboarding/Onboarding";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,6 +65,7 @@ export default async function RootLayout({
           {children}
           <Toaster richColors />
           <PageTitle />
+          <Onboarding />
           <div id="modal"></div>
         </body>
       </html>
