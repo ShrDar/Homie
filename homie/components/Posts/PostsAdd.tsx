@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import TextareaAutosize from 'react-textarea-autosize';
 import { getProfileUrl } from '@/extra/helpers';
 import { db } from "@/config/firebase";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
 
 export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, setPosts }: { openPostAddModal: boolean, setOpenPostAddModal: any, user: any, setPosts: any }) {
     const [content, setContent] = useState('');
@@ -94,7 +94,7 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                     content,
                     image: imageId || null,
                     userId: user._id,
-                    commentId: commentChannelId, // Add the comment channel ID
+                    commentId: commentChannelId,
                     reactions: {
                         dap: 0,
                         love: 0,
@@ -106,6 +106,29 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
             });
 
             if (response.ok) {
+                // Send notifications to homies
+                if (user.homies && user.homies.length > 0) {
+                    const batch = writeBatch(db);
+                    
+                    for (const homieId of user.homies) {
+                        const notificationRef = doc(db, "Notifications", homieId);
+                        
+                        batch.set(notificationRef, {
+                            notifications: [{
+                                message: `${user.name} shared a new post: "${content.slice(0, 30)}${content.length > 30 ? '...' : ''}"`,
+                                timestamp: new Date(),
+                                type: 'post',
+                                read: false,
+                                postId: commentChannelId, // Using commentChannelId as postId reference
+                                userId: user._id
+                            }],
+                            updatedAt: new Date()
+                        }, { merge: true });
+                    }
+
+                    await batch.commit();
+                }
+
                 toast.success("Post created successfully!");
                 setContent('');
                 setCurrentImage("");

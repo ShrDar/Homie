@@ -11,26 +11,9 @@ import { LuSettings2 } from "react-icons/lu";
 import { motion } from "framer-motion";
 // import { Session } from "next-auth";
 // import { HomieUser } from "@/homieTypes/homieTypes";
-import { useEffect, useState } from "react";
-import LogOutModal from "../Portals/LogOutModal";
 
 export default function SlideBarHorizental() {
     const pathname = usePathname();
-    const [openLogOutModal, setOpenLogOutModal] = useState(false);
-
-    useEffect(() => {
-        const handleKeyPress = (event: KeyboardEvent) => {
-            if (event.ctrlKey && event.key.toLowerCase() === 'q') {
-                event.preventDefault();
-                setOpenLogOutModal(true);
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyPress);
-        return () => {
-            window.removeEventListener('keydown', handleKeyPress);
-        };
-    }, []);
 
     // const [user, setUser] = useState<HomieUser>();
     
@@ -174,10 +157,6 @@ export default function SlideBarHorizental() {
                     <p className="text-sm capitalize tracking-[2px] [writing-mode:vertical-lr] rotate-180">More</p>
                 </Link>
             </div>
-            {
-                openLogOutModal && 
-                <LogOutModal setOpenLogOutModal={setOpenLogOutModal} />
-            }
         </motion.div>
     );
 }

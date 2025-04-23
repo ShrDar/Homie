@@ -8,6 +8,11 @@ import SlideBar from "@/components/SlideBar/SlideBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
 import SlideBarHorizental from "@/components/SlideBar/SlideBarHorizental";
 import Onboarding from "@/components/Onboarding/Onboarding";
+import Shortcuts from "@/components/Shortcut/Shortcuts";
+import SlideBarNormie from "@/components/SlideBar/SlideBarNormie";
+import SidebarSelector from "@/components/SlideBar/SlidebarSelector";
+import ViewNotifications from "@/components/Notifications/ViewNotifications";
+import ListenNotifications from "@/components/Notifications/ListenNotifications";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,13 +65,16 @@ export default async function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} ${pixelify.variable} ${tiny.variable} selection:bg-bgPrimary bg-bgPrimary antialiased min-h-screen w-full relative flex justify-center items-center`}
         >
-          {session && <SlideBarHorizental />}
+          {session && <SidebarSelector session={session} />}
           {session && <SlideBar session={session} />} 
           {children}
           <Toaster richColors />
-          <PageTitle />
+
+          {session && <PageTitle />}
           {session && <Onboarding session={session} />}
-          <div id="modal"></div>
+          {session && <Shortcuts />}
+
+          {session && <ListenNotifications session={session} />}          
         </body>
       </html>
     </SessionProvider>

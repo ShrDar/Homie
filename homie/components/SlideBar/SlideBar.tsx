@@ -25,24 +25,24 @@ export default function SlideBar( {session} : {session: Session} ) {
     const [user, setUser] = useState({username: '', bio: '', image: "", name: ""});
 
     // Modified effect to handle first visit peek
-    useEffect(() => {
-        let peekInterval: NodeJS.Timeout | null = null;
-        let closeTimeout: NodeJS.Timeout | null = null;
+    // useEffect(() => {
+    //     let peekInterval: NodeJS.Timeout | null = null;
+    //     let closeTimeout: NodeJS.Timeout | null = null;
 
-        if (!hasInteracted && firstVisit) {
-            peekInterval = setInterval(() => {
-                setHidden(false);
-                closeTimeout = setTimeout(() => {
-                    setHidden(true);
-                }, 1000);
-            }, 5000);
+    //     if (!hasInteracted && firstVisit) {
+    //         peekInterval = setInterval(() => {
+    //             setHidden(false);
+    //             closeTimeout = setTimeout(() => {
+    //                 setHidden(true);
+    //             }, 1000);
+    //         }, 5000);
 
-            return () => {
-                if (peekInterval) clearInterval(peekInterval);
-                if (closeTimeout) clearTimeout(closeTimeout);
-            };
-        }
-    }, [firstVisit, hasInteracted]);
+    //         return () => {
+    //             if (peekInterval) clearInterval(peekInterval);
+    //             if (closeTimeout) clearTimeout(closeTimeout);
+    //         };
+    //     }
+    // }, [firstVisit, hasInteracted]);
 
     const handleSidebarInteraction = () => {
         setFirstVisit(false);
