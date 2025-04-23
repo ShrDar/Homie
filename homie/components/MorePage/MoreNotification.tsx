@@ -70,8 +70,8 @@ export default function MoreNotification({ session }: { session: Session }) {
     };
 
     return (
-        <div className="p-6 w-full">
-            <div className="text-center flex flex-col gap-5"> 
+        <div className="w-full flex justify-center items-start h-full">
+            <div className="text-center flex flex-col gap-5 w-full"> 
                 <p className="text-2xl tracking-[1px]">Notifications</p>
 
                 <div className="flex flex-col">
