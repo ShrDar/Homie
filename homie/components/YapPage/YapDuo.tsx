@@ -2,7 +2,7 @@
 import { db } from "@/config/firebase";
 import { getProfileUrl } from "@/extra/helpers";
 import { HomieUser } from "@/homieTypes/homieTypes";
-import { collection, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, Timestamp, query, where, getDocs, getDoc } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, Timestamp, query, where, getDocs, getDoc, writeBatch, arrayUnion } from "firebase/firestore";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -223,6 +223,27 @@ export default function YapDuo({ session } : { session: Session }) {
                 }),
             });
 
+            // Add notification for DM participant
+            if (yapper2) {
+                const batch = writeBatch(db);
+                const notificationRef = doc(db, "Notifications", yapper2._id);
+                
+                batch.set(notificationRef, {
+                    notifications: arrayUnion({
+                        message: `${yapper1?.name}: ${previewText.slice(0,30)}${previewText.length > 30 ? '...' : ''}`,
+                        timestamp: new Date(),
+                        type: 'message',
+                        read: false,
+                        shownOnToast: false,
+                        yapId: yapId,
+                        userId: session.user.id
+                    }),
+                    updatedAt: new Date()
+                }, { merge: true });
+
+                await batch.commit();
+            }
+
             setNewMessage("");
         } catch (error) {
             console.error("Error sending message:", error);
@@ -369,6 +390,7 @@ const unsendMessage = async (messageId: string) => {
                 lastSenderId: session.user.id
             });
 
+            // In sendImageMessage function after successful upload:
             await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/yaps/${session.user.id}/update-yap/${yapId}`, {
                 method: 'PUT',
                 headers: {
@@ -383,6 +405,27 @@ const unsendMessage = async (messageId: string) => {
                 }),
             });
 
+            // Add notification for DM participant
+            if (yapper2) {
+                const batch = writeBatch(db);
+                const notificationRef = doc(db, "Notifications", yapper2._id);
+                
+                batch.set(notificationRef, {
+                    notifications: arrayUnion({
+                        message: `${yapper1?.name} sent an image 🖼️`,
+                        timestamp: new Date(),
+                        type: 'message',
+                        read: false,
+                        shownOnToast: false,
+                        yapId: yapId,
+                        userId: session.user.id
+                    }),
+                    updatedAt: new Date()
+                }, { merge: true });
+
+                await batch.commit();
+            }
+
             // Clear both image and text
             setNewMessage("");
             // toast.success("Image sent successfully");
@@ -396,7 +439,7 @@ const unsendMessage = async (messageId: string) => {
 
     const sendGifMessage = async (gif: any) => {
         if (!yapId || !session?.user?.id) return;
-        setIsSending(true); // Set sending state to true
+        setIsSending(true);
 
         try {
             // Add message to Firebase
@@ -431,6 +474,27 @@ const unsendMessage = async (messageId: string) => {
                     participants: yapData[0].participants
                 }),
             });
+
+            // Add notification for DM participant
+            if (yapper2) {
+                const batch = writeBatch(db);
+                const notificationRef = doc(db, "Notifications", yapper2._id);
+                
+                batch.set(notificationRef, {
+                    notifications: arrayUnion({
+                        message: `${yapper1?.name} sent a GIF 😏`,
+                        timestamp: new Date(),
+                        type: 'message',
+                        read: false,
+                        shownOnToast: false,
+                        yapId: yapId,
+                        userId: session.user.id
+                    }),
+                    updatedAt: new Date()
+                }, { merge: true });
+
+                await batch.commit();
+            }
 
             setNewMessage("");
             // toast.success("GIF sent successfully");

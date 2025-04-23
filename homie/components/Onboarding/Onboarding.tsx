@@ -139,9 +139,9 @@ export default function Onboarding({ session }: { session: Session | null }) {
                         userId,
                         allowNoti: allowNotification,
                         preferences: {
-                            allowPostNofi: false,
-                            allowTeasNoti: false,
-                            allowMessagesNoti: false
+                            allowPostNofi: allowNotification,
+                            allowTeasNoti: allowNotification,
+                            allowMessagesNoti: allowNotification
                         },
                         notifications: [],
                         createdAt: new Date(),

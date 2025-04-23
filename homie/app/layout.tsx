@@ -13,6 +13,7 @@ import SlideBarNormie from "@/components/SlideBar/SlideBarNormie";
 import SidebarSelector from "@/components/SlideBar/SlidebarSelector";
 import ViewNotifications from "@/components/Notifications/ViewNotifications";
 import ListenNotifications from "@/components/Notifications/ListenNotifications";
+import HandleNotification from "@/components/Notifications/HandleNotification";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -74,7 +75,8 @@ export default async function RootLayout({
           {session && <Onboarding session={session} />}
           {session && <Shortcuts />}
 
-          {session && <ListenNotifications session={session} />}          
+          {session && <ListenNotifications session={session} />} 
+          {session && <HandleNotification session={session} />}         
         </body>
       </html>
     </SessionProvider>

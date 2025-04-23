@@ -1,8 +1,8 @@
 'use client';
 
 import { Session } from "next-auth";
-import { useEffect, useState } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
+import { useEffect } from "react";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore"; // Import updateDoc and getDoc
 import { db } from "@/config/firebase";
 import { toast } from "sonner";
 
@@ -11,11 +11,13 @@ interface Notification {
   timestamp: any; // This will handle Firestore Timestamp
   type: string;
   read: boolean;
+  shownOnToast: boolean;
 }
 
 export default function ListenNotifications({ session }: { session: Session | null | undefined }) {
   const userId = session?.user?.id;
-  const [lastNotificationTime, setLastNotificationTime] = useState<Date | null>(null);
+  // Remove lastNotificationTime state
+  // const [lastNotificationTime, setLastNotificationTime] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -44,52 +46,69 @@ export default function ListenNotifications({ session }: { session: Session | nu
     checkNotificationPermission();
 
     // Listen to real-time notifications
-    const unsubscribe = onSnapshot(doc(db, "Notifications", userId), (doc) => {
-      const data = doc.data();
-      if (!data || !data.notifications) return;
+    const userDocRef = doc(db, "Notifications", userId); // Define userDocRef
+    const unsubscribe = onSnapshot(userDocRef, async (docSnapshot) => { // Make callback async
+      const data = docSnapshot.data();
+      if (!data || !data.notifications || !Array.isArray(data.notifications)) return;
 
-      // Get the latest notification
-      const latestNotification = data.notifications[0] as Notification;
-      
-      if (!latestNotification) return;
+      const notifications = data.notifications as Notification[];
 
-      // Convert Firestore timestamp to Date object
-      const notificationTime = latestNotification.timestamp?.toDate();
+      // Find the index of the latest notification that hasn't been read or shown on toast
+      const latestUnshownIndex = notifications.findIndex(
+        (notification) => !notification.read && !notification.shownOnToast
+      );
 
-      // Only show notification if it's newer than the last one we've seen
-      if (!lastNotificationTime || notificationTime > lastNotificationTime) {
-        // Show toast notification
-        toast(latestNotification.message, {
-          className: "bg-bgPrimary text-fontPrimary border-[1px] border-[#666]",
-          duration: 3000,
+      if (latestUnshownIndex === -1) return; // No new unshown notifications
+
+      const latestNotification = notifications[latestUnshownIndex];
+
+      // Show toast notification
+      toast(latestNotification.message, {
+        className: "bg-bgPrimary text-fontPrimary border-[1px] border-[#666]",
+        duration: 3000,
+      });
+
+      // Show browser notification if permitted
+      if (Notification.permission === "granted") {
+        try {
+          const notification = new Notification("Homie", {
+            body: latestNotification.message,
+            icon: "/logo/Homie-2.svg",
+            tag: 'homie-notification', // Prevents duplicate notifications
+          });
+          // You might want to add an onclick handler here to mark as read or navigate
+        } catch (error) {
+          console.error("Error showing browser notification:", error);
+        }
+      }
+
+      // --- Update the shownOnToast flag in Firestore ---
+      try {
+        // Create a deep copy of the notifications array to modify
+        const updatedNotifications = notifications.map((notification, index) => {
+          if (index === latestUnshownIndex) {
+            return { ...notification, shownOnToast: true };
+          }
+          return notification;
         });
 
-        // Show browser notification if permitted
-        if (Notification.permission === "granted") {
-          try {
-            const notification = new Notification("Homie", {
-              body: latestNotification.message,
-              icon: "/logo/Homie-2.svg",
-              tag: 'homie-notification', // Prevents duplicate notifications
-            });
-
-            // Auto close after 5 seconds
-            setTimeout(() => notification.close(), 5000);
-          } catch (error) {
-            console.error("Error showing browser notification:", error);
-          }
-        }
-
-        // Update the last notification time
-        setLastNotificationTime(notificationTime);
+        // Update the document in Firestore
+        await updateDoc(userDocRef, {
+          notifications: updatedNotifications,
+        });
+      } catch (error) {
+        console.error("Error updating notification shownOnToast status:", error);
+        // Handle potential errors during the update
       }
+      // --- End of update ---
+
     }, (error) => {
       console.error("Error listening to notifications:", error);
     });
 
     // Cleanup subscription on unmount
     return () => unsubscribe();
-  }, [userId, lastNotificationTime]);
+  }, [userId]); // Remove lastNotificationTime from dependencies
 
   // This component doesn't render anything visible
   return null;

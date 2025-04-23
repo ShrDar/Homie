@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import TextareaAutosize from 'react-textarea-autosize';
 import { getProfileUrl } from '@/extra/helpers';
 import { db } from "@/config/firebase";
-import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
+import { collection, doc, setDoc, writeBatch, arrayUnion } from "firebase/firestore";
 
 export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, setPosts }: { openPostAddModal: boolean, setOpenPostAddModal: any, user: any, setPosts: any }) {
     const [content, setContent] = useState('');
@@ -114,14 +114,15 @@ export default function PostsAdd({ openPostAddModal, setOpenPostAddModal, user, 
                         const notificationRef = doc(db, "Notifications", homieId);
                         
                         batch.set(notificationRef, {
-                            notifications: [{
+                            notifications: arrayUnion({
                                 message: `${user.name} shared a new post: "${content.slice(0, 30)}${content.length > 30 ? '...' : ''}"`,
                                 timestamp: new Date(),
                                 type: 'post',
                                 read: false,
-                                postId: commentChannelId, // Using commentChannelId as postId reference
+                                shownOnToast: false,
+                                postId: commentChannelId,
                                 userId: user._id
-                            }],
+                            }),
                             updatedAt: new Date()
                         }, { merge: true });
                     }

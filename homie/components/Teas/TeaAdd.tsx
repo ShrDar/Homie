@@ -5,7 +5,7 @@ import { IoIosImages } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
 import Image from "next/image"
 import TextareaAutosize from 'react-textarea-autosize'
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, writeBatch, arrayUnion } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { storage } from "@/config/AppWriteClient";
 import { ID } from 'appwrite';
@@ -113,7 +113,31 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
             };
 
             const teasRef = collection(db, "Tea");
-            await addDoc(teasRef, teaData);
+            const teaDoc = await addDoc(teasRef, teaData);
+
+            // Send notifications to homies
+            if (user?.homies && user.homies.length > 0) {
+                const batch = writeBatch(db);
+                
+                for (const homieId of user.homies) {
+                    const notificationRef = doc(db, "Notifications", homieId);
+                    
+                    batch.set(notificationRef, {
+                        notifications: arrayUnion({
+                            message: `${user.name} brewed a new tea: "${title.slice(0, 30)}${title.length > 30 ? '...' : ''}"`,
+                            timestamp: new Date(),
+                            type: 'tea',
+                            read: false,
+                            shownOnToast: false,
+                            teaId: teaDoc.id,
+                            userId: user._id
+                        }),
+                        updatedAt: new Date()
+                    }, { merge: true });
+                }
+
+                await batch.commit();
+            }
 
             // Reset form after successful submission
             setTitle('');
