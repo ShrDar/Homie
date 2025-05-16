@@ -10,7 +10,7 @@ import { FaBarsStaggered } from "react-icons/fa6";
 import { FaUserAstronaut } from "react-icons/fa6";
 import { RiMessage3Line } from "react-icons/ri";
 import { FaRegHandshake } from "react-icons/fa6";
-import { LuEarth } from "react-icons/lu";
+import { LuEarth, LuSettings2 } from "react-icons/lu";
 import { TbCoffee } from "react-icons/tb"
 import { logout } from "@/actions/auth";
 import { IoLogOutOutline } from "react-icons/io5";
@@ -21,7 +21,7 @@ export default function SlideBar( {session} : {session: Session} ) {
 
     const [hidden, setHidden] = useState(true);
     const [firstVisit, setFirstVisit] = useState(true);
-    const [hasInteracted, setHasInteracted] = useState(false);
+    // const [hasInteracted, setHasInteracted] = useState(false);
     const [user, setUser] = useState({username: '', bio: '', image: "", name: ""});
 
     // Modified effect to handle first visit peek
@@ -46,7 +46,7 @@ export default function SlideBar( {session} : {session: Session} ) {
 
     const handleSidebarInteraction = () => {
         setFirstVisit(false);
-        setHasInteracted(true);
+        // setHasInteracted(true);
     };
 
     useEffect(() => {
@@ -93,7 +93,7 @@ export default function SlideBar( {session} : {session: Session} ) {
                 onMouseEnter={handleSidebarInteraction}
                 className="slideBar lg:hidden z-[100] lg:z-10 bg-transparent text-fontPrimary fixed top-0 h-full left-[-5px] md:left-0 flex justify-center items-center w-[50%] md:w-[20%] lg:w-[14%] sulphur"
             >
-                <div className="bg-bgSecondary h-[95%] w-[90%] md:w-full flex flex-col justify-start pt-20 items-center gap-10 rounded-[15px] ml-2">
+                <div className="bg-bgSecondary h-[95%] w-[90%] md:w-full flex flex-col justify-start pt-10 items-center gap-10 rounded-[15px] ml-2">
                     <div className="flex flex-col justify-center items-center gap-2 w-full">
                         <div className="w-full flex items-center justify-center lg:px-4">
                             <Link href={"/profile"} onClick={() => setHidden(true)} className="bg-[#8B8B8B] w-[40%] aspect-square md:w-[70%] lg:w-[45%] p-3 rounded-full overflow-hidden translate-x-[15px] flex justify-center items-center">
@@ -154,6 +154,12 @@ export default function SlideBar( {session} : {session: Session} ) {
                             <Link href="/teas" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6" onClick={() => setHidden(true)}>
                                 <TbCoffee size={28} className="group-hover:scale-1 transition-transform duration-300" />
                                 <p className="group-hover:translate-x-1 transition-transform duration-300">Teas</p>
+                            </Link>
+                        </div>
+                        <div className={`w-[70%] text-lg font-thin ${pathname !== "/more" ? "brightness-[0.5]" : ""} hover:brightness-[0.8] transition-all duration-100`}>
+                            <Link href="/more" className="w-full group flex justify-start items-center gap-4 transition-all duration-300 hover:gap-6" onClick={() => setHidden(true)}>
+                                <LuSettings2 size={28} className="group-hover:scale-1 transition-transform duration-300" />
+                                <p className="group-hover:translate-x-1 transition-transform duration-300">More</p>
                             </Link>
                         </div>
 

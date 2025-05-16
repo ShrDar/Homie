@@ -71,8 +71,8 @@ export default function MoreNotification({ session }: { session: Session }) {
 
     return (
         <div className="w-full flex justify-center items-start h-full">
-            <div className="text-center flex flex-col gap-5 w-full"> 
-                <p className="text-2xl tracking-[1px]">Notifications</p>
+            <div className="flex flex-col gap-5 w-full"> 
+                <p className="text-2xl text-center tracking-[1px]">Notifications</p>
 
                 <div className="flex flex-col">
                     <div className="flex items-center justify-between p-4 bg-bgSecondary rounded-lg">
@@ -83,12 +83,12 @@ export default function MoreNotification({ session }: { session: Session }) {
                             <button
                                 onClick={() => handleToggle()}
                                 className={`relative w-14 h-7 rounded-full transition-all duration-300 ${
-                                    allowNotification ? 'bg-green-600' : 'bg-[#1d1d1d]'
+                                    allowNotification ? 'bg-bgPrimary' : 'bg-[#3a3a3a]'
                                 } ${isLoading ? 'opacity-50' : ''}`}
                                 disabled={isLoading}
                             >
                                 <motion.div
-                                    className="absolute top-1 w-5 h-5 rounded-full bg-white"
+                                    className="absolute top-1 w-5 h-5 rounded-full bg-fontPrimary"
                                     animate={{
                                         left: allowNotification ? '1.95rem' : '0.25rem'
                                     }}
@@ -106,12 +106,12 @@ export default function MoreNotification({ session }: { session: Session }) {
                             <button
                                 onClick={() => allowNotification && handleToggle('allowPostNofi')}
                                 className={`relative w-10 h-5 rounded-full transition-all duration-300 ${
-                                    preferences.allowPostNofi ? 'bg-green-600' : 'bg-[#1d1d1d]'
+                                    preferences.allowPostNofi ? 'bg-bgPrimary' : 'bg-[#3a3a3a]'
                                 } ${isLoading ? 'opacity-50' : ''} ${!allowNotification ? 'opacity-50 cursor-none' : ''}`}
                                 disabled={isLoading || !allowNotification}
                             >
                                 <motion.div
-                                    className="absolute top-1 w-3 h-3 rounded-full bg-white"
+                                    className="absolute top-1 w-3 h-3 rounded-full bg-fontPrimary"
                                     animate={{
                                         left: preferences.allowPostNofi ? '1.5rem' : '0.25rem'
                                     }}
@@ -129,12 +129,12 @@ export default function MoreNotification({ session }: { session: Session }) {
                             <button
                                 onClick={() => allowNotification && handleToggle('allowTeasNoti')}
                                 className={`relative w-10 h-5 rounded-full transition-all duration-300 ${
-                                    preferences.allowTeasNoti ? 'bg-green-600' : 'bg-[#1d1d1d]'
+                                    preferences.allowTeasNoti ? 'bg-bgPrimary' : 'bg-[#3a3a3a]'
                                 } ${isLoading ? 'opacity-50' : ''} ${!allowNotification ? 'opacity-50 cursor-none' : ''}`}
                                 disabled={isLoading || !allowNotification}
                             >
                                 <motion.div
-                                    className="absolute top-1 w-3 h-3 rounded-full bg-white"
+                                    className="absolute top-1 w-3 h-3 rounded-full bg-fontPrimary"
                                     animate={{
                                         left: preferences.allowTeasNoti ? '1.5rem' : '0.25rem'
                                     }}
@@ -146,18 +146,18 @@ export default function MoreNotification({ session }: { session: Session }) {
 
                     <div className="flex items-center justify-between p-4 bg-bgSecondary rounded-lg">
                         <div>
-                            <p className={`text-fontPrimary text-sm ${!allowNotification ? 'opacity-50' : ''}`}>Message Alerts</p>
+                            <p className={`text-fontPrimary text-sm ${!allowNotification ? 'opacity-50' : ''}`}>Yap Notifications</p>
                         </div>
                         <motion.div className="flex items-center cursor-pointer">
                             <button
                                 onClick={() => allowNotification && handleToggle('allowMessagesNoti')}
                                 className={`relative w-10 h-5 rounded-full transition-all duration-300 ${
-                                    preferences.allowMessagesNoti ? 'bg-green-600' : 'bg-[#1d1d1d]'
+                                    preferences.allowMessagesNoti ? 'bg-bgPrimary' : 'bg-[#3a3a3a]'
                                 } ${isLoading ? 'opacity-50' : ''} ${!allowNotification ? 'opacity-50 cursor-none' : ''}`}
                                 disabled={isLoading || !allowNotification}
                             >
                                 <motion.div
-                                    className="absolute top-1 w-3 h-3 rounded-full bg-white"
+                                    className="absolute top-1 w-3 h-3 rounded-full bg-fontPrimary"
                                     animate={{
                                         left: preferences.allowMessagesNoti ? '1.5rem' : '0.25rem'
                                     }}

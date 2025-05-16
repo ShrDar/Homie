@@ -180,8 +180,8 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                         </button>
                     </div>
 
-                    <div className="flex flex-row gap-4 h-full">
-                        <div className="w-[50%] flex flex-col min-h-full justify-center items-stretch gap-4">
+                    <div className="flex flex-col-reverse lg:flex-row gap-4 h-full w-full">
+                        <div className="lg:w-[50%] flex flex-col min-h-full justify-center items-stretch gap-4">
                             <div className="flex gap-2 items-center">
                                 <input
                                     type="text"
@@ -226,6 +226,7 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                                 transition={{ duration: 0.2 }}
                                 type="text"
                                 placeholder="Tea Title..."
+                                maxLength={50}
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 className="w-full bg-bgPrimary text-fontPrimary p-4 rounded-lg outline-none"
@@ -241,6 +242,7 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                                     onChange={(e) => setContent(e.target.value)}
                                     className="w-full min-h-[8rem] p-4 rounded-lg bg-bgPrimary outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap"
                                     maxRows={10}
+                                    maxLength={1000}
                                 />
                             </motion.div>
 
@@ -278,9 +280,9 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                             initial={{x: 40, filter: 'blur(5px)'}}
                             animate={{x: 0, filter: 'blur(0px)'}}
                             transition={{duration: 0.2}}
-                            className="w-[50%] min-h-[50vh] overflow-y-auto border-bgPrimary border-l-[3px] border-[#888] pl-4 p-2 flex flex-col justify-center items-center"
+                            className="w-full lg:w-[50%] lg:min-h-[50vh] overflow-y-auto border-bgPrimary lg:border-l-[3px] border-[#888] lg:pl-4 lg:p-2 flex flex-col justify-center items-center"
                         >
-                            <div className="bg-bgPrimary rounded-[15px] p-8 w-full h-[70%] relative transition-all cursor-default">
+                            <div className="bg-bgPrimary rounded-[15px] p-8 w-full lg:h-[70%] relative transition-all cursor-default">
                                 <div className="flex items-center gap-2 absolute top-4 left-4">
                                     {tags.map((tag, index) => (
                                         <motion.span 
@@ -307,8 +309,8 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
                                     </span>
                                 </div>
 
-                                <div className="flex flex-col justify-center items-center gap-6 h-full">
-                                    <h2 className="text-3xl font-bold text-center">
+                                <div className="flex flex-col justify-center items-center gap-6 h-full py-20">
+                                    <h2 className="text-3xl font-bold text-center w-full overflow-auto">
                                         {title || "Tea Title..."}
                                     </h2>
                                     <p className="text-gray-400 text-lg line-clamp-2 text-center max-w-[80%]">

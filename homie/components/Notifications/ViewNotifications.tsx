@@ -6,9 +6,9 @@ import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from '@/config/firebase';
 import { motion } from 'framer-motion';
 import { createPortal } from "react-dom";
-import { RxCross2 } from "react-icons/rx";
 import { Timestamp } from "firebase/firestore"; // Add this import at the top
 import { IoRemoveCircleOutline } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 interface NotificationData {
   notifications: {
@@ -25,7 +25,9 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
   const [notifications, setNotifications] = useState<NotificationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const router = useRouter(); // Add this line
 
+  
   useEffect(() => {
     setMounted(true);
     return () => setMounted(false);
@@ -98,6 +100,26 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
     }
   };
 
+  const handleNotificationClick = (notification: any, index: any) => {
+    if (!notification.read) {
+      markAsRead(index);
+    }
+    
+    switch (notification.type) {
+      case 'message':
+        router.push(`/yap/${notification.yapId}`);
+        break;
+      case 'post':
+        router.push(`/posts/${notification.userId}`);
+        break;
+      case 'tea':
+        router.push(`/teas/${notification.userId}`);
+        break;
+    }
+    setOpenNotifications(false);
+  };
+
+
   const deleteNotification = async (index: number) => {
     if (!userId || !notifications) return;
   
@@ -111,6 +133,19 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
       });
     } catch (error) {
       console.error("Error deleting notification:", error);
+    }
+  };
+
+  const deleteAllNotifications = async () => {
+    if (!userId || !notifications) return;
+  
+    try {
+      const notificationRef = doc(db, "Notifications", userId);
+      await updateDoc(notificationRef, {
+        notifications: []
+      });
+    } catch (error) {
+      console.error("Error deleting all notifications:", error);
     }
   };
 
@@ -128,21 +163,31 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
-        className="fixed w-[90vw] md:w-[60vw] sulphur lg:w-[40vw] max-h-[80vh] overflow-y-auto top-[50%] left-[50%] z-[1000] translate-x-[-50%] translate-y-[-50%] bg-bgPrimary rounded-[15px] p-4"
+        className="fixed w-[90vw] md:w-[60vw] sulphur lg:w-[40vw] max-h-[60vh] overflow-y-auto top-[50%] left-[50%] z-[1000] translate-x-[-50%] translate-y-[-50%] bg-bgPrimary rounded-[15px] p-4 lg:min-h-[60vh] flex flex-col"
       >
         <div className="flex justify-between items-center my-3">
           <p className="text-[#fff] text-lg ml-2">Notifications</p>
-          {notifications?.notifications && notifications.notifications.length > 0 && notifications.notifications.some(n => !n.read) && (
-            <button
-              onClick={markAllAsRead}
-              className="text-xs text-[#fff] transition-colors p-2 rounded-md bg-bgSecondary hover:brightness-[0.8]"
-            >
-              Mark all Read
-            </button>
+          {notifications?.notifications && notifications.notifications.length > 0 && (
+            <div className="flex gap-2">
+              {notifications.notifications.some(n => !n.read) && (
+                <button
+                  onClick={markAllAsRead}
+                  className="text-xs text-[#fff] transition-colors p-2 rounded-md bg-bgSecondary hover:brightness-[0.8]"
+                >
+                  Mark all Read
+                </button>
+              )}
+              <button
+                onClick={deleteAllNotifications}
+                className="text-xs text-red-400 transition-colors p-2 rounded-md bg-bgSecondary hover:brightness-[0.8]"
+              >
+                Remove All
+              </button>
+            </div>
           )}
         </div>
         {!notifications?.notifications?.length ? (
-          <div className="text-center py-8 text-[#aaaaaa]">
+          <div className="flex-1 flex items-center justify-center text-center text-[#aaaaaa]">
             No notifications yet 😅
           </div>
         ) : (
@@ -156,7 +201,7 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
                 className={`p-4 rounded-lg cursor-pointer relative ${
                   notification.read ? 'bg-bgSecondary/50' : 'bg-bgSecondary'
                 } hover:bg-bgSecondary/80 transition-all duration-300 border border-bgSecondary hover:border-bgSecondary`}
-                onClick={() => !notification.read && markAsRead(index)}
+                onClick={() => handleNotificationClick(notification, index)}
               >
                 <div className="flex flex-col gap-2">
                   <p className="text-fontPrimary text-base leading-relaxed">{notification.message}</p>

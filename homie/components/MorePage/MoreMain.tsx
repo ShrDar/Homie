@@ -14,9 +14,9 @@ export default function MoreMain( {session} : {session: Session}) {
     const [selectedOption, setSelectedOption] = useState<'notifications' | 'appearance' | 'shortcuts' | 'slidebar'>('notifications');
 
     return (
-        <div className="w-[80%] lg:w-[60%] lg:h-[70%] border-[2px] border-[#666] text-[#fff] flex justify-between items-center rounded-[15px] bg-bgSecondary overflow-hidden">
+        <div className="w-[80%] h-[60%] lg:w-[60%] lg:h-[70%] border-[2px] border-[#666] text-[#fff] flex lg:justify-between items-center rounded-[15px] bg-bgSecondary overflow-hidden">
            
-            <div className="flex flex-col border-r-[2px] border-[#666] lg:w-[30%] lg:h-full">
+            <div className="flex flex-col border-r-[2px] border-[#666] lg:w-[30%] h-full">
                 <div 
                     className={`sideBarItem cursor-pointer flex justify-start items-center gap-2 p-3 py-5 ${selectedOption === 'notifications' ? 'bg-bgPrimary' : ''}`}
                     onClick={() => setSelectedOption('notifications')}
@@ -39,7 +39,7 @@ export default function MoreMain( {session} : {session: Session}) {
                     <p>Slidebar</p>
                 </div>
                 <div 
-                    className={`sideBarItem cursor-pointer flex justify-start items-center gap-2 p-3 py-5 ${selectedOption === 'shortcuts' ? 'bg-bgPrimary' : ''}`}
+                    className={`sideBarItem cursor-pointer hidden lg:flex justify-start items-center gap-2 p-3 py-5 ${selectedOption === 'shortcuts' ? 'bg-bgPrimary' : ''}`}
                     onClick={() => setSelectedOption('shortcuts')}
                 >
                     <FaRegKeyboard size={20} />
@@ -47,7 +47,7 @@ export default function MoreMain( {session} : {session: Session}) {
                 </div>
             </div>
 
-            <div className="selectedContent lg:w-[70%] h-full p-6 flex justify-center items-center">
+            <div className="selectedContent w-full lg:w-[70%] h-full p-6 flex justify-center items-center">
                 {selectedOption === 'notifications' && <MoreNotification session={session} />}
                 {selectedOption === 'appearance' && <MoreAppearance />}
                 {selectedOption === 'shortcuts' && <MoreShortcuts />}

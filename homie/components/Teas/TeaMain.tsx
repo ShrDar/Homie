@@ -27,7 +27,6 @@ export default function TeaMain({ session }: { session: Session }) {
     const [lastActivityTime, setLastActivityTime] = useState(Date.now());
     const [user, setUser] = useState<HomieUser | null>(null);
 
-    // Add this useEffect for fetching user data
     useEffect(() => {
         const fetchUserData = async() => {
             try {
@@ -39,7 +38,7 @@ export default function TeaMain({ session }: { session: Session }) {
             }
         }
         
-        const fetchUsersData = async() => {  // Add this function
+        const fetchUsersData = async() => {  
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`);
                 const usersData = await response.json();
@@ -51,7 +50,7 @@ export default function TeaMain({ session }: { session: Session }) {
         
         if (session?.user?.id) {
             fetchUserData();
-            fetchUsersData();  // Add this call
+            fetchUsersData();  
         }
     }, [session?.user?.id]);
 
@@ -62,7 +61,6 @@ export default function TeaMain({ session }: { session: Session }) {
                 const teasRef = collection(db, "Tea");
                 const q = query(teasRef, orderBy("createdAt", "desc"));
                 
-                // Replace the old fetch with onSnapshot
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     const teasData = querySnapshot.docs.map(doc => ({
                         _id: doc.id,
@@ -77,7 +75,6 @@ export default function TeaMain({ session }: { session: Session }) {
                     setIsLoadingTeas(false);
                 });
 
-                // Cleanup subscription on unmount
                 return () => unsubscribe();
             } catch (error) {
                 console.error("Error fetching teas:", error);
@@ -181,18 +178,18 @@ export default function TeaMain({ session }: { session: Session }) {
                                         animate={{ opacity: 1, y: 0 }}
                                         className="snap-start h-screen flex items-center justify-center p-4"
                                         >
-                                        <div className="flex items-center justify-center w-[65%] h-full gap-2  rounded-[15px] px-5">
+                                        <div className="flex flex-col lg:flex-row items-center justify-center lg:w-[65%] h-full gap-2 rounded-[15px] px-5">
                                             {tea?.image && 
                                                 <div onClick={() => {
                                                     setShowTeaDiscussion(true)
                                                     setCurrentTea(tea)
-                                                }} className="teaImage h-1/2 p-3 bg-bgSecondary rounded-[15px] hover:brightness-[0.9] transition-all duration-150 cursor-pointer">
+                                                }} className="teaImage w-full lg:w-[30%] lg:h-1/2 p-3 bg-bgSecondary rounded-[15px] hover:brightness-[0.9] transition-all duration-150 cursor-pointer">
                                                     <Image
                                                         src={getProfileUrl(tea?.image || "")}
                                                         alt={tea.title}
                                                         width={300}
                                                         height={300}
-                                                        className="h-full object-cover rounded-[15px]"
+                                                        className="h-full w-full object-contain lg:object-cover rounded-[15px]"
                                                     />
                                                 </div>
                                             }
@@ -271,6 +268,7 @@ export default function TeaMain({ session }: { session: Session }) {
                     setShowTeaDiscussion={setShowTeaDiscussion}
                 />
             }
+            {/* Desktop Button (hidden on mobile) */}
             <motion.button 
                 initial={{ scale: 0 }}
                 animate={{ 
@@ -279,7 +277,7 @@ export default function TeaMain({ session }: { session: Session }) {
                 whileHover={{scale: 1.1}}
                 whileTap={{scale: 0.9}}
                 transition={{ duration: 0.1 , ease: 'linear'}}
-                className={`fixed bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 z-50 group ${
+                className={`fixed hidden lg:flex bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 z-50 group ${
                     !isButtonVisible && 'pointer-events-none'
                 }`}
                 onClick={() => setShowTeaAdd(true)}
@@ -290,6 +288,16 @@ export default function TeaMain({ session }: { session: Session }) {
                         Brew
                     </span>
                 </div>
+            </motion.button>
+
+            {/* Mobile Button (hidden on desktop) */}
+            <motion.button 
+                initial={{ scale: 1 }}
+                whileTap={{scale: 0.95}}
+                className="fixed lg:hidden flex bottom-8 right-6 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 z-50"
+                onClick={() => setShowTeaAdd(true)}
+            >
+                <TbCoffee className="w-6 h-6" />
             </motion.button>
         </>
     );

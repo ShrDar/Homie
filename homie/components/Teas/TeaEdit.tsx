@@ -239,8 +239,8 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                         </button>
                     </div>
 
-                    <div className="flex flex-row gap-4 h-full">
-                        <div className="w-[50%] flex flex-col min-h-full justify-center items-stretch gap-4">
+                    <div className="flex flex-col lg:flex-row gap-4 h-full">
+                        <div className="w-full lg:w-[50%] flex flex-col min-h-full justify-center items-stretch gap-4">
                             <div className="flex gap-2 items-center">
                                 <input
                                     type="text"
@@ -337,9 +337,9 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                             initial={{x: 40, filter: 'blur(5px)'}}
                             animate={{x: 0, filter: 'blur(0px)'}}
                             transition={{duration: 0.2}}
-                            className="w-[50%] min-h-[50vh] overflow-y-auto border-bgPrimary border-l-[3px] border-[#888] pl-4 p-2 flex flex-col justify-center items-center"
+                            className="w-full lg:w-[50%] lg:min-h-[50vh] overflow-y-auto border-bgPrimary lg:border-l-[3px] border-[#888] lg:pl-4 lg:p-2 flex flex-col justify-center items-center"
                         >
-                            <div className="bg-bgPrimary rounded-[15px] p-8 w-full h-[70%] relative transition-all cursor-default">
+                            <div className="bg-bgPrimary rounded-[15px] p-8 w-full h-auto lg:h-[70%] relative transition-all cursor-default">
                                 <div className="flex items-center gap-2 absolute top-4 left-4">
                                     {tags.map((tag, index) => (
                                         <motion.span 
@@ -366,7 +366,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                     </span>
                                 </div>
 
-                                <div className="flex flex-col justify-center items-center gap-6 h-full">
+                                <div className="flex flex-col justify-center items-center gap-6 h-full py-20 lg:py-0">
                                     <h2 className="text-3xl font-bold text-center">
                                         {title || "Tea Title..."}
                                     </h2>

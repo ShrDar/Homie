@@ -5,20 +5,18 @@ import { motion } from "motion/react";
 
 export default function MoreAppearance() {
     const [isDefaultMode, setIsDefaultMode] = useState(() => {
-        // Initialize state from localStorage or default to true
         const savedTheme = localStorage.getItem('theme');
         return savedTheme ? savedTheme === 'default' : true;
     });
 
     useEffect(() => {
-        // Update localStorage whenever theme changes
         localStorage.setItem('theme', isDefaultMode ? 'default' : 'light');
     }, [isDefaultMode]);
 
     return (
-        <div className="flex gap-8 p-8 w-full max-w-4xl mx-auto h-full ">
+        <div className="flex flex-col items-center justify-center lg:items-stretch lg:flex-row gap-8 lg:p-8 w-full lg:max-w-4xl lg:mx-auto h-full ">
             <motion.div 
-                className={`flex-1 p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-6 transition-all duration-300 backdrop-blur-sm ${
+                className={`w-full p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-6 transition-all duration-300 backdrop-blur-sm ${
                     isDefaultMode 
                     ? 'bg-bgPrimary shadow-lg shadow-bgPrimary/20' 
                     : 'bg-white/5'
@@ -34,7 +32,7 @@ export default function MoreAppearance() {
             </motion.div>
             
             <motion.div 
-                className={`flex-1 p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-6 transition-all duration-300 backdrop-blur-sm ${
+                className={`w-full p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-6 transition-all duration-300 backdrop-blur-sm ${
                     !isDefaultMode 
                     ? 'bg-bgPrimary shadow-lg shadow-bgPrimary/20' 
                     : 'bg-white/5'

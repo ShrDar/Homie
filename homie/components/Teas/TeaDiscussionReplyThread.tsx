@@ -173,7 +173,7 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
     };
 
     return (
-        <div className="w-[60%] bg-bgSecondary rounded-[15px] p-5 h-[85vh] flex flex-col gap-4">
+        <div className="lg:w-[60%] w-full bg-bgSecondary rounded-[15px] p-5 lg:h-[85vh] flex flex-col gap-4">
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <h2 className="text-xl font-semibold">Discussion</h2>
@@ -190,7 +190,7 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
             </div>
 
             <div className="flex flex-col justify-center h-full bg-bgPrimary rounded-[15px] p-4 overflow-y-auto">
-                <div className="flex flex-col h-full gap-4">
+                <div className="flex flex-col h-[15vh] lg:h-full gap-4">
                     {isLoading ? (
                         <div className="h-full flex items-center justify-center">
                             <p className="text-gray-400">Loading messages...</p>

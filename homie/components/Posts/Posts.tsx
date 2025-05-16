@@ -28,6 +28,7 @@ import { db } from '@/config/firebase';
 import ShimmerLoading from '../Loading/ShimmerLoading';
 import PostReactions from './PostReactions';
 import PostReactionCounts from './PostReactionCounts';
+import ImageViewer from '../Image/ImageViewer';
 
 
 export default function Posts({session} : {session: Session}) {
@@ -55,6 +56,9 @@ export default function Posts({session} : {session: Session}) {
   const [isDeletingPost, setIsDeletingPost] = useState(false);
   const [showPostReaction, setShowPostReactions] = useState(false);
   const [showPostReactionCount, setShowPostReactionCount] = useState(false);
+
+  const [openImageViewer, setOpenImageViewer] = useState(false);
+  const [currentImage, setCurrentImage] = useState<string | "">("");
 
 
   useEffect(() => {
@@ -259,6 +263,18 @@ export default function Posts({session} : {session: Session}) {
         }}
         className="min-h-screen relative w-full flex flex-col justify-start items-center overflow-y-auto snap-y snap-mandatory"
       >
+        {/* Mobile Add Post Button */}
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          onClick={() => setOpenPostAddModal(true)}
+          className="md:hidden fixed bottom-24 right-6 z-50 w-14 h-14 bg-bgSecondary text-fontPrimary rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 flex items-center justify-center"
+        >
+          <MdOutlinePostAdd className="w-6 h-6" />
+        </motion.button>
 
         {posts.map((post) => {
           const postUser = users?.find((homie : HomieUser) => homie._id === post.userId);
@@ -390,13 +406,16 @@ export default function Posts({session} : {session: Session}) {
                         </p>
     
                         {post.image && (
-                        <div className="w-full h-full relative">
+                        <div className="w-full bg-bgPrimary rounded-[15px] h-full relative cursor-pointer hover:brightness-[0.95]" onClick={() => {
+                          setCurrentImage(post?.image || "")
+                          setOpenImageViewer(true)
+                        }}>
                             <Image
                                 key={`post-image-${post._id}`}
                                 src={getProfileUrl(post.image)}
                                 alt={post.title}
                                 fill
-                                className="object-cover w-full rounded-lg"
+                                className="lg:object-contain object-contain w-full rounded-[15px]"
                             />
                         </div>
                         )}
@@ -478,7 +497,7 @@ export default function Posts({session} : {session: Session}) {
           whileHover={{scale: 1.1}}
           whileTap={{scale: 0.9}}
           transition={{ duration: 0.1 , ease: 'linear'}}
-          className={`fixed bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 z-50 group ${
+          className={`fixed lg:flex hidden bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 z-50 group ${
             !isButtonVisible && 'pointer-events-none'
           }`}
           onClick={() => setOpenPostAddModal(true)}
@@ -530,6 +549,14 @@ export default function Posts({session} : {session: Session}) {
             showPostReactionCount={showPostReactionCount}
             setShowPostReactionCount={setShowPostReactionCount}
             post={currentReactionShowPost}
+          />
+        )
+      }
+      {
+        openImageViewer && (
+          <ImageViewer
+            setOpenImageViewer={setOpenImageViewer}
+            image={currentImage}
           />
         )
       }

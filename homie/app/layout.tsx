@@ -6,12 +6,9 @@ import { auth } from "@/auth";
 import { Toaster } from "sonner";
 import SlideBar from "@/components/SlideBar/SlideBar";
 import PageTitle from "@/components/PageTitle/PageTitle";
-import SlideBarHorizental from "@/components/SlideBar/SlideBarHorizental";
 import Onboarding from "@/components/Onboarding/Onboarding";
 import Shortcuts from "@/components/Shortcut/Shortcuts";
-import SlideBarNormie from "@/components/SlideBar/SlideBarNormie";
 import SidebarSelector from "@/components/SlideBar/SlidebarSelector";
-import ViewNotifications from "@/components/Notifications/ViewNotifications";
 import ListenNotifications from "@/components/Notifications/ListenNotifications";
 import HandleNotification from "@/components/Notifications/HandleNotification";
 
@@ -69,7 +66,11 @@ export default async function RootLayout({
           {session && <SidebarSelector session={session} />}
           {session && <SlideBar session={session} />} 
           {children}
-          <Toaster richColors />
+          <Toaster richColors toastOptions={{
+            classNames: {
+              toast: "sulphur"
+            }
+          }} />
 
           {session && <PageTitle />}
           {session && <Onboarding session={session} />}

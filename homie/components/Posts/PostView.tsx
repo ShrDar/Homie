@@ -4,11 +4,14 @@ import { getProfileUrl } from "@/extra/helpers";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import ImageViewer from "../Image/ImageViewer";
 
 export default function PostView({post} : {post: Post}) {
     const router = useRouter();
     const [postUser, setPostUser] = useState<any>(null);
-
+    
+    const [openImageViewer, setOpenImageViewer] = useState(false);
+    const [currentImage, setCurrentImage] = useState<string | "">("");
     function getRelativeTime(dateString: string): string {
         const date = new Date(dateString);
         const now = new Date();
@@ -106,19 +109,31 @@ export default function PostView({post} : {post: Post}) {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.4 }}
-                            className="w-full h-full relative"
+                            className="w-full h-full bg-primary rounded-[15px] relative cursor-pointer hover:brightness-[0.9]"
+                            onClick={() => {
+                                setOpenImageViewer(true);
+                                setCurrentImage(post?.image || "");
+                            }}
                         >
                             <Image
                                 src={getProfileUrl(post.image)}
                                 alt={post.title || "Post image"}
                                 width={500}
                                 height={500}
-                                className="object-cover w-full rounded-lg"
+                                className="object-contain  w-full rounded-[15px]"
                             />
                         </motion.div>
                     )}
                 </div>
             </motion.div>
+            {
+                openImageViewer && (
+                    <ImageViewer
+                        image={currentImage}
+                        setOpenImageViewer={setOpenImageViewer}
+                    />
+                )
+            }
         </motion.div>
     );
 }

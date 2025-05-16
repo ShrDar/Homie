@@ -258,8 +258,8 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                         </button>
                     </div>
 
-                    <div className="flex flex-row gap-4 h-full">
-                        <div className='w-[50%] flex flex-col min-h-full justify-center items-stretch gap-4'>
+                    <div className="flex flex-col-reverse lg:flex-row gap-4 h-full">
+                        <div className='lg:w-[50%] flex flex-col min-h-full justify-center items-stretch gap-4'>
                             <TextareaAutosize
                                 placeholder="What's on your mind?"
                                 value={content}
@@ -289,7 +289,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
 
                         {/* Preview Section */}
                         
-                            <div className="w-[50%] h-full border-bgPrimary border-l-[3px] border-[#888] pl-4 p-2">
+                            <div className="lg:w-[50%] h-full border-bgPrimary lg:border-l-[3px] border-[#888] lg:pl-4 lg:p-2">
                                 <div className="bg-bgPrimary  rounded-[15px] p-4 flex flex-col gap-2">
                                     <div className='flex justify-start items-center gap-2'>
                                         <div className="w-10 h-10 rounded-full overflow-hidden bg-bgPrimary">

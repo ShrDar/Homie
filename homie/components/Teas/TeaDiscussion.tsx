@@ -124,9 +124,9 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                 animate={{ opacity: 1 }}
                 className="fixed top-0 left-0 z-[90] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm"
             />
-            <div className='fixed w-[90%] md:w-[80%] top-[50%] left-[50%] z-[100] translate-x-[-50%] translate-y-[-50%] flex justify-center items-center gap-3'>
+            <div className='fixed w-[90%] md:w-[80%] top-[50%] left-[50%] z-[100] translate-x-[-50%] translate-y-[-50%] flex flex-col lg:flex-row justify-center items-center gap-3 h-[100vh] overflow-auto'>
                 
-                <div className="w-[40%] relative bg-bgSecondary rounded-[15px] p-6 flex flex-col shadow-lg">
+                <div className="lg:w-[40%] w-full relative bg-bgSecondary rounded-[15px] p-6 pb-10 lg:pb-6 flex flex-col shadow-lg h-[50vh] lg:h-auto">
                     <div className="flex justify-between items-start mb-1">
                         <div className="flex items-center gap-2 flex-wrap">
                             {tea?.tags.map((tag, index) => (
@@ -207,12 +207,12 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                                     alt="teaImage"
                                     width={500}
                                     height={500} 
-                                    className="w-full h-52 object-cover rounded-lg shadow-md transition-transform duration-300 "
+                                    className="w-full lg:h-52 object-cover rounded-lg shadow-md transition-transform duration-300 "
                                 />
                             </div>
                         )}
 
-                        <div className="bg-bgPrimary rounded-lg p-5 h-[25vh] overflow-y-auto shadow-inner transition-shadow">
+                        <div className="bg-bgPrimary rounded-lg p-5 lg:h-[25vh] lg:overflow-y-auto shadow-inner transition-shadow">
                             <p className="text-md whitespace-pre-wrap text-start">{tea?.content}</p>
                         </div>
 

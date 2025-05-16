@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Session } from 'next-auth';
 import { motion, AnimatePresence } from "motion/react";
-import { FiSidebar, FiMenu } from "react-icons/fi";
 import Image from 'next/image';
 
 export default function MoreSlideBar({ session }: { session: Session | null | undefined }) {
@@ -28,9 +27,9 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
 
     return (
         <div className="p-8">
-            <div className="flex gap-8 w-full max-w-4xl mx-auto">
+            <div className="flex flex-col lg:flex-row gap-8 w-full max-w-4xl mx-auto">
                 <motion.div 
-                    className={`flex-1 p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-6 transition-all duration-300 backdrop-blur-sm ${
+                    className={`flex-1 p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center lg:gap-6 transition-all duration-300 backdrop-blur-sm ${
                         selectedStyle === 'horizontal' 
                         ? 'bg-bgPrimary shadow-lg shadow-bgPrimary/20' 
                         : 'bg-white/5'
@@ -45,7 +44,7 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
                         height={1000}
                         className='rounded-[15px]'
                     />
-                    <span className={`font-medium text-lg transition-colors duration-300 ${
+                    <span className={`font-medium text-center text-sm lg:text-lg transition-colors duration-300 ${
                         selectedStyle === 'horizontal' ? 'text-white' : 'text-gray-400'
                     }`}>
                         Horizontal Sidebar
@@ -53,7 +52,7 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
                 </motion.div>
                 
                 <motion.div 
-                    className={`flex-1 p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center gap-6 transition-all duration-300 backdrop-blur-sm ${
+                    className={`flex-1 p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center lg:gap-6 transition-all duration-300 backdrop-blur-sm ${
                         selectedStyle === 'normie' 
                         ? 'bg-bgPrimary shadow-lg shadow-bgPrimary/20' 
                         : 'bg-white/5'
@@ -68,7 +67,7 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
                         height={1000}
                         className='rounded-[15px]'
                     />
-                    <span className={`font-medium text-lg transition-colors duration-300 ${
+                    <span className={`font-medium text-center text-sm lg:text-lg transition-colors duration-300 ${
                         selectedStyle === 'normie' ? 'text-white' : 'text-gray-400'
                     }`}>
                         Normie Sidebar
