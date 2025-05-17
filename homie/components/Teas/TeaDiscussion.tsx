@@ -24,6 +24,13 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
     const [showReportModal, setShowReportModal] = useState(false);
     const [selectedTeaId, setSelectedTeaId] = useState<string>("");
     const [author, setAuthor] = useState<HomieUser | null>(null);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
+
     const gradients = [
         "from-purple-400 to-pink-400",
         "from-blue-400 to-cyan-400",
@@ -122,11 +129,11 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                 onClick={() => setShowTeaDiscussion(false)} 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="fixed top-0 left-0 z-[90] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm"
+                className={`fixed top-0 left-0 z-[90] h-screen w-full ${isDefaultMode ? 'bg-[#000]' : 'bg-white/50'} bg-opacity-50 backdrop-blur-sm`}
             />
-            <div className='fixed w-[90%] md:w-[80%] top-[50%] left-[50%] z-[100] translate-x-[-50%] translate-y-[-50%] flex flex-col lg:flex-row justify-center items-center gap-3 h-[100vh] overflow-auto'>
+            <div className={`fixed w-[90%] md:w-[80%] top-[50%] left-[50%] z-[100] translate-x-[-50%] translate-y-[-50%] flex flex-col lg:flex-row justify-center items-center gap-3 h-[100vh]`}>
                 
-                <div className="lg:w-[40%] w-full relative bg-bgSecondary rounded-[15px] p-6 pb-10 lg:pb-6 flex flex-col shadow-lg h-[50vh] lg:h-auto">
+                <div className={`lg:w-[40%] w-full relative ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} rounded-[15px] p-6 pb-10 lg:pb-6 flex flex-col shadow-lg h-[50vh] lg:h-auto`}>
                     <div className="flex justify-between items-start mb-1">
                         <div className="flex items-center gap-2 flex-wrap">
                             {tea?.tags.map((tag, index) => (
@@ -136,7 +143,7 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                                     transition={{ 
                                         delay: index * 0.05 
                                     }}
-                                    key={index} className="px-3 py-1.5 rounded-full bg-bgPrimary text-sm cursor-default selection:bg-bgSecondary hover:bg-opacity-80 transition-all"
+                                    key={index} className={`px-3 py-1.5 rounded-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-200 text-gray-800'} text-sm cursor-default selection:bg-bgSecondary hover:bg-opacity-80 transition-all`}
                                 >
                                     #{tag}
                                 </motion.span>
@@ -144,23 +151,23 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger className="outline-none">
-                                <div className="p-2 hover:bg-bgPrimary rounded-full transition-all">
-                                    <CiMenuKebab className="w-5 h-5 rotate-90 hover:scale-110 transition-transform" />
+                                <div className={`p-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} rounded-full transition-all`}>
+                                    <CiMenuKebab className={`w-5 h-5 rotate-90 hover:scale-110 transition-transform ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`} />
                                 </div>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent side="bottom" align="end" className="bg-bgSecondary sulphur border-[1px] border-[#888] text-fontPrimary p-2 rounded-lg z-[200] shadow-xl">
+                            <DropdownMenuContent side="bottom" align="end" className={`${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} border-[1px] border-[#888] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} p-2 rounded-lg z-[200] shadow-xl sulphur`}>
                                 {tea?.userId === user?._id && (
                                     <>
                                         <DropdownMenuItem onClick={() => {
                                             setShowTeaDiscussion(false);
                                             setShowTeaEdit(true);
-                                        }} className="cursor-pointer px-4 py-2 hover:bg-bgPrimary rounded-lg transition-all duration-150 flex items-center gap-2">
+                                        }} className={`cursor-pointer px-4 py-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} rounded-lg transition-all duration-150 flex items-center gap-2`}>
                                             <span className="text-sm">Edit</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem 
                                             onClick={handleDeleteTea}
                                             disabled={isDeletingTea}
-                                            className="cursor-pointer px-4 py-2 hover:bg-bgPrimary rounded-lg transition-all duration-150 flex items-center gap-2 text-red-500"
+                                            className={`cursor-pointer px-4 py-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} rounded-lg transition-all duration-150 flex items-center gap-2 text-red-500`}
                                         >
                                             <span className="text-sm">{isDeletingTea ? "Deleting..." : "Delete"}</span>
                                         </DropdownMenuItem>
@@ -171,7 +178,7 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                                         setSelectedTeaId(tea?._id || "");
                                         setShowReportModal(true);
                                     }}
-                                    className="cursor-pointer px-4 py-2 hover:bg-bgPrimary rounded-lg transition-all duration-150 flex items-center gap-2"
+                                    className={`cursor-pointer px-4 py-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} rounded-lg transition-all duration-150 flex items-center gap-2`}
                                 >
                                     <span className="text-sm">Report</span>
                                 </DropdownMenuItem>
@@ -184,7 +191,7 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                             <h1 className={`text-3xl font-bold text-center bg-gradient-to-r ${gradientVar} bg-clip-text text-transparent`}>
                                 {tea?.title}
                             </h1>
-                            <span onClick={() => router.push(`homie/${author?._id}`)} className="text-sm text-gray-400 hover:text-gray-300 cursor-pointer">
+                            <span onClick={() => router.push(`homie/${author?._id}`)} className={`text-sm ${isDefaultMode ? 'text-gray-400' : 'text-gray-600'} hover:${isDefaultMode ? 'text-gray-300' : 'text-gray-700'} cursor-pointer`}>
                                 by{" "}
                                 <AnimatePresence mode="wait">
                                     {author && (
@@ -212,20 +219,20 @@ export default function TeaDiscussion({ setShowTeaDiscussion, tea, user, setShow
                             </div>
                         )}
 
-                        <div className="bg-bgPrimary rounded-lg p-5 lg:h-[25vh] lg:overflow-y-auto shadow-inner transition-shadow">
-                            <p className="text-md whitespace-pre-wrap text-start">{tea?.content}</p>
+                        <div className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} rounded-lg p-5 lg:h-[25vh] lg:overflow-y-auto shadow-inner transition-shadow`}>
+                            <p className={`text-md whitespace-pre-wrap text-start ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{tea?.content}</p>
                         </div>
 
-                            <div className="bottom-3 text-gray-400 text-sm left-6 absolute flex items-center gap-2">
+                            <div className={`bottom-3 ${isDefaultMode ? 'text-gray-400' : 'text-gray-600'} text-sm left-6 absolute flex items-center gap-2`}>
                                 {
                                     tea?.isOpen ?
                                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>:
                                     <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                                 }
-                                {tea?.isOpen ? <span className="hover:text-gray-300 transition-colors">Discuss</span> : <span className="hover:text-gray-300 transition-colors">Discussed</span>}
+                                {tea?.isOpen ? <span className={`hover:${isDefaultMode ? 'text-gray-300' : 'text-gray-700'} transition-colors`}>Discuss</span> : <span className={`hover:${isDefaultMode ? 'text-gray-300' : 'text-gray-700'} transition-colors`}>Discussed</span>}
                             </div>
                             <div>
-                                <span className="bottom-3 text-gray-400 text-sm right-6 absolute hover:text-gray-300 transition-colors">
+                                <span className={`bottom-3 ${isDefaultMode ? 'text-gray-400' : 'text-gray-600'} text-sm right-6 absolute hover:${isDefaultMode ? 'text-gray-300' : 'text-gray-700'} transition-colors`}>
                                     {new Date(tea?.createdAt || "").toLocaleDateString()}
                                 </span>
                             </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import bcrypt from "bcrypt-edge";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { FaCheck } from "react-icons/fa6";
 
 export default function ChangePassModal({ openChangePassModal, setOpenChangePassModal, user, setUser } : {openChangePassModal : boolean, setOpenChangePassModal: any, user: any, setUser: any}) {
-    
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
     
     const [displayCurrentPasswordInput, setDisplayCurrentPasswordInput] = useState(true);
     const [currentPassword, setCurrentPassword] = useState("");
@@ -21,6 +21,11 @@ export default function ChangePassModal({ openChangePassModal, setOpenChangePass
     const [newPasswordConfirmError, setNewPasswordConfirmError] = useState("");
     
     const [displayCurrentPassTick, setDisplayCurrentPassTick] = useState(false);
+    
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
     
     if(!openChangePassModal) {
         return null;
@@ -150,7 +155,7 @@ export default function ChangePassModal({ openChangePassModal, setOpenChangePass
                         transition={{ duration: 0.2 }}
                     />
                     <div 
-                        className="fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary"
+                        className={`fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary text-fontPrimary' : 'bg-white text-gray-800'} top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur`}
                     >
                         {displayCurrentPasswordInput && (
                             <motion.div 
@@ -168,18 +173,18 @@ export default function ChangePassModal({ openChangePassModal, setOpenChangePass
                                         }} 
                                         value={currentPassword} 
                                         maxLength={128}
-                                        className={`w-full bg-bgPrimary border-2 focus:outline-none selection:bg-[#666] ${
+                                        className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary placeholder:text-fontPrimary' : 'bg-gray-100 text-gray-800 placeholder:text-gray-500'} border-2 focus:outline-none selection:bg-[#666] ${
                                             currentPasswordError 
                                                 ? 'border-red-500' 
                                                 : 'border-transparent focus:border-[#666666]'
-                                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
+                                        } px-6 py-3 rounded-[6px]`}
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Password" 
                                     />
                                     <button 
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
+                                        className={`absolute right-3 top-1/2 -translate-y-1/2 ${isDefaultMode ? 'text-white' : 'text-gray-600'}`}
                                     >
                                         {showPassword ? (
                                             <FaRegEyeSlash />
@@ -188,7 +193,7 @@ export default function ChangePassModal({ openChangePassModal, setOpenChangePass
                                         )}
                                     </button>
                                 </div>
-                                <div onClick={() => checkPass()} className={`bg-bgPrimary rounded-full p-2 cursor-pointer hover:brightness-[0.8] transition-all duration-150 ${displayCurrentPassTick ? "flex" : "hidden"}`}>
+                                <div onClick={() => checkPass()} className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} rounded-full p-2 cursor-pointer hover:brightness-[0.8] transition-all duration-150 ${displayCurrentPassTick ? "flex" : "hidden"}`}>
                                     <FaCheck size={20} />
                                 </div>
                             </motion.div>
@@ -209,18 +214,18 @@ export default function ChangePassModal({ openChangePassModal, setOpenChangePass
                                         }} 
                                         value={newPassword} 
                                         maxLength={128}
-                                        className={`w-full bg-bgPrimary border-2 focus:outline-none selection:bg-[#666] ${
+                                        className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary placeholder:text-fontPrimary' : 'bg-gray-100 text-gray-800 placeholder:text-gray-500'} border-2 focus:outline-none selection:bg-[#666] ${
                                             newPasswordError 
                                                 ? 'border-red-500' 
                                                 : 'border-transparent focus:border-[#666666]'
-                                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
+                                        } px-6 py-3 rounded-[6px]`}
                                         type={showPassword ? "text" : "password"}
                                         placeholder="New Password" 
                                     />
                                     <button 
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
+                                        className={`absolute right-3 top-1/2 -translate-y-1/2 ${isDefaultMode ? 'text-white' : 'text-gray-600'}`}
                                     >
                                         {showPassword ? (
                                             <FaRegEyeSlash />
@@ -237,29 +242,23 @@ export default function ChangePassModal({ openChangePassModal, setOpenChangePass
                                             validateNewPasswordConfirm(e.target.value)
                                         }} 
                                         value={newPasswordConfirm} 
-                                        className={`w-full bg-bgPrimary border-2 focus:outline-none selection:bg-[#666] ${
+                                        className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary placeholder:text-fontPrimary' : 'bg-gray-100 text-gray-800 placeholder:text-gray-500'} border-2 focus:outline-none selection:bg-[#666] ${
                                             newPasswordConfirmError 
                                                 ? 'border-red-500' 
                                                 : 'border-transparent focus:border-[#666666]'
-                                        } text-fontPrimary placeholder:text-fontPrimary px-6 py-3 rounded-[6px]`}
+                                        } px-6 py-3 rounded-[6px]`}
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Confirm password" 
                                     />
-                                    
-                                    {/* {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>} */}
                                 </div>
 
                                 <div className="w-full flex justify-center items-center gap-4">
-                                        <div onClick={() => {
-                                            setOpenChangePassModal(false)
-                                            setDisplayCurrentPasswordInput(true);
-                                            setCurrentPassword("");
-                                        }} className="bg-bgPrimary w-full p-3 hover:brightness-[0.9] cursor-pointer rounded-[6px] flex justify-center items-center">
-                                            <p className="text-[#FF6F6F]">Discard</p>
-                                        </div>
-                                        <div onClick={() => handleChange()} className="bg-bgPrimary w-full p-3 hover:brightness-[1.2] cursor-pointer rounded-[6px] flex justify-center items-center">
-                                            <p className="text-[#5FB972]">Change</p>
-                                        </div>
+                                    <div onClick={() => backToDefault()} className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} w-full p-3 hover:brightness-[0.9] cursor-pointer rounded-[6px] flex justify-center items-center`}>
+                                        <p className="text-[#FF6F6F]">Discard</p>
+                                    </div>
+                                    <div onClick={() => handleChange()} className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} w-full p-3 hover:brightness-[1.2] cursor-pointer rounded-[6px] flex justify-center items-center`}>
+                                        <p className="text-[#5FB972]">Change</p>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}

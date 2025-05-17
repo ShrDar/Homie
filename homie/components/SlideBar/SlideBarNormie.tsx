@@ -16,9 +16,14 @@ import { getProfileUrl } from "@/extra/helpers";
 export default function SlideBarNormie( {session} : {session: Session | null | undefined}) {
     
     const pathname = usePathname();
-
     const [user, setUser] = useState<HomieUser>();
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
     
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
+
     useEffect(() => {
         const fetchUserData = async() => {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
@@ -37,7 +42,7 @@ export default function SlideBarNormie( {session} : {session: Session | null | u
         <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="fixed hidden md:flex left-0 top-0 h-full bg-gradient-to-b from-bgSecondary/30 to-bgSecondary/10 backdrop-blur-md w-14 z-[50] shadow-[1px_0_10px_rgba(0,0,0,0.2)]"
+            className={`fixed hidden md:flex left-0 top-0 h-full ${isDefaultMode ? 'bg-gradient-to-b from-bgSecondary/30 to-bgSecondary/10' : 'bg-gradient-to-b from-gray-200/30 to-gray-200/10'} backdrop-blur-md w-14 z-[50] shadow-[1px_0_10px_rgba(0,0,0,0.2)]`}
         >
             <div className="flex flex-col w-full py-6 items-center justify-between">
                 <Link href="/profile" className="relative p-3 transition-transform group flex items-center">
@@ -48,7 +53,7 @@ export default function SlideBarNormie( {session} : {session: Session | null | u
                         alt="Profile Picture"
                         className="rounded-full aspect-square object-cover"
                     />
-                    <span className="absolute sulphur left-12 top-1/2 -translate-y-1/2 px-2 py-1 bg-bgPrimary border-[1px] border-bgSecondary shadow-[1px_3px_5px_#1f1f1f] rounded text-sm text-white opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap pointer-events-none">
+                    <span className={`absolute sulphur left-12 top-1/2 -translate-y-1/2 px-2 py-1 ${isDefaultMode ? 'bg-bgPrimary border-bgSecondary text-white' : 'bg-white border-gray-300 text-gray-800'} border-[1px] shadow-[1px_3px_5px_#1f1f1f] rounded text-sm opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap pointer-events-none`}>
                         {user?.username}
                     </span>
                 </Link>
@@ -64,15 +69,15 @@ export default function SlideBarNormie( {session} : {session: Session | null | u
                         <Link 
                             key={href}
                             href={href} 
-                            className={`relative p-3 rounded-lg transition-all hover:bg-white/5 group flex items-center`}
+                            className={`relative p-3 rounded-lg transition-all ${isDefaultMode ? 'hover:bg-white/5' : 'hover:bg-gray-200/20'} group flex items-center`}
                         >
                             <div className={`${pathname === href || (href === "/yap" && pathname.includes("/yap")) 
-                                ? "text-fontPrimary" 
-                                : "text-[#666666]"}`}
+                                ? (isDefaultMode ? "text-fontPrimary" : "text-gray-800") 
+                                : (isDefaultMode ? "text-[#666666]" : "text-gray-500")}`}
                             >
                                 {icon}
                             </div>
-                            <span className="absolute sulphur left-12 top-1/2 -translate-y-1/2 px-2 py-1 bg-bgPrimary border-[1px] border-bgSecondary shadow-[1px_3px_5px_#1f1f1f] rounded text-sm text-white opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap pointer-events-none">
+                            <span className={`absolute sulphur left-12 top-1/2 -translate-y-1/2 px-2 py-1 ${isDefaultMode ? 'bg-bgPrimary border-bgSecondary text-white' : 'bg-white border-gray-300 text-gray-800'} border-[1px] shadow-[1px_3px_5px_#1f1f1f] rounded text-sm opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap pointer-events-none`}>
                                 {label}
                             </span>
                         </Link>
@@ -81,12 +86,15 @@ export default function SlideBarNormie( {session} : {session: Session | null | u
 
                 <Link 
                     href="/more" 
-                    className={`relative p-3 rounded-lg transition-all hover:bg-white/5 group flex items-center ${
-                        pathname === "/more" ? "text-fontPrimary" : "text-[#666666]"
-                    }`}
+                    className={`relative p-3 rounded-lg transition-all ${isDefaultMode ? 'hover:bg-white/5' : 'hover:bg-gray-200/20'} group flex items-center`}
                 >
-                    <LuSettings2 size={18} />
-                    <span className="absolute sulphur left-12 top-1/2 -translate-y-1/2 px-2 py-1 bg-bgPrimary border-[1px] border-bgSecondary shadow-[1px_3px_5px_#1f1f1f] rounded text-sm text-white opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap pointer-events-none">
+                    <div className={`${pathname === "/more" 
+                        ? (isDefaultMode ? "text-fontPrimary" : "text-gray-800") 
+                        : (isDefaultMode ? "text-[#666666]" : "text-gray-500")}`}
+                    >
+                        <LuSettings2 size={18} />
+                    </div>
+                    <span className={`absolute sulphur left-12 top-1/2 -translate-y-1/2 px-2 py-1 ${isDefaultMode ? 'bg-bgPrimary border-bgSecondary text-white' : 'bg-white border-gray-300 text-gray-800'} border-[1px] shadow-[1px_3px_5px_#1f1f1f] rounded text-sm opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap pointer-events-none`}>
                         More
                     </span>
                 </Link>

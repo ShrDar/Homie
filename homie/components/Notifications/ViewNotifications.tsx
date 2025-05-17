@@ -26,6 +26,13 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
   const router = useRouter(); // Add this line
+  const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+  // Add this useEffect near other useEffect hooks
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+  }, []);
 
   
   useEffect(() => {
@@ -163,16 +170,24 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
-        className="fixed w-[90vw] md:w-[60vw] sulphur lg:w-[40vw] max-h-[60vh] overflow-y-auto top-[50%] left-[50%] z-[1000] translate-x-[-50%] translate-y-[-50%] bg-bgPrimary rounded-[15px] p-4 lg:min-h-[60vh] flex flex-col"
+        className={`fixed w-[90vw] md:w-[60vw] sulphur lg:w-[40vw] max-h-[60vh] overflow-y-auto top-[50%] left-[50%] z-[1000] translate-x-[-50%] translate-y-[-50%] ${
+          isDefaultMode ? 'bg-bgPrimary' : 'bg-white'
+        } rounded-[15px] p-4 lg:min-h-[60vh] flex flex-col`}
       >
         <div className="flex justify-between items-center my-3">
-          <p className="text-[#fff] text-lg ml-2">Notifications</p>
+          <p className={`text-[#fff] text-lg ml-2 ${
+            !isDefaultMode && 'text-gray-800'
+          }`}>Notifications</p>
           {notifications?.notifications && notifications.notifications.length > 0 && (
             <div className="flex gap-2">
               {notifications.notifications.some(n => !n.read) && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-xs text-[#fff] transition-colors p-2 rounded-md bg-bgSecondary hover:brightness-[0.8]"
+                  className={`text-xs ${
+                    isDefaultMode ? 'text-[#fff]' : 'text-gray-800'
+                  } transition-colors p-2 rounded-md ${
+                    isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-100'
+                  } hover:brightness-[0.8]`}
                 >
                   Mark all Read
                 </button>
@@ -199,8 +214,14 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.1 }}
                 className={`p-4 rounded-lg cursor-pointer relative ${
-                  notification.read ? 'bg-bgSecondary/50' : 'bg-bgSecondary'
-                } hover:bg-bgSecondary/80 transition-all duration-300 border border-bgSecondary hover:border-bgSecondary`}
+                  notification.read ? 
+                    (isDefaultMode ? 'bg-bgSecondary/50' : 'bg-gray-100/50') : 
+                    (isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-100')
+                } ${
+                  isDefaultMode ? 
+                  'hover:bg-bgSecondary/80 border-bgSecondary' : 
+                  'hover:bg-gray-100/80 border-gray-200'
+                } transition-all duration-300 border`}
                 onClick={() => handleNotificationClick(notification, index)}
               >
                 <div className="flex flex-col gap-2">

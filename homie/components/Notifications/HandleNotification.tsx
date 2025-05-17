@@ -24,6 +24,7 @@ export default function HandleNotification({ session }: { session: Session }) {
   const userId = session?.user?.id;
 
   // Effect to listen for notification changes
+
   useEffect(() => {
     if (!userId) return;
 
@@ -48,6 +49,9 @@ export default function HandleNotification({ session }: { session: Session }) {
     return () => unsubscribe();
   }, [userId]); 
 
+  if(pathname.includes("admin")) {
+    return null;
+  }
 
   return (
     <>

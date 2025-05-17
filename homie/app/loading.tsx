@@ -1,10 +1,20 @@
+"use client"
+
 import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
+import { useEffect, useState } from "react";
 
 export default function Loading() {
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
+
     return (
-        <div className="h-screen w-screen flex items-center text-4xl justify-center bg-bgPrimary text-fontPrimary sulphur tracking-[4px]">
+        <div className={`h-screen w-screen flex items-center text-4xl justify-center ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} sulphur tracking-[4px]`}>
             <TextShimmerWave
-                className="[--base-color:#bbb] [--base-gradient-color:#2a2a2a]"
+                className={`${isDefaultMode ? '[--base-color:#bbb] [--base-gradient-color:#2a2a2a]' : '[--base-color:#666] [--base-gradient-color:#999]'}`}
                 duration={1.3}
                 spread={1}
                 zDistance={1}

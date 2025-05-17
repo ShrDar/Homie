@@ -2,9 +2,16 @@
 "use client"
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
 
 export default function PageTitle() {
     const pathname = usePathname();
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
 
     const getPageTitle = () => {
         const path = pathname?.slice(1);
@@ -26,7 +33,7 @@ export default function PageTitle() {
         <div 
             className="fixed right-8 cursor-default sulphur md:flex flex-col hidden hover:animate-pulse"
         >
-            <h1 className="text-xl uppercase tracking-[8px] text-[#ffffff6e] [writing-mode:vertical-lr] rotate-180">
+            <h1 className={`text-xl uppercase tracking-[8px] ${isDefaultMode ? 'text-[#ffffff6e]' : 'text-gray-400'} [writing-mode:vertical-lr] rotate-180`}>
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={`${pathname}`}

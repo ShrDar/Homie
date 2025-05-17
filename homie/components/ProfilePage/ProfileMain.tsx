@@ -11,6 +11,12 @@ import { HomieUser } from "@/homieTypes/homieTypes";
 
 export default function ProfileMain({ session }: { session: Session }) {
     const [user, setUser] = useState<HomieUser | null>(null);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
 
     useEffect(() => {
         const fetchUserData = async() => {
@@ -35,7 +41,7 @@ export default function ProfileMain({ session }: { session: Session }) {
                 {
                     user?.role === "ADMIN" &&
                     <Link href={'/admin'}>
-                        <div className="absolute top-5 left-5 md:left-auto md:right-5 border-[2px] border-[#666] text-[#666] hover:border-[#fff] hover:text-[#fff] transition-all duration-100 p-2 rounded-full cursor-pointer">
+                        <div className={`absolute top-5 left-5 md:left-auto md:right-5 border-[2px] ${isDefaultMode ? 'border-[#666] text-[#666] hover:border-[#fff] hover:text-[#fff]' : 'border-gray-400 text-gray-400 hover:border-gray-800 hover:text-gray-800'} transition-all duration-100 p-2 rounded-full cursor-pointer`}>
                             <MdAdminPanelSettings size={20} />
                         </div>
                     </Link>

@@ -27,6 +27,13 @@ export default function TeaMain({ session }: { session: Session }) {
     const [lastActivityTime, setLastActivityTime] = useState(Date.now());
     const [user, setUser] = useState<HomieUser | null>(null);
 
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
+
     useEffect(() => {
         const fetchUserData = async() => {
             try {
@@ -196,7 +203,7 @@ export default function TeaMain({ session }: { session: Session }) {
                                             <div onClick={() => {
                                                 setShowTeaDiscussion(true)
                                                 setCurrentTea(tea)  
-                                            }} className="w-full max-w-3xl h-[50%] bg-bgSecondary cursor-pointer hover:bg-[#3a3a3a] p-8 rounded-xl flex justify-center item-center transition-all relative">
+                                            }} className={`w-full max-w-3xl h-[50%] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-200'} cursor-pointer ${isDefaultMode ? 'hover:bg-[#3a3a3a]' : 'hover:bg-gray-200'} p-8 rounded-xl flex justify-center item-center transition-all relative`}>
                                                 <div className="flex items-center gap-2 absolute top-4 left-4">
                                                     {tea.tags.map((tag, index) => (
                                                         <span key={index} className="px-3 py-1 rounded-full bg-bgPrimary text-sm">
@@ -211,7 +218,7 @@ export default function TeaMain({ session }: { session: Session }) {
                                                     </span>
                                                 </div>
                                                 <div className="flex flex-col justify-center items-center gap-6">
-                                                    <h2 className="text-3xl font-bold">
+                                                    <h2 className={`text-3xl font-bold ${isDefaultMode? "" : "text-gray-800"}`}>
                                                         {tea.title}
                                                     </h2>
                                                     <p className="text-gray-400 text-lg line-clamp-1">

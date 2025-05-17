@@ -213,6 +213,13 @@ export default function Posts({session} : {session: Session}) {
 
 
 
+  const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+  }, []);
+
   if(isLoadingPosts) {
     return (
       <ShimmerLoading displayText='Posts Incoming' />
@@ -221,24 +228,24 @@ export default function Posts({session} : {session: Session}) {
 
   if(posts.length === 0) {
     return (
-      <div className="min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4">
+      <div className={`min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4 ${!isDefaultMode ? 'bg-gray-100' : 'bg-bgPrimary'}`}>
         <div className="w-24 h-24 bg-bgPrimary rounded-full flex items-center justify-center">
-          <MdOutlinePostAdd className="w-12 h-12 text-fontPrimary opacity-50" />
+          <MdOutlinePostAdd className={`w-12 h-12 ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} opacity-50`} />
         </div>
         <div className="text-center">
           <h2 className="text-fontPrimary text-2xl font-semibold mb-2">No Posts Yet</h2>
           <p className="text-[#888] max-w-md">Be the first one to share something amazing with your homies!</p>
         </div>
         <motion.button 
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          onClick={() => setOpenPostAddModal(true)}
-          className="px-6 py-3 bg-bgSecondary text-fontPrimary rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 flex items-center gap-2"
-        >
-          <MdOutlinePostAdd className="w-5 h-5" />
+          initial={{ scale: 0 }} 
+          animate={{ scale: 1 }} 
+          whileHover={{ scale: 1.1 }} 
+          whileTap={{ scale: 0.9 }} 
+          transition={{ duration: 0.2, ease: 'easeOut' }} 
+          onClick={() => setOpenPostAddModal(true)} 
+          className={`px-6 py-3 ${isDefaultMode ? 'bg-bgSecondary text-fontPrimary hover:bg-[#242424]' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'} rounded-full shadow-lg transition-all duration-300 flex items-center gap-2`}
+        > 
+          <MdOutlinePostAdd className={`w-5 h-5 ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`} />
           <span>Create Post</span>
         </motion.button>
         <PostsAdd 
@@ -261,7 +268,7 @@ export default function Posts({session} : {session: Session}) {
           handleMovementForAddPost();
           setShowPostReactions(false);
         }}
-        className="min-h-screen relative w-full flex flex-col justify-start items-center overflow-y-auto snap-y snap-mandatory"
+        className={`min-h-screen relative w-full flex flex-col justify-start items-center overflow-y-auto snap-y snap-mandatory ${!isDefaultMode ? 'bg-gray-100' : ''}`}
       >
         {/* Mobile Add Post Button */}
         <motion.button
@@ -271,9 +278,9 @@ export default function Posts({session} : {session: Session}) {
           whileTap={{ scale: 0.9 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
           onClick={() => setOpenPostAddModal(true)}
-          className="md:hidden fixed bottom-24 right-6 z-50 w-14 h-14 bg-bgSecondary text-fontPrimary rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 flex items-center justify-center"
+          className={`md:hidden fixed bottom-24 right-6 z-50 w-14 h-14 ${isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-200'} ${!isDefaultMode ? 'text-gray-800' : 'text-fontPrimary'} rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 flex items-center justify-center`}
         >
-          <MdOutlinePostAdd className="w-6 h-6" />
+          <MdOutlinePostAdd className={`w-6 h-6 ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`} />
         </motion.button>
 
         {posts.map((post) => {
@@ -327,13 +334,13 @@ export default function Posts({session} : {session: Session}) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className={`min-h-screen w-[90%] py-5 md:w-[80%] lg:w-[70%] flex flex-col snap-start`}
+              className={`min-h-screen w-[90%] py-5 md:w-[80%] lg:w-[70%] flex flex-col snap-start ${!isDefaultMode ? 'text-gray-800' : ''}`}
             >
-                <div className={`w-full h-full flex rounded-[15px] relative ${post.image ? "bg-bgPrimary" : "bg-[#43434364] px-8"}`}>
-                    <div className={`bg-bgSecondary w-full rounded-[15px] p-4 flex flex-col gap-4 ${!post.image ? 'my-auto h-fit' : 'h-full'}`}>
+                <div className={`w-full h-full flex rounded-[15px] relative ${post.image ? (!isDefaultMode ? "bg-gray-200" : "bg-bgPrimary") : (!isDefaultMode ? "bg-gray-300" : "bg-[#43434364]")} ${!post.image ? "px-8" : ""}`}>
+                    <div className={`${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} w-full rounded-[15px] p-4 flex flex-col gap-4 ${!post.image ? 'my-auto h-fit' : 'h-full'}`}>
                         <div className="flex justify-between items-center gap-3">
                           <div className='flex items-center gap-3'>
-                            <div onClick={() => router.push(`homie/${postUser?._id}`)} className="w-12 h-12 cursor-pointer rounded-full overflow-hidden bg-bgPrimary">
+                            <div onClick={() => router.push(`homie/${postUser?._id}`)} className={`w-12 h-12 cursor-pointer rounded-full overflow-hidden ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'}`}>
                                 {postUser?.image ? (
                                 <Image
                                     key={`user-image-${postUser._id}`}
@@ -348,7 +355,7 @@ export default function Posts({session} : {session: Session}) {
                                 )}
                             </div>
                             <div>
-                                <h3 className="text-fontPrimary text-xl">{postUser?.name || 'Anonymous'}</h3>
+                                <h3 className={`${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} text-xl`}>{postUser?.name || 'Anonymous'}</h3>
                                 <p className="text-sm opacity-60">
                                   {getRelativeTime(post.createdAt)}
                                   {post.isEdited && post.updatedAt !== post.createdAt && 
@@ -362,11 +369,11 @@ export default function Posts({session} : {session: Session}) {
                           </div>
                           <DropdownMenu>
                               <DropdownMenuTrigger className="outline-none">
-                                  <div className="ml-auto p-2 rotate-[90deg] border-[2px] border-[#888] rounded-full hover:bg-bgPrimary transition-colors">
+                                  <div className={`ml-auto p-2 rotate-[90deg] border-[2px] border-[#888] rounded-full ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} transition-colors`}>
                                       <CiMenuKebab className="w-6 h-6" />
                                   </div>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent className="bg-bgSecondary border-[1px] border-[#888] text-fontPrimary p-2 rounded-lg">
+                              <DropdownMenuContent className={`${isDefaultMode ? 'bg-bgSecondary text-fontPrimary' : 'bg-white text-gray-800'} border-[1px] border-[#888] p-2 rounded-lg`}>
                                   {post.userId === user?._id && (
                                       <>
                                           <DropdownMenuItem
@@ -374,7 +381,7 @@ export default function Posts({session} : {session: Session}) {
                                                   setCurrentEditPost(post);
                                                   setOpenPostEditModal(true);
                                               }}
-                                              className="cursor-pointer px-4 py-2 hover:bg-bgPrimary rounded-lg transition-all duration-150 flex items-center gap-2"
+                                              className={`cursor-pointer px-4 py-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} rounded-lg transition-all duration-150 flex items-center gap-2`}
                                           >
                                               <span className="text-sm sulphur">Edit</span>
                                           </DropdownMenuItem>
@@ -382,7 +389,7 @@ export default function Posts({session} : {session: Session}) {
                                               onClick={() => {
                                                   handleDeletePost(post._id, post.image);
                                               }}
-                                              className="cursor-pointer px-4 py-2 hover:bg-bgPrimary rounded-lg transition-all duration-150 flex items-center gap-2"
+                                              className={`cursor-pointer px-4 py-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} rounded-lg transition-all duration-150 flex items-center gap-2`}
                                           >
                                               <span className="text-sm sulphur">Delete</span>
                                           </DropdownMenuItem>
@@ -393,7 +400,7 @@ export default function Posts({session} : {session: Session}) {
                                           setSelectedPostId(post._id);
                                           setShowReportModal(true);
                                       }}
-                                      className="cursor-pointer px-4 py-2 hover:bg-bgPrimary rounded-lg transition-all duration-150 flex items-center gap-2"
+                                      className={`cursor-pointer px-4 py-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} rounded-lg transition-all duration-150 flex items-center gap-2`}
                                   >
                                       <span className="text-sm sulphur">Report</span>
                                   </DropdownMenuItem>
@@ -401,12 +408,12 @@ export default function Posts({session} : {session: Session}) {
                           </DropdownMenu>
                         </div>
     
-                        <p className={`text-fontPrimary leading-[1.6rem] whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[60vh]"} p-2 overflow-y-auto`}>
+                        <p className={`${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} leading-[1.6rem] whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[60vh]"} p-2 overflow-y-auto`}>
                           {post.content}
                         </p>
     
                         {post.image && (
-                        <div className="w-full bg-bgPrimary rounded-[15px] h-full relative cursor-pointer hover:brightness-[0.95]" onClick={() => {
+                        <div className={`w-full ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} rounded-[15px] h-full relative cursor-pointer hover:brightness-[0.95]`} onClick={() => {
                           setCurrentImage(post?.image || "")
                           setOpenImageViewer(true)
                         }}>
@@ -421,11 +428,11 @@ export default function Posts({session} : {session: Session}) {
                         )}
     
                         <div className="w-full flex justify-between gap-0">
-                          <div className='flex items-center justify-center gap-2 '>
+                          <div className='flex items-center justify-center gap-2'>
                             <div onClick={() => { 
                               setShowPostReactionCount(true)
                               setCurrentReactionShowPost(post)
-                            }} className='totalReactionCount bg-bgPrimary text-[#888] aspect-square hover:text-[#fff] border-transparent cursor-pointer min-h-[30px] px-4 py-2 rounded-full flex justify-center items-center border-[2px] gap-2 transition-all duration-300'>
+                            }} className={`totalReactionCount ${isDefaultMode ? 'bg-bgPrimary text-[#888]' : 'bg-gray-200 text-gray-600'} aspect-square hover:text-[#fff] border-transparent cursor-pointer min-h-[30px] px-4 py-2 rounded-full flex justify-center items-center border-[2px] gap-2 transition-all duration-300`}>
                                 <motion.p 
                                     key={post.reactions?.length} // Add this line to trigger animation on count change
                                     initial={{y: 20, filter: "blur(10px)"}} 
@@ -457,9 +464,9 @@ export default function Posts({session} : {session: Session}) {
                                   color: currentColor
                               }}
                                 className={`cursor-pointer min-h-[50px] px-4 py-2 rounded-full flex justify-center items-center border-[2px] gap-2 transition-all duration-300 ${
-                                  hasUserReacted 
-                                    ? currentReactionClass 
-                                    : 'bg-bgPrimary text-[#888] hover:text-[#fff] border-transparent '
+                                  hasUserReacted
+                                    ? currentReactionClass
+                                    : `${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} text-[#888] hover:text-[#fff] border-transparent`
                                 }`}
                               >
                                 <div className={`${isMoreThanOne ? "text-sm" : "text-xl"}`}>
@@ -477,9 +484,11 @@ export default function Posts({session} : {session: Session}) {
                         <button onClick={() => {
                           setOpenPostCommentModal(true)
                           setCurrentCommentPost(post)
-                        }} className="text-[#888] px-4 py-2 rounded-full bg-bgPrimary hover:brightness-110 hover:text-[#fff] transition-all flex justify-center items-center gap-2">
-                            <BiCommentDetail className="w-5 h-5" />
-                            <p>Comment</p>
+                        }} 
+                        className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} text-[#888] px-4 py-2 rounded-full hover:brightness-110 hover:text-[#fff] transition-all flex justify-center items-center gap-2`}
+                        >
+                          <BiCommentDetail className="w-5 h-5" />
+                          <p>Comment</p>
                         </button>
                         </div>
                     </div>
@@ -492,19 +501,19 @@ export default function Posts({session} : {session: Session}) {
         <motion.button 
           initial={{ scale: 0 }}
           animate={{ 
-            scale: isButtonVisible ? 1 : 0,
+            scale: isButtonVisible ? 1 : 0, 
           }}
           whileHover={{scale: 1.1}}
           whileTap={{scale: 0.9}}
           transition={{ duration: 0.1 , ease: 'linear'}}
-          className={`fixed lg:flex hidden bottom-10 right-12 p-4 bg-bgSecondary text-white rounded-full shadow-lg hover:bg-[#242424] transition-all duration-300 z-50 group ${
+          className={`fixed lg:flex hidden bottom-10 right-12 p-4 ${isDefaultMode ? 'bg-bgSecondary text-fontPrimary hover:bg-[#242424]' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'} rounded-full shadow-lg transition-all duration-300 z-50 group ${
             !isButtonVisible && 'pointer-events-none'
           }`}
           onClick={() => setOpenPostAddModal(true)}
         >
           <div className="flex items-center">
-            <MdOutlinePostAdd className="w-6 h-6" />
-            <span className="w-0 overflow-hidden group-hover:w-16 transition-all duration-300 ease-in-out">
+            <MdOutlinePostAdd className={`w-6 h-6 ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`} />
+            <span className={`w-0 overflow-hidden group-hover:w-16 transition-all duration-300 ease-in-out ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>
               Post
             </span>
           </div>

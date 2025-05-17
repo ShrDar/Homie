@@ -57,12 +57,26 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+
   return (
     <SessionProvider session={session}>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} ${pixelify.variable} ${tiny.variable} selection:bg-bgPrimary bg-bgPrimary antialiased min-h-screen w-full relative flex justify-center items-center`}
+          className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} ${pixelify.variable} ${tiny.variable} selection:bg-bgPrimary antialiased min-h-screen w-full relative flex justify-center items-center`}
+          id="theme-wrapper"
         >
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  const theme = localStorage.getItem('theme') || 'default';
+                  document.getElementById('theme-wrapper').className = 
+                    document.getElementById('theme-wrapper').className + 
+                    (theme === 'default' ? ' bg-bgPrimary' : ' bg-gray-100');
+                })();
+              `,
+            }}
+          />
           {session && <SidebarSelector session={session} />}
           {session && <SlideBar session={session} />} 
           {children}

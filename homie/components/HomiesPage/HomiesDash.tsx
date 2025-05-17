@@ -32,6 +32,12 @@ export default function HomiesDash({session} : {session: Session}) {
     const [homieUsername, setHomieUsername] = useState("");
     const [backdrop, setBackdrop] = useState(false);
     const [currentDisplay, setCurrentDisplay] = useState<string>("homies");
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
 
     const isEqual = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -291,7 +297,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 handleBackDrop(e.target.value)
                             }} 
                             value={homieUsername} 
-                            className={`w-full bg-bgSecondary border-2 focus:outline-none selection:bg-[#2a2a2a] border-transparent focus:border-[#6d6d6d] text-fontPrimary placeholder:text-[#ffffff85] px-4 py-3 rounded-[6px]`}
+                            className={`w-full ${isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-200'} border-2 focus:outline-none selection:bg-[#2a2a2a] border-transparent focus:border-[#6d6d6d] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} placeholder:${isDefaultMode ? 'text-[#ffffff85]' : 'text-gray-500'} px-4 py-3 rounded-[6px]`}
                             type={"text"}
                             placeholder="Add homies with their username" 
                         />
@@ -305,7 +311,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 } else
                                 return homie.username && homie.username.toLowerCase().includes(homieUsername.toLowerCase()) && homie._id !== user?._id
                             }).length === 0 ? (
-                                <p className="w-full text-start px-3 tracking-[3px] font-bold text-[#b6b6b6]">No Homies</p>
+                                <p className="w-full text-start px-3 tracking-[3px] font-bold ${isDefaultMode ? 'text-[#b6b6b6]' : 'text-gray-600'}">No Homies</p>
                             ) : (
                                 homies.filter(homie =>
                                     homie.username && 
@@ -319,9 +325,9 @@ export default function HomiesDash({session} : {session: Session}) {
                                 const isHomie = user?.homies.includes(homie._id);
                                 
                                 return (
-                                    <motion.div key={homie._id} initial={{y: -50, opacity: 0, filter: "blur(10px)"}} transition={{delay: index*0.1}} whileInView={{y: 0, opacity: 1, filter: "blur(0px)"}} viewport={{ once: true}} className="w-full bg-bgSecondary hover:bg-[#3f3f3f] cursor-default p-4 rounded-[15px] flex justify-center items-center">
+                                    <motion.div key={homie._id} initial={{y: -50, opacity: 0, filter: "blur(10px)"}} transition={{delay: index*0.1}} whileInView={{y: 0, opacity: 1, filter: "blur(0px)"}} viewport={{ once: true}} className={`w-full ${isDefaultMode ? 'bg-bgSecondary hover:bg-[#3f3f3f]' : 'bg-gray-200 hover:bg-gray-300'} cursor-default p-4 rounded-[15px] flex justify-center items-center`}>
                                         <div onClick={() => router.push(`/homie/${homie?._id}`)} className="w-[90%] homie cursor-pointer flex justify-start items-center gap-4">
-                                            <div className="bg-bgPrimary p-2 rounded-full">
+                                            <div className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} p-2 rounded-full`}>
                                                 <Image 
                                                     alt="homieProfileImage"
                                                     src={getProfileUrl(homie.image)}
@@ -331,18 +337,18 @@ export default function HomiesDash({session} : {session: Session}) {
                                                 />
                                             </div>
                                             <div className="flex flex-col justify-center items-start">
-                                                <p>{homie.name}</p>
-                                                <p className="text-xs text-[#ffffffad]">@{homie.username}</p>
+                                                <p className={`${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{homie.name}</p>
+                                                <p className={`text-xs ${isDefaultMode ? 'text-[#ffffffad]' : 'text-gray-600'}`}>@{homie.username}</p>
                                             </div>
                                         </div>
                                         {
                                             isHomie && 
-                                            <div className="bg-bgPrimary transition-all duration-150 md:min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center text-center gap-2 h-full">
+                                            <div className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} transition-all duration-150 md:min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center text-center gap-2 h-full`}>
                                                 <p className="text-sm flex">Homies</p>
                                             </div>
                                         }
                                         {(!isRequestSent && !isRequestReceived && !isHomie) &&
-                                            <div onClick={() => handleBefriend(homie)} className="bg-bgPrimary md:min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                            <div onClick={() => handleBefriend(homie)} className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} md:min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full`}>
                                                 <p className="text-sm hidden md:flex">Befriend</p>
                                                 <div>
                                                     <Image 
@@ -356,7 +362,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                             </div>
                                         }{
                                             isRequestSent &&
-                                            <div className="bg-bgPrimary cursor-none transition-all duration-150 md:min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                            <div className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} cursor-none transition-all duration-150 md:min-w-[130px] border-[2px] border-transparent z-[12] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full`}>
                                                 <p className="text-sm hidden md:flex">Pending</p>
                                                 <div>
                                                     <FiWatch size={25} className="animate-pulse " />
@@ -366,7 +372,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                         { 
                                             (isRequestReceived && !isHomie) &&
                                             <div className="flex justify-center items-center gap-2">
-                                                <div onClick={() => handleAcceptBefriend(homie)} className="bg-bgPrimary md:min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full">
+                                                <div onClick={() => handleAcceptBefriend(homie)} className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} md:min-w-[130px] cursor-pointer hover:brightness-[1.2] transition-all duration-150 border-[2px] border-transparent z-[12] hover:border-[#666666] active:scale-[0.8] px-5 py-2 rounded-[15px] flex justify-center items-center gap-2 h-full`}>
                                                     <p className="text-sm hidden md:flex">Accept</p>
                                                     <div className="w-[25px]">
                                                     <Image 
@@ -378,7 +384,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                                         />
                                                     </div>
                                                 </div>
-                                                <div onClick={() => homie && handleRequestReject(homie)} className="rejectRequest cursor-pointer bg-bgPrimary border-[1.5px] border-transparent transition-all duration-150 hover:border-[#FF6F6F] p-2 rounded-full">
+                                                <div onClick={() => homie && handleRequestReject(homie)} className={`rejectRequest cursor-pointer ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} border-[1.5px] border-transparent transition-all duration-150 hover:border-[#FF6F6F] p-2 rounded-full`}>
                                                     <RxCross2 size={12} color="FF6F6F" />
                                                 </div>
                                             </div>
@@ -391,9 +397,9 @@ export default function HomiesDash({session} : {session: Session}) {
 
                 </div>
                 <div className="w-full flex justify-center items-center">
-                    <p className="uppercase font-bold tracking-[2px]">{currentDisplay}</p>
+                    <p className={`uppercase font-bold tracking-[2px] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{currentDisplay}</p>
                 </div>
-                <div className="w-full relative z-[10] rounded-[10px] p-4 bg-[#43434395] overflow-y-auto h-[70dvh]">
+                <div className={`w-full relative z-[10] rounded-[10px] p-4 ${isDefaultMode ? 'bg-[#43434395]' : 'bg-gray-200/80'} overflow-y-auto h-[70dvh]`}>
                     {(user?.homies?.length === 0 && user?.homieRequests?.length === 0 && user?.homieSentRequests?.length === 0) && 
                         <div className="w-full h-full flex flex-col justify-center items-center gap-4 opacity-[0.6]">
                             <div className="w-full flex justify-center items-center">
@@ -406,7 +412,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 />
                             </div>
                             <div>
-                                <p className="text-3xl font-bold tracking-[3px]">Add Homies</p>
+                                <p className="text-3xl font-bold tracking-[3px] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}">Add Homies</p>
                             </div>
                         </div>
                     }
@@ -418,7 +424,7 @@ export default function HomiesDash({session} : {session: Session}) {
                                 {user.homies.map((homieId) => {
                                     const homie = homies.find((user) => user._id === homieId)
                                     return (
-                                        <div key={homieId} className="w-full flex justify-between items-center border-[5px] hover:bg-[#323232] border-bgPrimary rounded-[15px]">
+                                        <div key={homieId} className={`w-full flex justify-between items-center border-[5px] ${isDefaultMode ? 'hover:bg-[#323232] border-bgPrimary' : 'hover:bg-gray-300 border-gray-100'} rounded-[15px]`}>
                                             <div onClick={() => router.push(`/homie/${homie?._id}`)} className="homie w-[90%] flex justify-start cursor-pointer items-center gap-4 px-2 py-4">
                                                 <div className="bg-bgPrimary p-2 rounded-full">
                                                     <Image 
@@ -430,31 +436,30 @@ export default function HomiesDash({session} : {session: Session}) {
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-center items-start">
-                                                    <p>{homie?.name}</p>
-                                                    <p className="text-xs text-[#ffffffad]">@{homie?.username}</p>
+                                                    <p className={`${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{homie?.name}</p>
+                                                    <p className={`text-xs ${isDefaultMode ? 'text-[#ffffffad]' : 'text-gray-600'}`}>@{homie?.username}</p>
                                                 </div>
                                             </div>
                                             <div className="flex justify-center items-center gap-2 px-4">
-                                                <div onClick={() => createChat(user , homie?._id || "")} className="bg-bgPrimary flex justify-center items-center gap-2 hover:bg-[#1b1b1b] transition-all duration-150 cursor-pointer p-3 rounded-full">
+                                                <div onClick={() => createChat(user , homie?._id || "")} className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} flex justify-center items-center gap-2 ${isDefaultMode ? 'hover:bg-[#1b1b1b]' : 'hover:bg-gray-300'} transition-all duration-150 cursor-pointer p-3 rounded-full`}>
                                                     {/* <p>Yap</p> */}
-                                                    <RiMessage3Fill size={20} color="aaa"/>
+                                                    <RiMessage3Fill size={20} color={isDefaultMode ? "aaa" : "666"}/>
                                                 </div>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger>
-                                                        <div className="bg-transparent first-line:flex justify-center items-center gap-2 hover:bg-bgPrimary transition-all duration-150 cursor-pointer p-2 rounded-full">
-                                                        <CiMenuKebab size={22} color="aaa" />
+                                                        <div className="bg-transparent first-line:flex justify-center items-center gap-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} transition-all duration-150 cursor-pointer p-2 rounded-full">
+                                                        <CiMenuKebab size={22} color={isDefaultMode ? "aaa" : "666"} />
                                                         </div>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="start" className="bg-bgPrimary text-fontPrimary text-sm border-[#666] p-2">
+                                                    <DropdownMenuContent align="start" className={`${isDefaultMode ? 'bg-bgPrimary text-fontPrimary border-[#666]' : 'bg-white text-gray-800 border-gray-300'} text-sm p-2`}>
                                                         <div onClick={() => createChat(user , homie?._id || "")} className="sulphur cursor-pointer">
-                                                            <p className="w-full text-start hover:bg-[#1B1B1B] p-2 px-6 rounded-[6px]">Yap</p>
+                                                            <p className={`w-full text-start ${isDefaultMode ? 'hover:bg-[#1B1B1B]' : 'hover:bg-gray-100'} p-2 px-6 rounded-[6px]`}>Yap</p>
                                                         </div>
                                                         <div onClick={() => handleRemoveFriend(homie)} className="sulphur cursor-pointer">
-                                                            <p className="w-full text-start hover:bg-[#1B1B1B] p-2 px-6 rounded-[6px] text-[#FF6F6F] font-black">Remove</p>
+                                                            <p className={`w-full text-start ${isDefaultMode ? 'hover:bg-[#1B1B1B]' : 'hover:bg-gray-100'} p-2 px-6 rounded-[6px] text-[#FF6F6F] font-black`}>Remove</p>
                                                         </div>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
-
                                                 
                                             </div>
                                         </div>
@@ -550,19 +555,21 @@ export default function HomiesDash({session} : {session: Session}) {
                     </div>
                 
                         <div className="absolute top-4 right-4 opacity-[0.5] hover:opacity-[1] cursor-pointer transition-all duration-150">
-                            <div className="flex justify-center min-w-[150px] items-center border-[2px] border-[#666] rounded-[15px] overflow-hidden">
-                                <div onClick={() => setCurrentDisplay("homies")} className={`w-full ${currentDisplay === "homies" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[#222222] border-r-[1px] px-6 py-2 text-center transition-all duration-150`}>
-                                    <p className="text-sm">Homies</p>
+                            <div className={`flex justify-center min-w-[150px] items-center border-[2px] ${isDefaultMode ? 'border-[#666]' : 'border-gray-300'} rounded-[15px] overflow-hidden`}>
+                                <div onClick={() => setCurrentDisplay("homies")} className={`w-full ${currentDisplay === "homies" ? (isDefaultMode ? "bg-[#1b1b1b]" : "bg-gray-200") : (isDefaultMode ? "bg-[#2a2a2a]" : "bg-gray-100")} ${isDefaultMode ? 'hover:bg-[#222222]' : 'hover:bg-gray-300'} border-r-[1px] px-6 py-2 text-center transition-all duration-150`}>
+                                    <p className={`text-sm ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>Homies</p>
                                 </div>
-                                <div onClick={() => setCurrentDisplay("pending")} className={`w-full ${currentDisplay === "pending" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:bg-[#222222] px-6 py-2 text-center transition-all duration-150`}>
-                                    <p className="text-sm flex">Pending</p>
+                                <div onClick={() => setCurrentDisplay("pending")} className={`w-full ${currentDisplay === "pending" ? (isDefaultMode ? "bg-[#1b1b1b]" : "bg-gray-200") : (isDefaultMode ? "bg-[#2a2a2a]" : "bg-gray-100")} ${isDefaultMode ? 'hover:bg-[#222222]' : 'hover:bg-gray-300'} px-6 py-2 text-center transition-all duration-150`}>
+                                    <p className={`text-sm flex ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>Pending</p>
                                 </div>
                             </div>
                         </div>
-                        <div onClick={() => setCurrentDisplay("requests")} className={`absolute top-4 left-5 overflow-hidden rounded-full ${currentDisplay === "requests" ? "bg-[#1b1b1b]" : "bg-[#2a2a2a]"} hover:brightness-[0.8] cursor-pointer transition-all duration-150`}>
+                        <div onClick={() => setCurrentDisplay("requests")} className={`absolute top-4 left-5 overflow-hidden rounded-full ${currentDisplay === "requests" ? (isDefaultMode ? "bg-[#1b1b1b]" : "bg-gray-200") : (isDefaultMode ? "bg-[#2a2a2a]" : "bg-gray-100")} hover:brightness-[0.8] cursor-pointer transition-all duration-150`}>
                             <div className={`flex justify-center items-center rounded-full overflow-hidden`}>
-                                <div className="p-2 border-[#666] border-2 rounded-full">
-                                    <PiHandWavingFill size={18} color="bbb" />
+                                <div className={`flex justify-center items-center rounded-full overflow-hidden`}>
+                                    <div className={`p-2 ${isDefaultMode ? 'border-[#666]' : 'border-gray-400'} border-2 rounded-full`}>
+                                        <PiHandWavingFill size={18} color={isDefaultMode ? "bbb" : "666"} />
+                                    </div>
                                 </div>
                             </div>
                         </div>

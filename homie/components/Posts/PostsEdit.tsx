@@ -17,6 +17,12 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
     const [currentFile, setCurrentFile] = useState<File | null>(null);
     const [oldImage, setOldImage] = useState<string | null>(currentEditPost?.image || null);
     const [isPosting, setIsPosting] = useState(false);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
 
     useEffect(() => {
         setContent(currentEditPost?.content || "")
@@ -242,7 +248,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
             }} 
                 className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm">
             </div>
-            <div className="fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] text-fontPrimary">
+            <div className={`fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>
                 <div className="w-full px-8 flex flex-col gap-6">
                     <div className="flex justify-between items-center">
                         <h2 className="text-2xl font-semibold">Edit Post</h2>
@@ -253,7 +259,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                             setCurrentFile(null);
                             fetchPosts();
                         }} 
-                            className="p-2 hover:bg-bgPrimary rounded-full transition-colors">
+                            className={`p-2 ${isDefaultMode ? 'hover:bg-bgPrimary' : 'hover:bg-gray-200'} rounded-full transition-colors`}>
                             <RxCross2 size={24} />
                         </button>
                     </div>
@@ -264,13 +270,13 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                                 placeholder="What's on your mind?"
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                className="w-full min-h-[8rem] p-3 rounded-lg h-full bg-bgPrimary outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap"
+                                className={`w-full min-h-[8rem] p-3 rounded-lg h-full ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap`}
                                 maxRows={10}
                             />
                             
                             <div className="flex gap-4 items-center">
-                                <label className="cursor-pointer hover:brightness-[1.2] transition-all duration-100 flex items-center gap-2 border-2 border-[#c9c9c9] p-2 rounded-full">
-                                    <IoIosImages color="#c9c9c9" size={20}/>
+                                <label className={`cursor-pointer hover:brightness-[1.2] transition-all duration-100 flex items-center gap-2 border-2 ${isDefaultMode ? 'border-[#c9c9c9]' : 'border-gray-400'} p-2 rounded-full`}>
+                                    <IoIosImages color={isDefaultMode ? "#c9c9c9" : "#666"} size={20}/>
                                     <input 
                                         type="file" 
                                         accept="image/*" 
@@ -280,7 +286,7 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                                 </label>
                                 <button
                                     onClick={handleSubmit}
-                                    className="ml-auto bg-bgPrimary hover:bg-[#242424] px-6 py-2 rounded-full transition-colors"
+                                    className={`ml-auto ${isDefaultMode ? 'bg-bgPrimary hover:bg-[#242424]' : 'bg-gray-200 hover:bg-gray-300'} px-6 py-2 rounded-full transition-colors`}
                                 >
                                     Edit
                                 </button>
@@ -288,71 +294,69 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
                         </div>
 
                         {/* Preview Section */}
-                        
-                            <div className="lg:w-[50%] h-full border-bgPrimary lg:border-l-[3px] border-[#888] lg:pl-4 lg:p-2">
-                                <div className="bg-bgPrimary  rounded-[15px] p-4 flex flex-col gap-2">
-                                    <div className='flex justify-start items-center gap-2'>
-                                        <div className="w-10 h-10 rounded-full overflow-hidden bg-bgPrimary">
-                                            {user?.image ? (
-                                            <Image
-                                                key={`user-image-${user._id}`}
-                                                src={getProfileUrl(user.image)}
-                                                alt={user.name || 'User'}
-                                                width={40}
-                                                height={40}
-                                                className="w-full h-full aspect-auto object-cover"
-                                            />
-                                            ) : (
-                                            <div className="w-full h-full bg-bgPrimary" />
-                                            )}
-                                        </div>
-                                        <div>
-                                            <h3 className="text-fontPrimary text-md">{user?.name || 'Anonymous'}</h3>
-                                            <p className="text-sm opacity-60">
-                                                Just Now
-                                            </p>
-                                        </div>
+                        <div className={`lg:w-[50%] h-full ${isDefaultMode ? 'border-bgPrimary' : 'border-gray-300'} lg:border-l-[3px] border-[#888] lg:pl-4 lg:p-2`}>
+                            <div className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} rounded-[15px] p-4 flex flex-col gap-2`}>
+                                <div className='flex justify-start items-center gap-2'>
+                                    <div className="w-10 h-10 rounded-full overflow-hidden bg-bgPrimary">
+                                        {user?.image ? (
+                                        <Image
+                                            key={`user-image-${user._id}`}
+                                            src={getProfileUrl(user.image)}
+                                            alt={user.name || 'User'}
+                                            width={40}
+                                            height={40}
+                                            className="w-full h-full aspect-auto object-cover"
+                                        />
+                                        ) : (
+                                        <div className="w-full h-full bg-bgPrimary" />
+                                        )}
                                     </div>
-
-                                    {content &&
-                                        (
-                                            <p className="text-sm whitespace-pre-wrap max-h-[10rem] break-words overflow-y-auto">{content}</p>
-                                        )
-                                    }
-                                    {currentFile && (
-                                        <div className="relative w-full h-48">
-                                            <Image
-                                                src={currentImage}
-                                                alt="Preview"
-                                                fill
-                                                className="object-cover rounded-lg"
-                                            />
-                                        </div>
-                                    )}
-                                    {oldImage && (
-                                        <motion.div 
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="relative w-full h-[200px] mt-4"
-                                        >
-                                            <Image
-                                                src={getProfileUrl(oldImage || "")}
-                                                alt="Preview"
-                                                fill
-                                                className="object-cover rounded-lg"
-                                            />
-                                            <button
-                                                onClick={() => setOldImage("")}
-                                                className="absolute top-2 right-2 p-1 bg-bgSecondary rounded-full hover:bg-red-500/20 transition-colors"
-                                            >
-                                                <RxCross2 className="w-5 h-5" />
-                                            </button>
-                                        </motion.div>
-                                    )}
+                                    <div>
+                                        <h3 className={`text-md ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{user?.name || 'Anonymous'}</h3>
+                                        <p className="text-sm opacity-60">
+                                            Just Now
+                                        </p>
+                                    </div>
                                 </div>
+
+                                {content &&
+                                    (
+                                        <p className="text-sm whitespace-pre-wrap max-h-[10rem] break-words overflow-y-auto">{content}</p>
+                                    )
+                                }
+                                {currentFile && (
+                                    <div className="relative w-full h-48">
+                                        <Image
+                                            src={currentImage}
+                                            alt="Preview"
+                                            fill
+                                            className="object-cover rounded-lg"
+                                        />
+                                    </div>
+                                )}
+                                {oldImage && (
+                                    <motion.div 
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="relative w-full h-[200px] mt-4"
+                                    >
+                                        <Image
+                                            src={getProfileUrl(oldImage || "")}
+                                            alt="Preview"
+                                            fill
+                                            className="object-cover rounded-lg"
+                                        />
+                                        <button
+                                            onClick={() => setOldImage("")}
+                                            className="absolute top-2 right-2 p-1 bg-bgSecondary rounded-full hover:bg-red-500/20 transition-colors"
+                                        >
+                                            <RxCross2 className="w-5 h-5" />
+                                        </button>
+                                    </motion.div>
+                                )}
                             </div>
-                        
+                        </div>
                     </div>
                 </div>
             </div>
@@ -360,9 +364,9 @@ export default function PostEdit({ openPostEditModal, setOpenPostEditModal, user
             {isPosting && 
             (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200]">
-                    <div className="bg-bgSecondary p-4 rounded-lg flex items-center gap-2">
-                        <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
-                        <span className="text-white tracking-[4px]">Updating...</span>
+                    <div className={`${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} p-4 rounded-lg flex items-center gap-2`}>
+                        <div className={`w-5 h-5 border-t-2 ${isDefaultMode ? 'border-white' : 'border-gray-800'} rounded-full animate-spin`}></div>
+                        <span className={isDefaultMode ? 'text-white' : 'text-gray-800'}>Updating...</span>
                     </div>
                 </div>
             )}

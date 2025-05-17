@@ -5,6 +5,9 @@
 html {
     scroll-behavior: auto;
 }
+/* * {
+    border: 1px solid red;
+} */
 
 .sulphur {
     font-family: var(--font-sulphur), sans-serif;

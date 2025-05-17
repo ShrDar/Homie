@@ -45,7 +45,7 @@ export default async function HomePage() {
     }
 
   return (
-    <div className="homeContainer bg-bgPrimary text-fontPrimary z-[5] sulphur h-screen w-screen flex flex-col items-center justify-center">
+    <div className="homeContainer text-fontPrimary z-[5] sulphur h-screen w-screen flex flex-col items-center justify-center">
       <Posts session={session} />
     </div>
   );

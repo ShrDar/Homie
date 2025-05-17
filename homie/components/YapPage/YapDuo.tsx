@@ -70,6 +70,13 @@ export default function YapDuo({ session } : { session: Session }) {
     const [openGIFViewer,setOpenGIFViewer] = useState<boolean>(false);
     const [currentViewerImage, setCurrentViewerImage] = useState<string | null>(null);
 
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
@@ -517,9 +524,9 @@ const unsendMessage = async (messageId: string) => {
 
 
     return (
-        <div className="w-full h-[80dvh] z-[50] flex bg-bgSecondary text-fontPrimary rounded-[15px] p-5 flex-col justify-center items-center gap-2 ">
+        <div className={`w-full h-[80dvh] z-[50] flex ${isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-200'} text-fontPrimary rounded-[15px] p-5 flex-col justify-center items-center gap-2 `}>
             <div onClick={() => router.push(`/homie/${yapper2?._id}`)} className="yapTopBar cursor-pointer w-full flex justify-start items-center gap-2">
-                <div className="rounded-full overflow-hidden bg-bgPrimary p-2">
+                <div className={`rounded-full overflow-hidden ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} p-2`}>
                     <Image 
                         src={getProfileUrl(yapper2?.image || "")}
                         alt=""
@@ -529,12 +536,12 @@ const unsendMessage = async (messageId: string) => {
                     />
                 </div>
                 <div className="flex flex-col justify-center items-start">
-                  <p className="text-lg tracking-[1px] let">{yapper2?.name}</p>
-                  <p className="text-xs tracking-[3px]">@{yapper2?.username}</p>
+                  <p className={`text-lg tracking-[1px] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{yapper2?.name}</p>
+                  <p className={`text-xs tracking-[3px] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-600'}`}>@{yapper2?.username}</p>
                 </div>
             </div>
 
-            <div ref={smoothContainerRef} className="yapsContainer relative w-full bg-bgPrimary h-[70dvh] overflow-y-auto z-[50] overflow-x-hidden rounded-[15px] flex flex-col justify-start items-center p-4">
+            <div ref={smoothContainerRef} className={`yapsContainer relative w-full ${isDefaultMode ? 'bg-bgPrimary' : 'bg-white'} h-[70dvh] overflow-y-auto z-[50] overflow-x-hidden rounded-[15px] flex flex-col justify-start items-center p-4`}>
                 <div className="w-full flex flex-col gap-1">
                     {groupMessagesByDate(messages).map((group, groupIndex) => {
                         // Get all messages from current user
@@ -597,8 +604,8 @@ const unsendMessage = async (messageId: string) => {
                                                     )}
                                                     <motion.div initial={{x: 20}} animate={{x: 0}} className={`${message.type === "gif" || message.type === "image" ? "px-2" : "px-4"} py-2 rounded-[20px] ${
                                                         message.senderId === session?.user?.id 
-                                                            ? 'bg-bgSecondary text-fontPrimary overflow-hidden' 
-                                                            : 'bg-[#1b1b1b] text-fontPrimary'
+                                                            ? `${isDefaultMode ? 'bg-bgSecondary text-fontPrimary' : 'bg-gray-100 text-gray-800'}  overflow-hidden` 
+                                                            : `${isDefaultMode ? 'bg-[#1b1b1b] text-fontPrimary' : 'bg-gray-200 text-gray-800'} `
                                                     }`}>
                                                         {message.type === 'image' ? (
                                                             <div className="flex flex-col gap-2">
@@ -708,7 +715,7 @@ const unsendMessage = async (messageId: string) => {
                                 placeholder={selectedFile ? "Write Smth..." : "Yap Smth..."}
                                 minRows={1}
                                 maxRows={4}
-                                className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
+                                className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-white text-gray-800'} selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5`}
                             />
                         </div>
                         <div className="flex relative justify-center items-center gap-2">
@@ -737,8 +744,8 @@ const unsendMessage = async (messageId: string) => {
                         </div>
                         <button
                             type="submit"
-                            disabled={isSending} // Disable button when sending
-                            className="bg-bgPrimary text-fontPrimary w-32 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isSending}
+                            className={`${isDefaultMode ? 'bg-bgPrimary text-fontPrimary hover:bg-[#1b1b1b]' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'} w-32 h-10 rounded-full transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                             {isSending ? (<span className="animate-pulse">Sending...</span>) : (<span>Send</span>)}
                         </button>

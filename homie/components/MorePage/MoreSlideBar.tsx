@@ -9,6 +9,7 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
     const [selectedStyle, setSelectedStyle] = useState<'normie' | 'horizontal'>('normie');
     const [currentStyle, setCurrentStyle] = useState<'normie' | 'horizontal'>('normie');
     const [showPreview, setShowPreview] = useState(false);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
 
     useEffect(() => {
         const savedStyle = localStorage.getItem('sidebarType');
@@ -16,6 +17,8 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
             setSelectedStyle(savedStyle);
             setCurrentStyle(savedStyle);
         }
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
     }, []);
 
     const handleApplyChanges = () => {
@@ -31,8 +34,8 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
                 <motion.div 
                     className={`flex-1 p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center lg:gap-6 transition-all duration-300 backdrop-blur-sm ${
                         selectedStyle === 'horizontal' 
-                        ? 'bg-bgPrimary shadow-lg shadow-bgPrimary/20' 
-                        : 'bg-white/5'
+                        ? (isDefaultMode ? 'bg-bgPrimary shadow-lg shadow-bgPrimary/20' : 'bg-blue-500 shadow-lg shadow-blue-500/20')
+                        : (isDefaultMode ? 'bg-white/5' : 'bg-gray-200')
                     }`}
                     onClick={() => setSelectedStyle('horizontal')}
                     whileHover={{ scale: 1.03, translateY: -8 }}
@@ -45,7 +48,9 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
                         className='rounded-[15px]'
                     />
                     <span className={`font-medium text-center text-sm lg:text-lg transition-colors duration-300 ${
-                        selectedStyle === 'horizontal' ? 'text-white' : 'text-gray-400'
+                        selectedStyle === 'horizontal' 
+                        ? (isDefaultMode ? 'text-white' : 'text-white')
+                        : (isDefaultMode ? 'text-gray-400' : 'text-gray-600')
                     }`}>
                         Horizontal Sidebar
                     </span>
@@ -54,8 +59,8 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
                 <motion.div 
                     className={`flex-1 p-8 rounded-2xl cursor-pointer flex flex-col items-center justify-center lg:gap-6 transition-all duration-300 backdrop-blur-sm ${
                         selectedStyle === 'normie' 
-                        ? 'bg-bgPrimary shadow-lg shadow-bgPrimary/20' 
-                        : 'bg-white/5'
+                        ? (isDefaultMode ? 'bg-bgPrimary shadow-lg shadow-bgPrimary/20' : 'bg-blue-500 shadow-lg shadow-blue-500/20')
+                        : (isDefaultMode ? 'bg-white/5' : 'bg-gray-200')
                     }`}
                     onClick={() => setSelectedStyle('normie')}
                     whileHover={{ scale: 1.03, translateY: -8 }}
@@ -68,7 +73,9 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
                         className='rounded-[15px]'
                     />
                     <span className={`font-medium text-center text-sm lg:text-lg transition-colors duration-300 ${
-                        selectedStyle === 'normie' ? 'text-white' : 'text-gray-400'
+                        selectedStyle === 'normie' 
+                        ? (isDefaultMode ? 'text-white' : 'text-white')
+                        : (isDefaultMode ? 'text-gray-400' : 'text-gray-600')
                     }`}>
                         Normie Sidebar
                     </span>
@@ -77,7 +84,11 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
 
             <div className="flex justify-center gap-4 mt-6 w-full">
                 <motion.button
-                    className="px-4 py-2 rounded-lg font-medium text-sm bg-bgPrimary text-white hover:bg-white/20 w-full"
+                    className={`px-4 py-2 rounded-lg font-medium text-sm w-full ${
+                        isDefaultMode 
+                        ? 'bg-bgPrimary text-white hover:bg-white/20' 
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                    }`}
                     onClick={() => setShowPreview(true)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -88,8 +99,12 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
                 <motion.button
                     className={`px-4 py-2 rounded-lg font-medium text-sm w-full transition-all duration-300 ${
                         selectedStyle !== currentStyle 
-                        ? 'bg-bgPrimary text-white shadow-lg shadow-bgPrimary/20' 
-                        : 'bg-bgPrimary/50 text-gray-400'
+                        ? (isDefaultMode 
+                            ? 'bg-bgPrimary text-white shadow-lg shadow-bgPrimary/20' 
+                            : 'bg-blue-500 text-white shadow-lg shadow-blue-500/20')
+                        : (isDefaultMode 
+                            ? 'bg-bgPrimary/50 text-gray-400' 
+                            : 'bg-blue-300 text-gray-600')
                     }`}
                     onClick={handleApplyChanges}
                     disabled={selectedStyle === currentStyle}

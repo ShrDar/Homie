@@ -14,6 +14,7 @@ import { HomieUser, Tea } from "@/homieTypes/homieTypes";
 import DefaultLoading from '../Loading/DefaultLoading';
 import { getProfileUrl } from "@/extra/helpers";
 import { IoChevronBack } from "react-icons/io5";
+import { useEffect } from "react"
 
 export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussion }: { setShowTeaEdit: any, user: HomieUser | null, tea: Tea | null, setShowTeaDiscussion: any}) {
     const [title, setTitle] = useState(tea?.title || "")
@@ -24,6 +25,8 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
     const [image, setImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
     const [oldImage, setOldImage] = useState<string | null>(tea?.image ?? null);
+
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setOldImage(null);
@@ -195,6 +198,11 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
         }
     };
 
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
+
     return (
         <>
             {isLoading && <DefaultLoading displayText="Rebrewing Tea" />}
@@ -206,7 +214,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                 animate={{ opacity: 0.7 }}
                 className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm"
             />
-            <div className="fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] text-fontPrimary overflow-hidden">
+            <div className={`fixed w-[90%] md:w-[80%] lg:w-[70%] max-h-[90vh] overflow-y-auto py-8 flex justify-center items-start rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>
                 <div className="w-full px-8 flex flex-col gap-6">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-4">
@@ -248,7 +256,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                     value={currentTag}
                                     onChange={(e) => setCurrentTag(e.target.value)}
                                     onKeyDown={handleAddTag}
-                                    className="w-[80px] min-w-[80px] bg-bgPrimary text-fontPrimary px-3 py-2 rounded-lg outline-none text-sm transition-all"
+                                    className={`w-[80px] min-w-[80px] ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} px-3 py-2 rounded-lg outline-none text-sm transition-all`}
                                     disabled={tags.length >= 3}
                                 />
                                 {tags.length > 0 && (
@@ -264,12 +272,12 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                                     delay: index * 0.1 
                                                 }}
                                                 key={index} 
-                                                className="px-2 py-2 rounded-full bg-bgPrimary text-xs flex items-center gap-1.5"
+                                                className={`px-2 py-2 rounded-full ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} text-xs flex items-center gap-1.5`}
                                             >
                                                 #{tag}
                                                 <button 
                                                     onClick={() => removeTag(tag)}
-                                                    className="text-xs hover:text-red-500 transition-colors"
+                                                    className={`text-xs ${isDefaultMode ? 'hover:text-red-500' : 'hover:text-red-600'} transition-colors`}
                                                 >
                                                     ✕
                                                 </button>
@@ -287,7 +295,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                 placeholder="Tea Title..."
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full bg-bgPrimary text-fontPrimary p-4 rounded-lg outline-none"
+                                className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} p-4 rounded-lg outline-none`}
                             />
                             
                             <motion.div
@@ -298,7 +306,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                     placeholder="What's on your mind?"
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
-                                    className="w-full min-h-[8rem] p-4 rounded-lg bg-bgPrimary outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap"
+                                    className={`w-full min-h-[8rem] p-4 rounded-lg ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} outline-none resize-none selection:bg-bgSecondary whitespace-pre-wrap`}
                                     maxRows={10}
                                 />
                             </motion.div>
@@ -307,9 +315,9 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                 <motion.label 
                                     initial={{x: -10, filter: 'blur(5px)'}}
                                     animate={{x: 0, filter: 'blur(0px)'}}
-                                    className="cursor-pointer bg-bgPrimary hover:bg-[#242424] p-3 rounded-full transition-colors flex items-center gap-2"
+                                    className={`cursor-pointer ${isDefaultMode ? 'bg-bgPrimary hover:bg-[#242424]' : 'bg-gray-100 hover:bg-gray-200'} p-3 rounded-full transition-colors flex items-center gap-2`}
                                 >
-                                    <IoIosImages className="w-5 h-5" />
+                                    <IoIosImages className={`w-5 h-5 ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`} />
                                     
                                     <input
                                         ref={fileInputRef}
@@ -322,7 +330,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                 <motion.button 
                                     initial={{x: 20, filter: 'blur(5px)'}}
                                     animate={{x: 0, filter: 'blur(0px)'}}
-                                    className="ml-auto bg-bgPrimary hover:bg-[#242424] px-6 py-2 rounded-full transition-colors"
+                                    className={`ml-auto ${isDefaultMode ? 'bg-bgPrimary hover:bg-[#242424]' : 'bg-gray-100 hover:bg-gray-200'} px-6 py-2 rounded-full transition-colors`}
                                     onClick={handleSubmit}
                                 >
                                     Rebrew ☕
@@ -337,9 +345,9 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                             initial={{x: 40, filter: 'blur(5px)'}}
                             animate={{x: 0, filter: 'blur(0px)'}}
                             transition={{duration: 0.2}}
-                            className="w-full lg:w-[50%] lg:min-h-[50vh] overflow-y-auto border-bgPrimary lg:border-l-[3px] border-[#888] lg:pl-4 lg:p-2 flex flex-col justify-center items-center"
+                            className={`w-full lg:w-[50%] lg:min-h-[50vh] overflow-y-auto ${isDefaultMode ? 'border-bgPrimary' : 'border-gray-200'} lg:border-l-[3px] border-[#888] lg:pl-4 lg:p-2 flex flex-col justify-center items-center`}
                         >
-                            <div className="bg-bgPrimary rounded-[15px] p-8 w-full h-auto lg:h-[70%] relative transition-all cursor-default">
+                            <div className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} rounded-[15px] p-8 w-full h-auto lg:h-[70%] relative transition-all cursor-default`}>
                                 <div className="flex items-center gap-2 absolute top-4 left-4">
                                     {tags.map((tag, index) => (
                                         <motion.span 
@@ -353,7 +361,7 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
                                                 duration: 0.5
                                             }}
                                             key={index} 
-                                            className="px-3 py-1 rounded-full bg-bgSecondary text-sm"
+                                            className={`px-3 py-1 rounded-full ${isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-200'} text-sm`}
                                         >
                                             #{tag}
                                         </motion.span>

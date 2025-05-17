@@ -9,7 +9,6 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import ChangePassModal from "../Portals/ChangePassModal";
 
-
 export default function ProfileRight({ session, user, setUser }: {session: Session, user: any, setUser: any}) {
     // Split the full name into first and last name
     const [dbFirstName, setDbFirstName] = useState('');
@@ -21,6 +20,12 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
     const [usernameError, setUsernameError] = useState('');
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openChangePassModal, setOpenChangePassModal] = useState(false);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
 
     useEffect(() => {
         const [tdbFirstName, tdbLastName] = user?.name?.split(' ') || ['', ''];
@@ -130,9 +135,9 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="profileRightContainer relative bg-bgSecondary rounded-[15px] px-10 lg:px-16 py-16 z-[11] w-[90%] lg:w-[65%] flex flex-col justify-center items-center gap-10"
+                className={`profileRightContainer relative ${isDefaultMode ? 'bg-bgSecondary text-fontPrimary' : 'bg-gray-200 text-gray-800'} rounded-[15px] px-10 lg:px-16 py-16 z-[11] w-[90%] lg:w-[65%] flex flex-col justify-center items-center gap-10`}
             >
-                <motion.p variants={itemVariants} className="text-fontPrimary text-4xl lgtext-5xl font-thin">
+                <motion.p variants={itemVariants} className="text-4xl lgtext-5xl font-thin">
                     {firstName} {lastName}
                 </motion.p>
 
@@ -143,7 +148,7 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             maxLength={20}
-                            className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
+                            className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none px-6 py-3 rounded-[6px]`}
                             placeholder="First Name"
                         />
                     </div>
@@ -153,7 +158,7 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             maxLength={20}
-                            className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]"
+                            className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none px-6 py-3 rounded-[6px]`}
                             placeholder="Last Name"
                         />
                     </div>
@@ -168,7 +173,7 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                             setUsername(e.target.value)
                             validateUsername(e.target.value)
                         }} 
-                        className={`w-full bg-bgPrimary border-2 selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px] ${
+                        className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} border-2 selection:bg-bgSecondary focus:outline-none px-6 py-3 rounded-[6px] ${
                             usernameError 
                                     ? 'border-red-500' 
                                     : 'border-transparent focus:border-[#2a2a2a]'
@@ -176,14 +181,21 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                     />
                 </motion.div>
                 <motion.div variants={itemVariants} className="relative w-full flex justify-center items-center gap-4">
-                    <input type="text" placeholder="bio" value={bio} maxLength={30} onChange={(e) => setBio(e.target.value)} className="w-full bg-bgPrimary border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none text-fontPrimary px-6 py-3 rounded-[6px]" />
+                    <input 
+                        type="text" 
+                        placeholder="bio" 
+                        value={bio} 
+                        maxLength={30} 
+                        onChange={(e) => setBio(e.target.value)} 
+                        className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} border-2 border-transparent focus:border-[#2a2a2a] selection:bg-bgSecondary focus:outline-none px-6 py-3 rounded-[6px]`} 
+                    />
                 </motion.div>
                 <motion.div variants={itemVariants} className="relative w-full flex justify-center items-center gap-4">
                     <motion.div 
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleDiscard()} 
-                        className="w-full hover:brightness-[0.8] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer"
+                        className={`w-full hover:brightness-[0.8] transition-all duration-100 ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer`}
                     >
                         <p className="text-[#FF6F6F] text-xl">Discard</p>
                     </motion.div>
@@ -191,23 +203,33 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleTransform()} 
-                        className="w-full hover:brightness-[1.2] transition-all duration-100 bg-bgPrimary px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer"
+                        className={`w-full hover:brightness-[1.2] transition-all duration-100 ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} px-6 py-3 rounded-[6px] flex justify-center items-center cursor-pointer`}
                     >
                         <p className="text-[#5FB972] text-xl">Transform</p>
                     </motion.div>
                 </motion.div>
 
-                <motion.div whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} onClick={() => setOpenDeleteModal(true)} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 right-4 rounded-full border-[2px] border-[#FF6F6F] scale-[0.8] cursor-pointer">
-                        <MdDelete color="#FF6F6F" size={12} />
+                <motion.div 
+                    whileHover={{scale: 1.2}} 
+                    whileTap={{scale: 0.8}} 
+                    onClick={() => setOpenDeleteModal(true)} 
+                    className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} p-2 hover:brightness-[0.8] absolute top-4 right-4 rounded-full border-[2px] border-[#FF6F6F] scale-[0.8] cursor-pointer`}
+                >
+                    <MdDelete color="#FF6F6F" size={12} />
                 </motion.div>
                 {user?.hashedPassword &&
-                    <motion.div onClick={() => setOpenChangePassModal(true)} whileHover={{scale: 1.2}} whileTap={{scale: 0.8}} className="bg-bgPrimary p-2 hover:brightness-[0.8] absolute top-4 left-4 rounded-full border-[2px] border-bgPrimary scale-[0.8] cursor-pointer">
+                    <motion.div 
+                        onClick={() => setOpenChangePassModal(true)} 
+                        whileHover={{scale: 1.2}} 
+                        whileTap={{scale: 0.8}} 
+                        className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} p-2 hover:brightness-[0.8] absolute top-4 left-4 rounded-full border-[2px] border-bgPrimary scale-[0.8] cursor-pointer`}
+                    >
                         <Image 
                             src={`/figmaIcons/changePass.svg`}
                             alt="changePassword"
                             width={80}
                             height={100}
-                            className="w-[20px] h-[20px]"
+                            className={`w-[20px] h-[20px] ${isDefaultMode? '' : 'invert-[1]'}`}
                         />
                     </motion.div>
                 }

@@ -45,6 +45,12 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
     const [showGifPicker, setShowGifPicker] = useState(false);
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -173,10 +179,10 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
     };
 
     return (
-        <div className="lg:w-[60%] w-full bg-bgSecondary rounded-[15px] p-5 lg:h-[85vh] flex flex-col gap-4">
+        <div className={`lg:w-[60%] w-full ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} rounded-[15px] p-5 lg:h-[85vh] flex flex-col gap-4`}>
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-semibold">Discussion</h2>
+                    <h2 className={`text-xl font-semibold ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>Discussion</h2>
                     <span className="bg-bgPrimary px-2 py-1 rounded-full text-sm text-gray-400">
                         {messages.length} replies
                     </span>
@@ -189,18 +195,18 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
                 </button>
             </div>
 
-            <div className="flex flex-col justify-center h-full bg-bgPrimary rounded-[15px] p-4 overflow-y-auto">
+            <div className={`flex flex-col justify-center h-full ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} rounded-[15px] p-4 overflow-y-auto`}>
                 <div className="flex flex-col h-[15vh] lg:h-full gap-4">
                     {isLoading ? (
                         <div className="h-full flex items-center justify-center">
-                            <p className="text-gray-400">Loading messages...</p>
+                            <p className={`${isDefaultMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading messages...</p>
                         </div>
                     ) : messages.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center">
-                            <p className="text-gray-400 font-medium">
+                            <p className={`${isDefaultMode ? 'text-gray-400' : 'text-gray-600'} font-medium`}>
                                 No Discussions yet
                             </p>
-                            <p className="text-gray-500 text-sm">
+                            <p className={`${isDefaultMode ? 'text-gray-500' : 'text-gray-500'} text-sm`}>
                                 Be the first one to join the discussion!
                             </p>
                         </div>
@@ -239,13 +245,13 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
                                             </>
                                         )}
                                         <div className={`mb-1 ${msg.userId === user._id ? "text-right mr-2" : "text-left ml-2"}`}>
-                                            <span className="text-sm text-right font-semibold">{msg.userName}</span>
+                                            <span className={`text-sm text-right font-semibold ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{msg.userName}</span>
                                         </div>
                                         <div className={`${msg.type === "gif" ? "px-2" : "px-4"} py-2 rounded-[20px] ${
                                             msg.userId === user._id 
-                                                ? 'bg-bgSecondary text-fontPrimary' 
-                                                : 'bg-[#1b1b1b] text-fontPrimary'
-                                        } relative`}>
+                                                ? isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-200'
+                                                : isDefaultMode ? 'bg-[#1b1b1b]' : 'bg-gray-300'
+                                        } ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} relative`}>
                                             <div className={`absolute z-[150] ${
                                                 msg.userId === user._id 
                                                     ? 'left-0 -translate-x-[24px]' 
@@ -253,19 +259,19 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
                                             } top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity`}>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger>
-                                                        <div className="p-1 hover:bg-bgSecondary rounded-full transition-colors">
-                                                            <CiMenuKebab size={16} className="text-fontPrimary opacity-60" />
+                                                        <div className={`p-1 ${isDefaultMode ? 'hover:bg-bgSecondary' : 'hover:bg-gray-200'} rounded-full transition-colors`}>
+                                                            <CiMenuKebab size={16} className={`${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} opacity-60`} />
                                                         </div>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent 
                                                         align={msg.userId === user._id ? "start" : "end"} 
                                                         side={msg.userId === user._id ? "left" : "right"} 
                                                         sideOffset={8} 
-                                                        className="z-[200] bg-bgPrimary text-fontPrimary text-sm border-[#666] p-1"
+                                                        className={`z-[200] ${isDefaultMode ? 'bg-bgPrimary' : 'bg-white'} ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} text-sm border-[#666] p-1`}
                                                     >
                                                         <DropdownMenuItem 
                                                             onClick={() => setReplyingTo(msg)}
-                                                            className="sulphur cursor-pointer focus:bg-[#1B1B1B] focus:text-fontPrimary"
+                                                            className={`sulphur cursor-pointer ${isDefaultMode ? 'focus:bg-[#1B1B1B]' : 'focus:bg-gray-200'} ${isDefaultMode ? 'focus:text-fontPrimary' : 'focus:text-gray-800'}`}
                                                         >
                                                             <p className="w-full text-center p-1 rounded-[6px]">
                                                                 Reply
@@ -274,7 +280,7 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
                                                         {msg.userId === user._id && (
                                                             <DropdownMenuItem 
                                                                 onClick={() => deleteMessage(msg.id)}
-                                                                className="sulphur cursor-pointer focus:bg-[#1B1B1B] focus:text-[#FF6F6F]"
+                                                                className={`sulphur cursor-pointer ${isDefaultMode ? 'focus:bg-[#1B1B1B]' : 'focus:bg-gray-200'} focus:text-[#FF6F6F]`}
                                                             >
                                                                 <p className="w-full text-center p-1 rounded-[6px] text-[#FF6F6F]">
                                                                     Delete
@@ -324,14 +330,14 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
                         ))
                     )}
                 </div>
-                <div ref={messagesEndRef} /> {/* Add this div at the end of messages */}
+                <div ref={messagesEndRef} />
             </div>
 
             {
                 tea?.isOpen &&
                 <div className="yapTypeSection w-full">
                     {replyingTo && (
-                        <div className="flex items-center justify-between bg-bgPrimary rounded-[15px] p-3 mb-2">
+                        <div className={`flex items-center justify-between ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} rounded-[15px] p-3 mb-2`}>
                             <div className="flex items-center gap-2">
                                 <div className="w-1 h-6 bg-[#666] rounded-full"></div>
                                 <div>
@@ -359,7 +365,7 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
                                     placeholder="Type your message..."
                                     minRows={1}
                                     maxRows={4}
-                                    className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5"
+                                    className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-5`}
                                 />
                             </div>
                             <div className="flex relative justify-center items-center gap-2">
@@ -392,5 +398,5 @@ export default function TeaDiscussionReplyThread({ setShowTeaDiscussion, discuss
                 </div>
             }
         </div>
-    )
+    );
 }

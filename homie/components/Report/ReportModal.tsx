@@ -19,6 +19,12 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
     const [canShowModal, setCanShowModal] = useState(false);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
 
     const checkExistingReport = async () => {
         if (!isOpen) {
@@ -118,7 +124,7 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-bgSecondary rounded-[15px] p-6"
+                            className={`${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} rounded-[15px] p-6`}
                         >
                             <div className="flex items-center justify-center">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-fontPrimary"></div>
@@ -140,28 +146,27 @@ export default function ReportModal({ isOpen, onClose, reportedContentId, curren
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.95, opacity: 0 }}
-                        className="fixed z-[120] lg:w-[32%] w-[90%] translate-x-[-50%] translate-y-[-50%] bg-bgSecondary rounded-[15px] p-6"
+                        className={`fixed z-[120] lg:w-[32%] w-[90%] translate-x-[-50%] translate-y-[-50%] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} rounded-[15px] p-6`}
                     >
-                        <h2 className="text-2xl text-center font-bold text-fontPrimary mb-4">Report</h2>
+                        <h2 className={`text-2xl text-center font-bold ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} mb-4`}>Report</h2>
                         
-
                         <textarea
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
                             placeholder="Please describe the reason for reporting..."
-                            className="w-full h-32 p-3 rounded-lg bg-bgPrimary text-fontPrimary border-[2px] border-transparent selection:bg-bgSecondary focus:outline-none focus:border-[#888] resize-none"
+                            className={`w-full h-32 p-3 rounded-lg ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} border-[2px] border-transparent selection:bg-bgSecondary focus:outline-none focus:border-[#888] resize-none`}
                         />
                         <div className="flex justify-center items-center gap-3 mt-4">
                             <button
                                 onClick={onClose}
-                                className="px-4 py-2 w-full rounded-lg bg-bgPrimary text-fontPrimary hover:brightness-90"
+                                className={`px-4 py-2 w-full rounded-lg ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} hover:brightness-90`}
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleSubmit}
                                 disabled={isSubmitting}
-                                className="px-4 py-2 w-full rounded-lg bg-bgPrimary text-red-400 hover:brightness-90 disabled:opacity-50"
+                                className={`px-4 py-2 w-full rounded-lg ${isDefaultMode ? 'bg-bgPrimary text-red-400' : 'bg-gray-100 text-red-500'} hover:brightness-90 disabled:opacity-50`}
                             >
                                 {isSubmitting ? "Submitting..." : "Submit Report"}
                             </button>

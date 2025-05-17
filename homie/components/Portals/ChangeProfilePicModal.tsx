@@ -14,6 +14,12 @@ export default function ChangeProfilePicModal( {openChangeProfileModal, setOpenC
     
     const [currentImage, setCurrentImage] = useState(user.image || "");
     const [currentFile, setCurrentFile] = useState(user.image);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
     
     useEffect(() => {
         setCurrentImage(user.image || "");
@@ -97,7 +103,7 @@ export default function ChangeProfilePicModal( {openChangeProfileModal, setOpenC
             }} className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm">
 
             </div>
-            <div className="fixed px-10 w-[70%] md:w-auto lg:px-16 py-8 flex justify-center lg:scale-[1.2] items-center rounded-[15px] bg-bgSecondary top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary">
+            <div className={`fixed px-10 w-[70%] md:w-auto lg:px-16 py-8 flex justify-center lg:scale-[1.2] items-center rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary text-fontPrimary' : 'bg-white text-gray-800'} top-[50%] z-[100] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur`}>
                 <motion.form onSubmit={(e) => e.preventDefault()} className="w-full h-full flex justify-center items-center gap-5 lg:gap-10"> 
                     <motion.div initial={{scale: 0.5}} animate={{scale: 1}} className="w-full">
                         <Image 
@@ -105,15 +111,12 @@ export default function ChangeProfilePicModal( {openChangeProfileModal, setOpenC
                             alt="userProfileImage"
                             width={200}
                             height={200}
-                            className="w-[150px] h-[150px] bg-bgPrimary rounded-full p-5 aspect-square object-cover"
+                            className={`w-[150px] h-[150px] ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} rounded-full p-5 aspect-square object-cover`}
                         />
                     </motion.div>
                     <div className="flex flex-col justify-center items-center gap-4">
-                        <motion.label initial={{scale: 0}} animate={{scale: 1}} transition={{duration: 0.2, ease: "linear"}} htmlFor="file" className="cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] border-[#c9c9c9] p-2 rounded-full" >
-                            <IoIosImages color="#c9c9c9" size={20}/>
-                            {/* <div>
-                                <p className="text-xl">Change Pic</p>
-                            </div> */}
+                        <motion.label initial={{scale: 0}} animate={{scale: 1}} transition={{duration: 0.2, ease: "linear"}} htmlFor="file" className={`cursor-pointer hover:brightness-[8] transition-all duration-100 flex justify-center items-center gap-2 border-[2px] ${isDefaultMode ? 'border-[#c9c9c9]' : 'border-gray-400'} p-2 rounded-full`}>
+                            <IoIosImages color={isDefaultMode ? "#c9c9c9" : "#666"} size={20}/>
                         </motion.label>
                         <input className="hidden" type="file" accept="image/*" name="file" id="file" onChange={(e) => handlePicChange(e.target.files?.[0])} />
                         <motion.div initial={{scale: 0}} animate={{scale: 1}} transition={{duration: 0.2, ease: "linear"}} onClick={() => handleImageAccept()} className="border-[2px] hover:brightness-[1.5] transition-all duration-150 cursor-pointer p-2 rounded-full border-[#5FB972]">
@@ -124,8 +127,8 @@ export default function ChangeProfilePicModal( {openChangeProfileModal, setOpenC
                 <div onClick={() => {
                     setOpenChangeProfileModal(false)
                     setCurrentImage(user.image || "")
-                }} className="absolute hover:brightness-[3] transition-all duration-100 cursor-pointer top-2 right-2 flex justify-center items-center p-1 rounded-full border-[2px] border-bgPrimary">
-                    <RxCross2 size={12} color="2a2a2a"/>
+                }} className={`absolute hover:brightness-[3] transition-all duration-100 cursor-pointer top-2 right-2 flex justify-center items-center p-1 rounded-full border-[2px] ${isDefaultMode ? 'border-bgPrimary' : 'border-gray-300'}`}>
+                    <RxCross2 size={12} color={isDefaultMode ? "2a2a2a" : "666666"}/>
                 </div>
             </div>
         </>

@@ -7,12 +7,18 @@ import { useEffect, useState } from "react"
 
 export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal: (value: boolean) => void }) {
     const [mounted, setMounted] = useState(false);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
 
     useEffect(() => {
         setMounted(true);
         return () => setMounted(false);
     }, []);
-    
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
+
     const handleLogout = async () => {
         await logout();
     };
@@ -31,7 +37,7 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
             />
             <div 
                 key="modal"
-                className="fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] bg-bgSecondary top-[50%] z-[310] left-[50%] translate-x-[-50%] translate-y-[-50%] sulphur text-fontPrimary"
+                className={`fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} top-[50%] z-[310] left-[50%] translate-x-[-50%] translate-y-[-50%] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}
             >
                 <motion.p 
                     initial={{ y: -20 }}
@@ -44,7 +50,7 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     whileHover={{ scale: 1.02 }}
-                    className="bg-bgPrimary p-10 rounded-[15px] w-full flex justify-center items-center"
+                    className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} p-10 rounded-[15px] w-full flex justify-center items-center`}
                 >
                     <p className="text-center">Taking a break? See you bilis! 👋</p>
                 </motion.div>
@@ -53,7 +59,7 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setOpenLogOutModal(false)} 
-                        className="w-full cursor-pointer rounded-[15px] p-2 gap-2 bg-bgPrimary flex justify-center items-center"
+                        className={`w-full cursor-pointer rounded-[15px] p-2 gap-2 ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} flex justify-center items-center`}
                     >
                         <p>Stay</p>
                     </motion.div>
@@ -61,7 +67,7 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleLogout} 
-                        className="w-full cursor-pointer rounded-[15px] p-2 bg-bgPrimary text-[#d45353] flex justify-center items-center"
+                        className={`w-full cursor-pointer rounded-[15px] p-2 ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} text-[#d45353] flex justify-center items-center`}
                     >
                         <p>Logout</p>
                     </motion.div>

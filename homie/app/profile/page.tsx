@@ -11,7 +11,7 @@ export default async function Profile() {
     }
     // console.log(session)
     return (
-        <div className="profileContainer z-5 bg-bgPrimary text-fontPrimary sulphur py-20 lg:py-0 lg:w-[65%] flex flex-col lg:flex-row items-center justify-center lg:items-center lg:justify-center gap-10">
+        <div className="profileContainer z-5 sulphur py-20 lg:py-0 lg:w-[65%] flex flex-col lg:flex-row items-center justify-center lg:items-center lg:justify-center gap-10">
             {/* <Suspense fallback={<ProfileLoading />}>
                 <ProfileLeft session={session} />
                 <ProfileRight session={session} />

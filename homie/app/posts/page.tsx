@@ -11,7 +11,7 @@ export default async function PostRoute() {
   }
 
   return (
-    <div className="min-h-screen bg-bgPrimary text-fontPrimary w-full">
+    <div className="min-h-screen text-fontPrimary w-full">
       <HomePage/>
     </div>
   );
