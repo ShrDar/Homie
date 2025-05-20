@@ -92,7 +92,7 @@ export default function PostReactions({ post, setPosts, setShowPostReaction, use
                 }}
                 className="postReactions z-100 absolute rounded-[15px]"
             >
-                <div className='flex gap-3'>
+                <div className='flex gap-3 translate-x-[-55px] lg:translate-x-0'>
                     {reactionButtons.map((button, index) => {
                         const isReacted = hasUserReacted(button.type);
                         return (

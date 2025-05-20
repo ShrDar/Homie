@@ -37,7 +37,7 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
             />
             <div 
                 key="modal"
-                className={`fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} top-[50%] z-[310] left-[50%] translate-x-[-50%] translate-y-[-50%] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}
+                className={`fixed p-10 w-[70%] md:w-[50%] lg:w-[30%] flex flex-col gap-8 justify-center items-center rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} top-[50%] z-[310] left-[50%] translate-x-[-50%] translate-y-[-50%] ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} sulphur`}
             >
                 <motion.p 
                     initial={{ y: -20 }}

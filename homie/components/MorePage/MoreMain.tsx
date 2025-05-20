@@ -22,7 +22,7 @@ export default function MoreMain({ session }: { session: Session }) {
     }, []);
 
     return (
-        <div className={`w-[80%] h-[60%] lg:w-[60%] lg:h-[70%] border-[2px] border-[#666] text-[#fff] flex lg:justify-between items-center rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-100'} overflow-hidden`}>
+        <div className={`w-[95%] h-[60%] lg:w-[60%] lg:h-[70%] border-[2px] border-[#666] text-[#fff] flex lg:justify-between items-center rounded-[15px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-gray-100'} overflow-hidden`}>
            
             <div className={`flex flex-col border-r-[2px] border-[#666] lg:w-[30%] h-full`}>
                 <div 
@@ -48,7 +48,7 @@ export default function MoreMain({ session }: { session: Session }) {
                     <p>Appearance</p>
                 </div>
                 <div 
-                    className={`sideBarItem cursor-pointer flex justify-start items-center gap-2 p-3 py-5 ${
+                    className={`sideBarItem cursor-pointer hidden lg:flex justify-start items-center gap-2 p-3 py-5 ${
                         selectedOption === 'slidebar' 
                         ? (isDefaultMode ? 'bg-bgPrimary' : 'bg-blue-100') 
                         : ''
@@ -70,7 +70,7 @@ export default function MoreMain({ session }: { session: Session }) {
                     <p>Shortcuts</p>
                 </div>
                 <div 
-                    className={`sideBarItem cursor-pointer hidden lg:flex justify-start items-center gap-2 p-3 py-5 ${
+                    className={`sideBarItem cursor-pointer flex justify-start items-center gap-2 p-3 py-5 ${
                         selectedOption === 'exit' 
                         ? (isDefaultMode ? 'bg-bgPrimary' : 'bg-blue-100') 
                         : ''

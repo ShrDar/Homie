@@ -120,9 +120,3 @@ html {
     @apply bg-background text-foreground;
     }
 }
-/* .lightTheme {
-    --bgPrimary: #F4F4F9; 
-    --bgSecondary: #E1E1E6; 
-    --fontPrimary: #000;
-    --borderPrimary: #2d2d2d;
-} */

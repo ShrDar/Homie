@@ -85,7 +85,7 @@ export default async function RootLayout({
               toast: "sulphur"
             }
           }} />
-
+          
           {session && <PageTitle />}
           {session && <Onboarding session={session} />}
           {session && <Shortcuts />}

@@ -472,7 +472,7 @@ export default function Posts({session} : {session: Session}) {
                                 <div className={`${isMoreThanOne ? "text-sm" : "text-xl"}`}>
                                   {currentEmoji}
                                 </div>
-                                <span className={`${
+                                <span className={`lg:flex hidden ${
                                   hasUserReacted ? '' : ''
                                 }`}>
                                   {hasUserReacted ? currentReactionName : 'Reactions'}
@@ -488,7 +488,7 @@ export default function Posts({session} : {session: Session}) {
                         className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-200'} text-[#888] px-4 py-2 rounded-full hover:brightness-110 hover:text-[#fff] transition-all flex justify-center items-center gap-2`}
                         >
                           <BiCommentDetail className="w-5 h-5" />
-                          <p>Comment</p>
+                          <p className='hidden lg:flex'>Comment</p>
                         </button>
                         </div>
                     </div>

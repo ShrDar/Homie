@@ -15,7 +15,7 @@ export default function MoreExit() {
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6 h-full flex flex-col gap-6">
-      <h2 className={`text-xl lg:text-2xl font-semibold ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>
+      <h2 className={`text-xl lg:text-2xl text-center font-semibold ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>
         Exit
       </h2>
       

@@ -172,7 +172,7 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
         transition={{ duration: 0.2 }}
         className={`fixed w-[90vw] md:w-[60vw] sulphur lg:w-[40vw] max-h-[60vh] overflow-y-auto top-[50%] left-[50%] z-[1000] translate-x-[-50%] translate-y-[-50%] ${
           isDefaultMode ? 'bg-bgPrimary' : 'bg-white'
-        } rounded-[15px] p-4 lg:min-h-[60vh] flex flex-col`}
+        } rounded-[15px] p-4 min-h-[60vh] flex flex-col`}
       >
         <div className="flex justify-between items-center my-3">
           <p className={`text-[#fff] text-lg ml-2 ${

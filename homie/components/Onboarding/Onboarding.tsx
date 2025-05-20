@@ -6,14 +6,14 @@ import { createPortal } from 'react-dom';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import { Session } from 'next-auth';
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, onSnapshot } from "firebase/firestore";
 import { db } from '@/config/firebase';
 
 export default function Onboarding({ session }: { session: Session | null }) {
     const userId = session?.user?.id;
     const [currentStep, setCurrentStep] = useState(0); 
     const [isClient, setIsClient] = useState(false);
-    const [showOnboarding, setShowOnboarding] = useState(true);
+    const [showOnboarding, setShowOnboarding] = useState(false);
     const [allowNotification, setAllowNotification] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     
@@ -121,12 +121,57 @@ export default function Onboarding({ session }: { session: Session | null }) {
     const totalSteps = stepsContent.length;
     
     useEffect(() => {
+        const checkOnboardingStatus = async () => {
+            if (!userId) return;
+
+            try {
+                const userNotificationDoc = doc(db, "Notifications", userId);
+                
+                // Set up real-time listener
+                const unsubscribe = onSnapshot(userNotificationDoc, (docSnap) => {
+                    if (!docSnap.exists()) {
+                        // Create initial document if it doesn't exist
+                        setDoc(userNotificationDoc, {
+                            userId,
+                            allowNoti: false,
+                            hasCompletedOnboarding: false,
+                            preferences: {
+                                allowPostNofi: false,
+                                allowTeasNoti: false,
+                                allowMessagesNoti: false
+                            },
+                            notifications: [],
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        });
+                        setShowOnboarding(true);
+                    } else {
+                        const data = docSnap.data();
+                        if (!data.hasCompletedOnboarding) {
+                            setShowOnboarding(true);
+                            setAllowNotification(data.allowNoti || false);
+                        } else {
+                            setShowOnboarding(false);
+                        }
+                    }
+                }, (error) => {
+                    console.error("Error listening to onboarding status:", error);
+                    setShowOnboarding(false);
+                });
+
+                // Cleanup subscription on unmount
+                return () => unsubscribe();
+            } catch (error) {
+                console.error("Error checking onboarding status:", error);
+                setShowOnboarding(false);
+            }
+        };
+
         setIsClient(true);
-        const hasCompletedOnboarding = localStorage.getItem('hasCompletedOnboarding');
-        if (hasCompletedOnboarding === 'true') {
-            setShowOnboarding(false);
+        if (userId) {
+            checkOnboardingStatus();
         }
-    }, []);
+    }, [userId]);
 
     const handleNext = async () => {
         if (currentStep < totalSteps - 1) { 
@@ -138,6 +183,7 @@ export default function Onboarding({ session }: { session: Session | null }) {
                     await setDoc(doc(db, "Notifications", userId), {
                         userId,
                         allowNoti: allowNotification,
+                        hasCompletedOnboarding: true,
                         preferences: {
                             allowPostNofi: allowNotification,
                             allowTeasNoti: allowNotification,
@@ -155,7 +201,6 @@ export default function Onboarding({ session }: { session: Session | null }) {
             }
             
             setShowOnboarding(false);
-            localStorage.setItem('hasCompletedOnboarding', 'true');
         }
     };
 

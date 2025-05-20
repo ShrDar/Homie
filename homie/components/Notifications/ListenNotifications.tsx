@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface Notification {
   message: string;
@@ -28,6 +28,7 @@ interface NotificationPreferences {
 export default function ListenNotifications({ session }: { session: Session | null | undefined }) {
   const userId = session?.user?.id;
   const router = useRouter();
+  const pathname = usePathname();
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
 
   // Handle notification permission separately
@@ -101,6 +102,28 @@ export default function ListenNotifications({ session }: { session: Session | nu
 
       if (!isNotificationAllowed) return;
 
+      // Check if user is already on the same yap route for message notifications
+      if (latestNotification.type === 'message' && 
+          latestNotification.yapId && 
+          pathname === `/yap/${latestNotification.yapId}`) {
+        // Update the shownOnToast flag without showing notification
+        try {
+          const updatedNotifications = notifications.map((notification, index) => {
+            if (index === latestUnshownIndex) {
+              return { ...notification, shownOnToast: true };
+            }
+            return notification;
+          });
+
+          await updateDoc(userDocRef, {
+            notifications: updatedNotifications,
+          });
+        } catch (error) {
+          console.error("Error updating notification shownOnToast status:", error);
+        }
+        return;
+      }
+
       // Function to handle navigation based on notification type
       const handleNavigation = () => {
         switch (latestNotification.type) {
@@ -165,7 +188,7 @@ export default function ListenNotifications({ session }: { session: Session | nu
     });
 
     return () => unsubscribe();
-  }, [userId, notificationPermission, router]); // Add router to dependencies
+  }, [userId, notificationPermission, router, pathname]); // Add pathname to dependencies
 
   return null;
 }

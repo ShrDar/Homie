@@ -11,7 +11,7 @@ export default function MoreShortcuts() {
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6 h-full flex flex-col gap-3">
-      <h2 className={`text-2xl font-semibold ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-600'}`}>
+      <h2 className={`text-2xl text-center font-semibold ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-600'}`}>
         Keyboard Shortcuts
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

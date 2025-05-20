@@ -14,6 +14,7 @@ import { LuEarth, LuSettings2 } from "react-icons/lu";
 import { TbCoffee } from "react-icons/tb"
 import { logout } from "@/actions/auth";
 import { IoLogOutOutline } from "react-icons/io5";
+import HandleNotificationResponsive from "../Notifications/HandleNotificationResponsive";
 
 export default function SlideBar( {session} : {session: Session} ) {
 
@@ -164,7 +165,9 @@ export default function SlideBar( {session} : {session: Session} ) {
                         </div>
 
                     </div>
-                    
+                    <div className="absolute left-4 top-5 scale-[0.8]">
+                        <HandleNotificationResponsive session={session} />
+                    </div>
                 </div>  
                 <div className="absolute bottom-0 w-[80%] text-lg font-thin p-2 pl-5 mb-10 bg-bgPrimary flex justify-center items-center rounded-[15px]">
                     <button 

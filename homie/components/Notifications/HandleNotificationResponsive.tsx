@@ -16,20 +16,7 @@ interface Notification {
   shownOnToast: boolean;
 }
 
-const handleNotificationBellPositioning = (pathname: string): string => {
-  const defaultPosition = "translate-y-[-80px]";
-  
-  if (pathname === "/") return "translate-y-[-80px]";
-  if (pathname === "/yap") return "translate-y-[-55px]";
-  if (pathname === "/profile") return "translate-y-[-90px]";
-  if (pathname === "/homies") return "translate-y-[-85px]";
-  if (pathname === "/teas") return "translate-y-[-65px]";
-  if (pathname === "/more") return "translate-y-[-65px]";
-  
-  return defaultPosition;
-};
-
-export default function HandleNotification({ session }: { session: Session }) {
+export default function HandleNotificationResponsive({ session }: { session: Session }) {
   const pathname = usePathname();
   const [openNotifications, setOpenNotifications] = useState(false);
   const [hasUnread, setHasUnread] = useState(false); // State for unread status
@@ -68,7 +55,7 @@ export default function HandleNotification({ session }: { session: Session }) {
   return (
     <>
       <div
-        className={`hidden md:flex fixed right-7 cursor-pointer ${handleNotificationBellPositioning(pathname)} border-[2px] border-[#666] rounded-full text-[#666] hover:brightness-[2] p-2 transition-all duration-200`} 
+        className={`right-7 cursor-pointer border-[2px] border-[#666] rounded-full text-[#666] hover:brightness-[2] p-2 transition-all duration-200`} 
         onClick={() => setOpenNotifications(true)}
       >
         <MdNotifications size={18} className="" />
