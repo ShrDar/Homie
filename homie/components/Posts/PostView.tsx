@@ -9,9 +9,16 @@ import ImageViewer from "../Image/ImageViewer";
 export default function PostView({post} : {post: Post}) {
     const router = useRouter();
     const [postUser, setPostUser] = useState<any>(null);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
     
     const [openImageViewer, setOpenImageViewer] = useState(false);
     const [currentImage, setCurrentImage] = useState<string | "">("");
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
+
     function getRelativeTime(dateString: string): string {
         const date = new Date(dateString);
         const now = new Date();
@@ -54,9 +61,9 @@ export default function PostView({post} : {post: Post}) {
                 initial={{ scale: 0.98 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className={`w-full h-full flex rounded-[15px] ${post.image ? "bg-bgPrimary" : "bg-[#43434364]"}`}
+                className={`w-full h-full flex rounded-[15px] ${post.image ? isDefaultMode ? "bg-bgPrimary" : "bg-gray-100" : isDefaultMode ? "bg-[#43434364]" : "bg-gray-200"}`}
             >
-                <div className={`bg-bgSecondary w-full rounded-[15px] p-4 flex flex-col gap-4 ${!post.image ? 'my-auto h-fit' : 'h-full'}`}>
+                <div className={`${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} w-full rounded-[15px] p-4 flex flex-col gap-4 ${!post.image ? 'my-auto h-fit' : 'h-full'}`}>
                     <motion.div 
                         initial={{ y: -10, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -68,7 +75,7 @@ export default function PostView({post} : {post: Post}) {
                             whileTap={{ scale: 0.98 }}
                             transition={{ duration: 0.2 }}
                             onClick={() => router.push(`/homie/${postUser?._id}`)} 
-                            className="w-12 h-12 cursor-pointer rounded-full overflow-hidden bg-bgPrimary"
+                            className={`w-12 h-12 cursor-pointer rounded-full overflow-hidden ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'}`}
                         >
                             {postUser?.image ? (
                                 <Image
@@ -79,7 +86,7 @@ export default function PostView({post} : {post: Post}) {
                                     className="w-full h-full aspect-auto object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-full bg-bgPrimary" />
+                                <div className={`w-full h-full ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'}`} />
                             )}
                         </motion.div>
                         <motion.div
@@ -87,8 +94,8 @@ export default function PostView({post} : {post: Post}) {
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <h3 className="text-fontPrimary">{postUser?.name || 'Anonymous'}</h3>
-                            <p className="text-sm opacity-60">
+                            <h3 className={`${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{postUser?.name || 'Anonymous'}</h3>
+                            <p className={`text-sm ${isDefaultMode ? 'opacity-60' : 'text-gray-500'}`}>
                                 {getRelativeTime(post.createdAt)}
                                 {post.isEdited && post.updatedAt !== post.createdAt && " 🖊"}
                             </p>
@@ -99,7 +106,7 @@ export default function PostView({post} : {post: Post}) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.3 }}
-                        className={`text-fontPrimary leading-[30px] whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[20vh]"} p-2 overflow-y-auto`}
+                        className={`${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'} leading-[30px] whitespace-pre-wrap ${post.image ? "lg:max-h-[20vh] min-h-[7vh]" : "max-h-[20vh]"} p-2 overflow-y-auto`}
                     >
                         {post.content}
                     </motion.p>
@@ -109,7 +116,7 @@ export default function PostView({post} : {post: Post}) {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.4 }}
-                            className="w-full h-full bg-primary rounded-[15px] relative cursor-pointer hover:brightness-[0.9]"
+                            className={`w-full h-full ${isDefaultMode ? 'bg-primary' : 'bg-gray-100'} rounded-[15px] relative cursor-pointer hover:brightness-[0.9]`}
                             onClick={() => {
                                 setOpenImageViewer(true);
                                 setCurrentImage(post?.image || "");
@@ -120,7 +127,7 @@ export default function PostView({post} : {post: Post}) {
                                 alt={post.title || "Post image"}
                                 width={500}
                                 height={500}
-                                className="object-contain  w-full rounded-[15px]"
+                                className="object-contain w-full rounded-[15px]"
                             />
                         </motion.div>
                     )}

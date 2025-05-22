@@ -24,6 +24,12 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
     const [showGifPicker, setShowGifPicker] = useState(false);
     const [comments, setComments] = useState<any[]>([]);
     const router = useRouter();
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
 
     useEffect(() => {
         if (openPostCommentModal && currentCommentPost?.commentId) {
@@ -143,9 +149,9 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                     className='fixed w-[90%] md:w-[60%] top-[50%] left-[50%] z-[100] translate-x-[-50%] translate-y-[-50%] flex justify-center items-center gap-3'
                 >
                     <PostView post={currentCommentPost} />
-                    <div className="w-full max-w-[500px] bg-bgSecondary rounded-[15px] p-5">
-                        <div className="w-full h-[400px] bg-bgPrimary rounded-[15px] mb-4 p-4 flex flex-col items-center justify-center">
-                            <div className="text-[#666] text-center">
+                    <div className={`w-full max-w-[500px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} rounded-[15px] p-5`}>
+                        <div className={`w-full h-[400px] ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} rounded-[15px] mb-4 p-4 flex flex-col items-center justify-center`}>
+                            <div className={`text-[#666] text-center`}>
                                 <p className="text-lg mb-1">No comments yet</p>
                                 <p className="text-sm">Be the first homie to comment</p>
                             </div>
@@ -161,7 +167,7 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                                         placeholder="Write a comment..."
                                         minRows={1}
                                         maxRows={4}
-                                        className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-[1.6rem]"
+                                        className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-[1.6rem]`}
                                     />
                                 </div>
                                 <div className="flex relative justify-center items-center gap-2">
@@ -180,7 +186,7 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                                 </div>
                                 <button
                                     type="submit"
-                                    className="bg-bgPrimary text-fontPrimary px-6 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center"
+                                    className={`${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} px-6 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center`}
                                 >
                                     Drop
                                 </button>
@@ -204,8 +210,8 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                 className='fixed w-[90%] md:w-[60%] top-[50%] left-[50%] z-[100] translate-x-[-50%] translate-y-[-50%] flex justify-center items-center gap-3'
             >
                 <PostView post={currentCommentPost} />
-                <div className="w-full max-w-[500px] bg-bgSecondary rounded-[15px] p-5">
-                    <div className="w-full h-[400px] bg-bgPrimary rounded-[15px] mb-4 p-4 overflow-y-auto">
+                <div className={`w-full max-w-[500px] ${isDefaultMode ? 'bg-bgSecondary' : 'bg-white'} rounded-[15px] p-5`}>
+                    <div className={`w-full h-[400px] ${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} rounded-[15px] mb-4 p-4 overflow-y-auto`}>
                         <div className="flex flex-col gap-3">
                             {comments.map((comment) => (
                                 <motion.div 
@@ -230,14 +236,13 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                                         )}
                                         
                                         <div className={`group relative max-w-[65%] ${comment.userId === user._id ? 'order-1' : 'order-2'}`}>
-                                            
                                             <div className={`mb-1 ${comment.userId === user._id ? "text-right mr-2" : "text-left ml-2"}`}>
-                                                    <span className="text-sm text-right font-semibold">{comment.userName}</span>
+                                                <span className={`text-sm text-right font-semibold ${isDefaultMode ? 'text-fontPrimary' : 'text-gray-800'}`}>{comment.userName}</span>
                                             </div>
                                             <div className={`${comment.type === "gif" ? "px-2" : "px-4"} py-2 rounded-[20px] ${
                                                 comment.userId === user._id 
-                                                    ? 'bg-bgSecondary text-fontPrimary' 
-                                                    : 'bg-[#1b1b1b] text-fontPrimary'
+                                                    ? isDefaultMode ? 'bg-bgSecondary text-fontPrimary' : 'bg-gray-200 text-gray-800'
+                                                    : isDefaultMode ? 'bg-[#1b1b1b] text-fontPrimary' : 'bg-gray-300 text-gray-800'
                                             } relative`}>
                                                 {comment.userId === user._id && (
                                                     <div className="absolute z-[150] left-0 top-1/2 -translate-y-1/2 -translate-x-[24px] opacity-0 group-hover:opacity-100 transition-opacity">
@@ -308,7 +313,7 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                                     placeholder="Write a comment..."
                                     minRows={1}
                                     maxRows={4}
-                                    className="w-full bg-bgPrimary text-fontPrimary selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-[1.6rem]"
+                                    className={`w-full ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} selection:bg-bgSecondary overflow-hidden rounded-[15px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#666] resize-none leading-[1.6rem]`}
                                 />
                             </div>
                             <div className="flex relative justify-center items-center gap-2">
@@ -327,7 +332,7 @@ export default function PostsComment({ openPostCommentModal, setOpenPostCommentM
                             </div>
                             <button
                                 type="submit"
-                                className="bg-bgPrimary text-fontPrimary px-6 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center"
+                                className={`${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} px-6 h-10 rounded-full hover:bg-[#1b1b1b] transition-colors flex items-center justify-center`}
                             >
                                 Post
                             </button>

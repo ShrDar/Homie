@@ -20,11 +20,11 @@ const handleNotificationBellPositioning = (pathname: string): string => {
   const defaultPosition = "translate-y-[-80px]";
   
   if (pathname === "/") return "translate-y-[-80px]";
-  if (pathname === "/yap") return "translate-y-[-55px]";
-  if (pathname === "/profile") return "translate-y-[-90px]";
-  if (pathname === "/homies") return "translate-y-[-85px]";
-  if (pathname === "/teas") return "translate-y-[-65px]";
-  if (pathname === "/more") return "translate-y-[-65px]";
+  if (pathname.includes("/yap")) return "translate-y-[-55px]";
+  if (pathname.includes("/profile")) return "translate-y-[-90px]";
+  if (pathname.includes("/homies")) return "translate-y-[-85px]";
+  if (pathname.includes("/teas")) return "translate-y-[-65px]";
+  if (pathname.includes("/more")) return "translate-y-[-65px]";
   
   return defaultPosition;
 };

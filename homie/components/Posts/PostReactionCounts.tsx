@@ -13,6 +13,12 @@ export default function PostReactionCounts({ setShowPostReactionCount, post }: {
     const [users, setUsers] = useState<HomieUser[]>([]);
     const [currentSelectedReaction, setCurrentSelectedReaction] = useState("dap");
     const [isLoading, setIsLoading] = useState(true);
+    const [isDefaultMode, setIsDefaultMode] = useState(true);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }, []);
     
     useEffect(() => {
         const fetchUsers = async () => {
@@ -49,7 +55,7 @@ export default function PostReactionCounts({ setShowPostReactionCount, post }: {
                 animate={{ opacity: 1 }}
                 className="fixed top-[50%] z-[90] left-[50%] translate-x-[-50%] translate-y-[-50%] h-screen w-full bg-[#000] bg-opacity-50 backdrop-blur-sm"
             />
-            <div className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-[100] bg-bgPrimary rounded-xl p-3 w-[90%] md:w-[400px] h-[60vh]">
+            <div className={`fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-[100] ${isDefaultMode ? "bg-bgPrimary text-fontPrimary" : "bg-[#fff] text-gray-800"} rounded-xl p-3 w-[90%] md:w-[400px] h-[60vh]`}>
                 <div className="flex flex-col items-center justify-center gap-2 h-[calc(100%-2rem)]">
                     <motion.div 
                         layout
@@ -68,7 +74,7 @@ export default function PostReactionCounts({ setShowPostReactionCount, post }: {
                                         onClick={() => setCurrentSelectedReaction(button.type)}
                                     >
                                         <div 
-                                            className={`flex items-center gap-2 p-2 rounded-lg ${currentSelectedReaction === button.type ? 'scale-110 bg-[#1f1f1f]' : ''}`}
+                                            className={`flex items-center gap-2 p-2 rounded-lg ${currentSelectedReaction === button.type ? `scale-110 ${isDefaultMode? "bg-[#1f1f1f]" : "bg-gray-300"} ` : ''}`}
                                             style={{
                                                 background: `${button.gradient}${currentSelectedReaction === button.type ? '66' : '33'}`,
                                                 border: `2px solid ${button.color}${currentSelectedReaction === button.type ? 'FF' : '66'}`,
@@ -76,7 +82,7 @@ export default function PostReactionCounts({ setShowPostReactionCount, post }: {
                                             }}
                                         >
                                             <span className="text-xl">{button.icon}</span>
-                                            <span className="text-white font-semibold">{reactionUsers.length}</span>
+                                            <span className={`${isDefaultMode ? "text-white" : "text-gray-800"} font-semibold`}>{reactionUsers.length}</span>
                                         </div>
                                         
                                         
@@ -126,15 +132,15 @@ export default function PostReactionCounts({ setShowPostReactionCount, post }: {
                                                 className="rounded-full aspect-square object-cover"
                                             />
                                             <div className="flex flex-col">
-                                                <p className="text-white font-semibold text-md">{user.name}</p>
-                                                <p className="text-[#ffffff77] text-sm">@{user.username}</p>
+                                                <p className={`${isDefaultMode ? "text-white" : "text-gray-800"} font-semibold text-md`}>{user.name}</p>
+                                                <p className={`${isDefaultMode ? "text-[#ffffff77]" : "text-gray-400"}  text-sm`}>@{user.username}</p>
                                             </div>
                                         </motion.div>
                                     );
                                 })
                             ) : (
                                 <div className="flex items-center justify-center h-full">
-                                    <p className="text-[#ffffff77] text-lg mb-8">No reactions yet</p>
+                                    <p className={`${isDefaultMode ? "text-[#ffffff77]" : "text-gray-800"} text-lg mb-8`}>No reactions yet</p>
                                 </div>
                             )
                         ) : (

@@ -2,18 +2,27 @@ import { FiSun } from "react-icons/fi";
 import { FiMoon } from "react-icons/fi";
 import { useState } from "react";
 import { motion } from "motion/react";
+import Applying from '../ApplySettings/Applying';
 
 export default function MoreAppearance() {
     const [isDefaultMode, setIsDefaultMode] = useState(() => {
         const savedTheme = localStorage.getItem('theme');
         return savedTheme ? savedTheme === 'default' : true;
     });
+    const [isApplying, setIsApplying] = useState(false);
 
     const handleThemeChange = (isDefault: boolean) => {
+        setIsApplying(true);
         setIsDefaultMode(isDefault);
         localStorage.setItem('theme', isDefault ? 'default' : 'light');
-        window.location.reload();
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
     };
+
+    if (isApplying) {
+        return <Applying settingName="Theme" />;
+    }
 
     return (
         <div className="flex flex-col items-center justify-center lg:items-stretch lg:flex-row gap-8 lg:p-8 w-full lg:max-w-4xl lg:mx-auto h-full">
@@ -55,5 +64,5 @@ export default function MoreAppearance() {
                 </span>
             </motion.div>
         </div>
-    )
+    );
 }

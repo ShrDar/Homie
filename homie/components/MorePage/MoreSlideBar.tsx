@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { Session } from 'next-auth';
 import { motion, AnimatePresence } from "motion/react";
 import Image from 'next/image';
+import Applying from '../ApplySettings/Applying';
 
 export default function MoreSlideBar({ session }: { session: Session | null | undefined }) {
     const [selectedStyle, setSelectedStyle] = useState<'normie' | 'horizontal'>('normie');
     const [currentStyle, setCurrentStyle] = useState<'normie' | 'horizontal'>('normie');
     const [showPreview, setShowPreview] = useState(false);
     const [isDefaultMode, setIsDefaultMode] = useState(true);
+    const [isApplying, setIsApplying] = useState(false);
 
     useEffect(() => {
         const savedStyle = localStorage.getItem('sidebarType');
@@ -22,11 +24,18 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
     }, []);
 
     const handleApplyChanges = () => {
+        setIsApplying(true);
         localStorage.setItem('sidebarType', selectedStyle);
-        window.location.reload();
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
     };
 
     if (!session) return null;
+
+    if (isApplying) {
+        return <Applying settingName="Sidebar" />;
+    }
 
     return (
         <div className="p-8">
