@@ -50,7 +50,7 @@ export default function LoginRight() {
         if (response?.data?.success === true) {
             const result = await loginWithCreds(email, password);
             if (result?.error) {
-                toast.error(result.error);
+                toast.error("Invalid Credentials");
                 setLoggingIn(false);
             }
         } else {
