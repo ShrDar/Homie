@@ -234,7 +234,7 @@ export default function Posts({session} : {session: Session}) {
         </div>
         <div className="text-center">
           <h2 className="text-fontPrimary text-2xl font-semibold mb-2">No Posts Yet</h2>
-          <p className="text-[#888] max-w-md">Be the first one to share something amazing with your homies!</p>
+          <p className="text-[#888] max-w-md">Be the first one to share something dope with your homies!</p>
         </div>
         <motion.button 
           initial={{ scale: 0 }} 
