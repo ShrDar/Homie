@@ -7,15 +7,22 @@ import { Session } from 'next-auth';
 
 export default function SidebarSelector({ session }: { session: Session | null | undefined }) {
     const [sidebarType, setSidebarType] = useState<'normie' | 'horizontal'>('normie');
+    const [isMounted, setIsMounted] = useState(false); 
 
     useEffect(() => {
-        const savedPreference = localStorage.getItem('sidebarType');
-        if (!savedPreference) {
-            localStorage.setItem('sidebarType', 'normie'); // Set default value
-        } else if (savedPreference === 'horizontal' || savedPreference === 'normie') {
-            setSidebarType(savedPreference);
-        }
+        setIsMounted(true);
     }, []);
+
+    useEffect(() => {
+        if (isMounted && typeof window !== 'undefined' && window.localStorage) {
+            const savedPreference = localStorage.getItem('sidebarType');
+            if (!savedPreference) {
+                localStorage.setItem('sidebarType', 'normie'); 
+            } else if (savedPreference === 'horizontal' || savedPreference === 'normie') {
+                setSidebarType(savedPreference);
+            }
+        }
+    }, [isMounted]);
 
     if (!session) return null;
 
