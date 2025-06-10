@@ -6,13 +6,18 @@ import { useEffect, useState } from 'react'
 export default function PageTitle() {
     const pathname = usePathname();
     const [isDefaultMode, setIsDefaultMode] = useState(true);
+    const [isMounted, setIsMounted] = useState(false); // Track if the component is mounted
 
     useEffect(() => {
-        if (typeof window !== 'undefined' && window.localStorage) {
+        setIsMounted(true); // Set to true when the component is mounted on the client
+    }, []);
+
+    useEffect(() => {
+        if (isMounted && typeof window !== 'undefined' && window.localStorage) {
             const savedTheme = localStorage.getItem('theme');
             setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
         }
-    }, []);
+    }, [isMounted]); // This will run after the component is mounted
 
     const getPageTitle = () => {
         const path = pathname?.slice(1);
@@ -30,6 +35,11 @@ export default function PageTitle() {
     }
 
     const title = getPageTitle();
+
+    if (!isMounted) {
+        return null; // Avoid rendering on the server
+    }
+
     return (
         <div 
             className="fixed right-8 cursor-default sulphur md:flex flex-col hidden hover:animate-pulse"
