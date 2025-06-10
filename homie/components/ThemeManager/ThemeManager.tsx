@@ -1,17 +1,27 @@
-'use client'; 
+'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ThemeManager() {
+  const [isMounted, setIsMounted] = useState(false); 
+
   useEffect(() => {
-    const theme = localStorage.getItem('theme') || 'default';
+    setIsMounted(true); 
+  }, []);
 
-    const themeWrapper = document.getElementById('theme-wrapper');
-
-    if (themeWrapper) {
-      themeWrapper.className += theme === 'default' ? ' bg-bgPrimary' : ' bg-gray-100';
+  useEffect(() => {
+    if (isMounted) {
+      const theme = localStorage.getItem("theme") || "default";
+      const themeWrapper = document.getElementById("theme-wrapper");
+      if (themeWrapper) {
+        themeWrapper.className += theme === "default" ? " bg-bgPrimary" : " bg-gray-100";
+      }
     }
-  }, []); 
+  }, [isMounted]);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return null;
 }
