@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 
 export default function ThemeManager() {
-  console.log("ThemeManager triggered");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
