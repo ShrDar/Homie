@@ -5,11 +5,20 @@ import { useEffect, useState } from "react";
 
 export default function Loading() {
     const [isDefaultMode, setIsDefaultMode] = useState(true);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        setIsMounted(true);
     }, []);
+
+    useEffect(() => {
+        if (isMounted && typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        }
+    }, [isMounted]);
+
+    if (!isMounted) return null;
 
     return (
         <div className={`h-screen w-screen flex items-center text-4xl justify-center ${isDefaultMode ? 'bg-bgPrimary text-fontPrimary' : 'bg-gray-100 text-gray-800'} sulphur tracking-[4px]`}>
