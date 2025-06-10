@@ -15,27 +15,40 @@ import { getProfileUrl } from "@/extra/helpers";
 
 export default function SlideBarNormie( {session} : {session: Session | null | undefined}) {
     
-    const pathname = usePathname();
+     const pathname = usePathname();
     const [user, setUser] = useState<HomieUser>();
     const [isDefaultMode, setIsDefaultMode] = useState(true);
-    
+    const [isMounted, setIsMounted] = useState(false);
+
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        setIsMounted(true); 
     }, []);
 
     useEffect(() => {
-        const fetchUserData = async() => {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
-            const user = await response.json();
-            setUser(user);
+        if (isMounted && typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
         }
-    
-        fetchUserData();
-    }, [session?.user?.id, pathname])
+    }, [isMounted]);
 
-    if(pathname.includes("admin")) {
+    useEffect(() => {
+        const fetchUserData = async () => {
+            if (session?.user?.id) {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${session?.user?.id}`);
+                const user = await response.json();
+                setUser(user);
+            }
+        };
+
+        fetchUserData();
+    }, [session?.user?.id, pathname]);
+
+    if (pathname.includes("admin")) {
         return null;
+    }
+
+    if (!isMounted) {
+        return null; 
     }
 
     return (
