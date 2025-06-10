@@ -3,14 +3,15 @@
 import { useEffect, useState } from 'react';
 
 export default function ThemeManager() {
-  const [isMounted, setIsMounted] = useState(false); 
+  console.log("ThemeManager triggered");
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true); 
+    setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (isMounted) {
+    if (isMounted && typeof window !== 'undefined' && window.localStorage) {
       const theme = localStorage.getItem("theme") || "default";
       const themeWrapper = document.getElementById("theme-wrapper");
       if (themeWrapper) {
@@ -18,9 +19,8 @@ export default function ThemeManager() {
       }
     }
   }, [isMounted]);
-
   if (!isMounted) {
-    return null;
+    return null; 
   }
 
   return null;
