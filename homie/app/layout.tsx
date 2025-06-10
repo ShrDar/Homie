@@ -11,6 +11,7 @@ import Shortcuts from "@/components/Shortcut/Shortcuts";
 import SidebarSelector from "@/components/SlideBar/SlidebarSelector";
 import ListenNotifications from "@/components/Notifications/ListenNotifications";
 import HandleNotification from "@/components/Notifications/HandleNotification";
+import ThemeManager from "@/components/ThemeManager/ThemeManager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,18 +66,7 @@ export default async function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} ${sulphur.variable} ${jimNightShade.variable} ${pixelify.variable} ${tiny.variable} selection:bg-bgPrimary antialiased min-h-screen w-full relative flex justify-center items-center`}
           id="theme-wrapper"
         >
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function() {
-                  const theme = localStorage.getItem('theme') || 'default';
-                  document.getElementById('theme-wrapper').className = 
-                    document.getElementById('theme-wrapper').className + 
-                    (theme === 'default' ? ' bg-bgPrimary' : ' bg-gray-100');
-                })();
-              `,
-            }}
-          />
+          <ThemeManager />
           {session && <SidebarSelector session={session} />}
           {session && <SlideBar session={session} />} 
           {children}
