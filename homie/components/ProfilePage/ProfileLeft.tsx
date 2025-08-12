@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import ChangeProfilePic from "../Portals/ChangeProfilePicModal";
 import { getProfileUrl } from "@/extra/helpers";
 import { useRouter } from "next/navigation";

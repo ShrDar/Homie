@@ -6,7 +6,7 @@ import { LuEarth, LuSettings2 } from "react-icons/lu";
 import { FaUserAstronaut, FaRegHandshake } from "react-icons/fa6";
 import { RiMessage3Line } from "react-icons/ri";
 import { TbCoffee } from "react-icons/tb";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
 import { HomieUser } from "@/homieTypes/homieTypes";

@@ -1,5 +1,5 @@
 import { HomieUser, Post } from "@/homieTypes/homieTypes";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from 'date-fns';

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import LogOutModal from "../Portals/LogOutModal";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { IoLogOut } from "react-icons/io5";
 
 export default function MoreExit() {

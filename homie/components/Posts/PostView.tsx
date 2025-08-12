@@ -3,7 +3,7 @@ import Image from "next/image";
 import { getProfileUrl } from "@/extra/helpers";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import ImageViewer from "../Image/ImageViewer";
 
 export default function PostView({post} : {post: Post}) {

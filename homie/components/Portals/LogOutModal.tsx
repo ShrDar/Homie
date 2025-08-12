@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import { logout } from "@/actions/auth"
 import { createPortal } from "react-dom"
 import { useEffect, useState } from "react"

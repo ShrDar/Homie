@@ -1,6 +1,6 @@
 import { Session } from "next-auth";
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from '@/config/firebase';
 

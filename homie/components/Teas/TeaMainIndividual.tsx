@@ -1,7 +1,7 @@
 "use client"
 import { Session } from "next-auth";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import TeaDiscussion from "./TeaDiscussion";
 import { Tea, HomieUser } from "@/homieTypes/homieTypes";
 import TeaAdd from "./TeaAdd";

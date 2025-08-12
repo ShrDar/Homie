@@ -1,6 +1,6 @@
 "use client"
 import { HomieUser, Post } from "@/homieTypes/homieTypes"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { getProfileUrl, reactionButtons } from "@/extra/helpers"
 import { useEffect, useState } from "react"
 import Image from "next/image"

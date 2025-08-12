@@ -4,7 +4,7 @@ import { Session } from "next-auth"
 import { useEffect, useState } from "react";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from '@/config/firebase';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { createPortal } from "react-dom";
 import { Timestamp } from "firebase/firestore"; // Add this import at the top
 import { IoRemoveCircleOutline } from "react-icons/io5";

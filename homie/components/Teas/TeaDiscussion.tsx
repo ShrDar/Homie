@@ -1,6 +1,6 @@
 "use client"
 import { HomieUser, Tea } from "@/homieTypes/homieTypes"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 import { CiMenuKebab } from "react-icons/ci"
 import {
     DropdownMenu,
