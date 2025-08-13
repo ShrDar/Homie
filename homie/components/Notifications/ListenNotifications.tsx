@@ -35,17 +35,16 @@ export default function ListenNotifications({ session }: { session: Session | nu
   useEffect(() => {
     const checkNotificationPermission = async () => {
       try {
-        if (!("Notification" in window)) {
-          console.log("This browser does not support notifications");
-          return;
-        }
-
-        // Check current permission
-        if (Notification.permission === "granted") {
-          setNotificationPermission("granted");
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+          // Check current permission
+          if (Notification.permission === "granted") {
+            setNotificationPermission("granted");
+          } else {
+            const permission = await Notification.requestPermission();
+            setNotificationPermission(permission);
+          }
         } else {
-          const permission = await Notification.requestPermission();
-          setNotificationPermission(permission);
+          console.log("This browser does not support notifications");
         }
       } catch (error) {
         console.error("Error requesting notification permission:", error);
@@ -152,7 +151,7 @@ export default function ListenNotifications({ session }: { session: Session | nu
       });
 
       // Show browser notification if permitted and notifications are allowed
-      if (notificationPermission === "granted") {
+      if (notificationPermission === "granted" && typeof window !== 'undefined' && 'Notification' in window) {
         try {
           const notification = new Notification("Homie", {
             body: latestNotification.message,
