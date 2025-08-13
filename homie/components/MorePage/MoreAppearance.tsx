@@ -6,17 +6,34 @@ import Applying from '../ApplySettings/Applying';
 
 export default function MoreAppearance() {
     const [isDefaultMode, setIsDefaultMode] = useState(() => {
-        const savedTheme = localStorage.getItem('theme');
-        return savedTheme ? savedTheme === 'default' : true;
+        if (typeof window === 'undefined') return true;
+        
+        try {
+            const savedTheme = window.localStorage.getItem('theme');
+            return savedTheme ? savedTheme === 'default' : true;
+        } catch (error) {
+            console.warn('Failed to access localStorage:', error);
+            return true;
+        }
     });
     const [isApplying, setIsApplying] = useState(false);
 
     const handleThemeChange = (isDefault: boolean) => {
         setIsApplying(true);
         setIsDefaultMode(isDefault);
-        localStorage.setItem('theme', isDefault ? 'default' : 'light');
+        
+        if (typeof window !== 'undefined') {
+            try {
+                window.localStorage.setItem('theme', isDefault ? 'default' : 'light');
+            } catch (error) {
+                console.warn('Failed to save theme to localStorage:', error);
+            }
+        }
+        
         setTimeout(() => {
-            window.location.reload();
+            if (typeof window !== 'undefined') {
+                window.location.reload();
+            }
         }, 1500);
     };
 

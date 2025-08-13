@@ -5,8 +5,15 @@ export default function MoreShortcuts() {
   const [isDefaultMode, setIsDefaultMode] = useState(true);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const savedTheme = window.localStorage.getItem('theme');
+      setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    } catch (error) {
+      console.warn('Failed to access localStorage:', error);
+      setIsDefaultMode(true);
+    }
   }, []);
 
   return (

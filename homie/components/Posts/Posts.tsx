@@ -216,8 +216,10 @@ export default function Posts({session} : {session: Session}) {
   const [isDefaultMode, setIsDefaultMode] = useState(true);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }
   }, []);
 
   if(isLoadingPosts) {

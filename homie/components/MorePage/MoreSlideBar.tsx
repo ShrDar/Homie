@@ -14,13 +14,15 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
     const [isApplying, setIsApplying] = useState(false);
 
     useEffect(() => {
-        const savedStyle = localStorage.getItem('sidebarType');
-        if (savedStyle === 'normie' || savedStyle === 'horizontal') {
-            setSelectedStyle(savedStyle);
-            setCurrentStyle(savedStyle);
+        if (typeof window !== 'undefined') {
+            const savedStyle = localStorage.getItem('sidebarType');
+            if (savedStyle === 'normie' || savedStyle === 'horizontal') {
+                setSelectedStyle(savedStyle);
+                setCurrentStyle(savedStyle);
+            }
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
         }
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
     }, []);
 
     const handleApplyChanges = () => {

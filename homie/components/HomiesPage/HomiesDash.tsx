@@ -35,8 +35,15 @@ export default function HomiesDash({session} : {session: Session}) {
     const [isDefaultMode, setIsDefaultMode] = useState(true);
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        if (typeof window !== 'undefined') {
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+            } catch (error) {
+                console.error('Error accessing localStorage:', error);
+                setIsDefaultMode(true); // fallback to default
+            }
+        }
     }, []);
 
     const isEqual = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b);
