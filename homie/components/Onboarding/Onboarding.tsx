@@ -56,7 +56,7 @@ export default function Onboarding({ session }: { session: Session | null }) {
     );
     
     useEffect(() => {
-        if (isClient && Notification.permission === 'granted') {
+        if (isClient && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
             setAllowNotification(true);
         }
     }, [isClient]);
@@ -64,10 +64,15 @@ export default function Onboarding({ session }: { session: Session | null }) {
     const NotificationsStep = () => {
         const handleToggle = async () => {
             if (!allowNotification) {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    setAllowNotification(true);
+                if (typeof window !== 'undefined' && 'Notification' in window) {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        setAllowNotification(true);
+                    } else {
+                        setAllowNotification(false);
+                    }
                 } else {
+                    console.log("This browser does not support notifications");
                     setAllowNotification(false);
                 }
             } else {

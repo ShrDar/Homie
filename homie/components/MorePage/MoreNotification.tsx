@@ -42,10 +42,14 @@ export default function MoreNotification({ session }: { session: Session }) {
             if (!type) {
                 // Main notification toggle
                 if (!allowNotification) {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted') {
-                        await updateFirestore({ allowNoti: true });
-                        setAllowNotification(true);
+                    if (typeof window !== 'undefined' && 'Notification' in window) {
+                        const permission = await Notification.requestPermission();
+                        if (permission === 'granted') {
+                            await updateFirestore({ allowNoti: true });
+                            setAllowNotification(true);
+                        }
+                    } else {
+                        console.log("This browser does not support notifications");
                     }
                 } else {
                     await updateFirestore({ allowNoti: false });
