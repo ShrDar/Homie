@@ -16,6 +16,12 @@ export default function ThemeManager() {
       if (themeWrapper) {
         themeWrapper.className += theme === "default" ? " bg-bgPrimary" : " bg-gray-100";
       }
+    } else {
+      const theme = localStorage.getItem("theme") || "default";
+      const themeWrapper = document.getElementById("theme-wrapper");
+      if (themeWrapper) {
+        themeWrapper.className += theme === "default" ? " bg-bgPrimary" : " bg-gray-100";
+      }
     }
   }, [isMounted]);
   if (!isMounted) {
