@@ -35,7 +35,8 @@ export default function HomiesDash({session} : {session: Session}) {
     const [isDefaultMode, setIsDefaultMode] = useState(true);
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && window.localStorage) {
+
             try {
                 const savedTheme = localStorage.getItem('theme');
                 setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);

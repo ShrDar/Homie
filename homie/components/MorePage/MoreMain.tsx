@@ -17,7 +17,8 @@ export default function MoreMain({ session }: { session: Session }) {
     const [isDefaultMode, setIsDefaultMode] = useState(true);
 
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        if (typeof window === 'undefined' || !window.localStorage) return;
+
         
         try {
             const savedTheme = window.localStorage.getItem('theme');

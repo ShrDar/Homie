@@ -15,8 +15,10 @@ export default function PostView({post} : {post: Post}) {
     const [currentImage, setCurrentImage] = useState<string | "">("");
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        }
     }, []);
 
     function getRelativeTime(dateString: string): string {

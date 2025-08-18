@@ -199,8 +199,10 @@ export default function TeaEdit({ setShowTeaEdit, user, tea, setShowTeaDiscussio
     };
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        }
     }, []);
 
     return (

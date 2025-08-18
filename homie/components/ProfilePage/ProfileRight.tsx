@@ -23,8 +23,10 @@ export default function ProfileRight({ session, user, setUser }: {session: Sessi
     const [isDefaultMode, setIsDefaultMode] = useState(true);
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        }
     }, []);
 
     useEffect(() => {

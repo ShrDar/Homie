@@ -159,8 +159,10 @@ export default function TeaAdd({ setShowTeaAdd, user }: { setShowTeaAdd: any, us
     };
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        }
     }, []);
 
     return (

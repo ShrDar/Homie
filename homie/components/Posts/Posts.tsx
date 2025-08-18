@@ -216,7 +216,8 @@ export default function Posts({session} : {session: Session}) {
   const [isDefaultMode, setIsDefaultMode] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.localStorage) {
+
       const savedTheme = localStorage.getItem('theme');
       setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
     }

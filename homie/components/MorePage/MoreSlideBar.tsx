@@ -14,7 +14,8 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
     const [isApplying, setIsApplying] = useState(false);
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && window.localStorage) {
+
             const savedStyle = localStorage.getItem('sidebarType');
             if (savedStyle === 'normie' || savedStyle === 'horizontal') {
                 setSelectedStyle(savedStyle);
@@ -27,7 +28,9 @@ export default function MoreSlideBar({ session }: { session: Session | null | un
 
     const handleApplyChanges = () => {
         setIsApplying(true);
-        localStorage.setItem('sidebarType', selectedStyle);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            localStorage.setItem('sidebarType', selectedStyle);
+        }
         setTimeout(() => {
             window.location.reload();
         }, 1500);

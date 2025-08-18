@@ -28,13 +28,13 @@ export default function ViewNotifications({ session, setOpenNotifications }: { s
   const router = useRouter(); // Add this line
   const [isDefaultMode, setIsDefaultMode] = useState(true);
 
-  // Add this useEffect near other useEffect hooks
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
-  }, []);
+    if (typeof window !== 'undefined') {
+        const savedTheme = localStorage.getItem('theme');
+        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+    }
+}, []);
 
-  
   useEffect(() => {
     setMounted(true);
     return () => setMounted(false);

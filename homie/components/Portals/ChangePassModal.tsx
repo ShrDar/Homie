@@ -23,8 +23,10 @@ export default function ChangePassModal({ openChangePassModal, setOpenChangePass
     const [displayCurrentPassTick, setDisplayCurrentPassTick] = useState(false);
     
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        }
     }, []);
     
     if(!openChangePassModal) {

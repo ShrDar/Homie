@@ -15,8 +15,10 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
     }, []);
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        }
     }, []);
 
     const handleLogout = async () => {

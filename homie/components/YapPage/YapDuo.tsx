@@ -73,8 +73,10 @@ export default function YapDuo({ session } : { session: Session }) {
     const [isDefaultMode, setIsDefaultMode] = useState(true);
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const savedTheme = localStorage.getItem('theme');
+            setIsDefaultMode(savedTheme ? savedTheme === 'default' : true);
+        }
     }, []);
 
     const scrollToBottom = () => {

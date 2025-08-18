@@ -6,8 +6,8 @@ import Applying from '../ApplySettings/Applying';
 
 export default function MoreAppearance() {
     const [isDefaultMode, setIsDefaultMode] = useState(() => {
-        if (typeof window === 'undefined') return true;
-        
+        if (typeof window === 'undefined' || !window.localStorage) return true;
+
         try {
             const savedTheme = window.localStorage.getItem('theme');
             return savedTheme ? savedTheme === 'default' : true;
@@ -22,7 +22,8 @@ export default function MoreAppearance() {
         setIsApplying(true);
         setIsDefaultMode(isDefault);
         
-        if (typeof window !== 'undefined') {
+        if (typeof window !== 'undefined' && window.localStorage) {
+
             try {
                 window.localStorage.setItem('theme', isDefault ? 'default' : 'light');
             } catch (error) {

@@ -16,7 +16,8 @@ export default function MoreNotification({ session }: { session: Session }) {
     });
 
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        if (typeof window === 'undefined' || !window.localStorage) return;
+
         
         try {
             const savedTheme = window.localStorage.getItem('theme');
