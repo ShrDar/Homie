@@ -17,7 +17,7 @@ export default function ThemeManager() {
         themeWrapper.className += theme === "default" ? " bg-bgPrimary" : " bg-gray-100";
       }
     } else {
-      const theme = localStorage.getItem("theme") || "default";
+      const theme = "default";
       const themeWrapper = document.getElementById("theme-wrapper");
       if (themeWrapper) {
         themeWrapper.className += theme === "default" ? " bg-bgPrimary" : " bg-gray-100";
