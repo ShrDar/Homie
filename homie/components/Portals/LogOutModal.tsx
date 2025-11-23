@@ -54,7 +54,7 @@ export default function LogOutModal({ setOpenLogOutModal }: { setOpenLogOutModal
                     whileHover={{ scale: 1.02 }}
                     className={`${isDefaultMode ? 'bg-bgPrimary' : 'bg-gray-100'} p-10 rounded-[15px] w-full flex justify-center items-center`}
                 >
-                    <p className="text-center">Taking a break? See you bilis! 👋</p>
+                    <p className="text-center">Taking a break? See you soon! 👋</p>
                 </motion.div>
                 <div className="flex justify-center items-center w-full gap-4">
                     <motion.div 
