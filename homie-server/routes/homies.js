@@ -81,7 +81,7 @@ router.post("/:userId/homie-request/:homieId", async (req, res) => {
   }
 });
 
-// api to accept a homie request
+// api to accept a homie requests
 router.post("/:userId/accept-request/:homieId", async (req, res) => {
   const { userId, homieId } = req.params;
 
