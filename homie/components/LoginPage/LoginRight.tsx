@@ -6,7 +6,7 @@ import EntryBtn from "../Button/EntryBtn";
 import Image from "next/image";
 import Link from "next/link";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { login, loginWithCreds } from "@/actions/auth";
+import { loginWithCreds } from "@/actions/auth";
 import { toast, Toaster } from "sonner";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { motion } from "motion/react";
