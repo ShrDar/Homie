@@ -11,7 +11,14 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { motion } from "motion/react";
 
 export default function SignUpClient() {
-    const defaultImages = ['https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa0bcf002e60148154/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa130a0027cba1a4ac/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa131a003596256ea6/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa132700151f0a8682/view?project=67aa0803002c7db860ad&mode=admin', 'https://cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/67aa1336000dac6ec818/view?project=67aa0803002c7db860ad&mode=admin'];
+    const defaultImages = [
+        "https://fra.cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/6a743d330037ad387111/view?project=67aa0803002c7db860ad&impersonateuserid=&mode=admin",
+        "https://fra.cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/6a743d330037ad088a00/view?project=67aa0803002c7db860ad&impersonateuserid=&mode=admin",
+        "https://fra.cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/6a743d330037a420f267/view?project=67aa0803002c7db860ad&impersonateuserid=&mode=admin",
+        "https://fra.cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/6a743d330037aa23794e/view?project=67aa0803002c7db860ad&impersonateuserid=&mode=admin",
+        "https://fra.cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/6a743d330037a9e98f97/view?project=67aa0803002c7db860ad&impersonateuserid=&mode=admin",
+        "https://fra.cloud.appwrite.io/v1/storage/buckets/67aa0b3d001aeadacd8a/files/6a743d330037a81b7bd0/view?project=67aa0803002c7db860ad&impersonateuserid=&mode=admin"
+    ];
     const { executeRecaptcha } = useGoogleReCaptcha();
 
     const [email, setEmail] = useState("");

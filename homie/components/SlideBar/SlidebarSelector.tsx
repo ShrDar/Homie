@@ -6,7 +6,7 @@ import SlideBarNormie from './SlideBarNormie';
 import { Session } from 'next-auth';
 
 export default function SidebarSelector({ session }: { session: Session | null | undefined }) {
-    const [sidebarType, setSidebarType] = useState<'normie' | 'horizontal'>('normie');
+    const [sidebarType, setSidebarType] = useState<'normie' | 'horizontal'>('horizontal');
     const [isMounted, setIsMounted] = useState(false); 
 
     useEffect(() => {
