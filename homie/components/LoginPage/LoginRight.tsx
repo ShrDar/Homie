@@ -6,7 +6,7 @@ import EntryBtn from "../Button/EntryBtn";
 import Image from "next/image";
 import Link from "next/link";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { loginWithCreds } from "@/actions/auth";
+import { login, loginWithCreds } from "@/actions/auth";
 import { toast, Toaster } from "sonner";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { motion } from "motion/react";
@@ -150,39 +150,35 @@ export default function LoginRight() {
                 />
             </div>
             <motion.div 
-                // initial={{ opacity: 0 }}
-                // animate={{ opacity: 1 }}
-                // transition={{ delay: 0.6, staggerChildren: 0.1 }}
-                onClick={() => {
-                    toast.info("Feature under maintainance 🏗")
-                }}
-                title="Under Maintainance"
-                className="thirdPartyContainer w-full flex cursor-not-allowed"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, staggerChildren: 0.1 }}
+                className="thirdPartyContainer w-full flex "
             >
-                <div className="flex gap-8 w-full justify-center items-center pointer-events-none">
+                <div className="flex gap-8 w-full justify-center items-center ">
                     <motion.div 
-                        // initial={{ opacity: 0, y: 20 }}
-                        // animate={{ opacity: 1, y: 0 }}
-                        // whileHover={{ scale: 1.05 }}
-                        // whileTap={{ scale: 0.95 }}
-                        // onClick={() => {
-                        //     login("google")
-                        //     setLoggingIn(true)
-                        // }} 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                            login("google")
+                            setLoggingIn(true)
+                        }} 
                         className="thirdPartyGoogle cursor-pointer w-full flex items-center border-[1px] border-fontPrimary p-2 rounded-[10px] justify-center gap-5 hover:bg-bgPrimary transition-all duration-100 "
                     >
                         <Image src={"/logo/googlePlain.png"} alt="" width={500} height={500} className="w-[30px]" />
                         <p>Google</p>
                     </motion.div>
                     <motion.div 
-                        // initial={{ opacity: 0, y: 20 }}
-                        // animate={{ opacity: 1, y: 0 }}
-                        // whileHover={{ scale: 1.05 }}
-                        // whileTap={{ scale: 0.95 }}
-                        // onClick={() => {
-                        //     login("github")
-                        //     setLoggingIn(true)
-                        // }} 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                            login("github")
+                            setLoggingIn(true)
+                        }} 
                         className="thirdPartyGoogle cursor-pointer w-full flex items-center border-[1px] border-fontPrimary p-2 rounded-[10px] justify-center gap-5 hover:bg-bgPrimary transition-all duration-100"
                     >
                         <Image src={"/logo/githubPlain.png"} alt="" width={500} height={500} className="w-[30px]" />
